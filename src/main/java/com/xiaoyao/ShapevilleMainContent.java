@@ -55,4 +55,5 @@ public class ShapevilleMainContent extends JPanel {
 
         add(progressPanel);
     }
+
 }

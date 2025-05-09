@@ -109,8 +109,8 @@ public class StageSwitcherPanel extends JPanel {
     // 启动任务1
     private void startTask1() {
         System.out.println("Starting Task 1: Shape Recognition");
-        TaskScreen taskScreen = new TaskScreen("Shape Recognition");
-        taskScreen.setVisible(true);  // 显示任务界面
+        Task1Screen task1Screen = new Task1Screen();
+        task1Screen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务2
