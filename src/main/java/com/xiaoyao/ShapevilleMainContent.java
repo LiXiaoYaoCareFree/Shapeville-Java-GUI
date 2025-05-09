@@ -13,14 +13,14 @@ public class ShapevilleMainContent extends JPanel {
         // 欢迎标题区域
         add(Box.createVerticalStrut(20));
 
-// 加载图片图标
+        // 加载图片图标
         ImageIcon welcomeIcon = new ImageIcon(getClass().getClassLoader().getResource("images/img_1.png"));
 
-// 设置图片图标为指定大小（可选，视情况而定）
+        // 设置图片图标为指定大小（可选，视情况而定）
         Image img = welcomeIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // 调整为 100x100
         welcomeIcon = new ImageIcon(img);
 
-// 创建 JLabel 用于显示图片
+        // 创建 JLabel 用于显示图片
         JLabel welcomeIconLabel = new JLabel(welcomeIcon, SwingConstants.CENTER);
         welcomeIconLabel.setAlignmentX(CENTER_ALIGNMENT);  // 让图片居中
 
