@@ -13,7 +13,7 @@ public class StageSwitcherPanel extends JPanel {
         // Stage buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JToggleButton ks1 = new JToggleButton("<html><b>Key Stage 1</b><br>(Years 1–2)</html>");
-        JToggleButton ks2 = new JToggleButton("<html><b>Key Stage 2</b><br>(Years 3–6)</html>");
+        JToggleButton ks2 = new JToggleButton("<html><b>Key Stage 2</b><br>(Years 3–4)</html>");
 
         ButtonGroup group = new ButtonGroup();
         group.add(ks1); group.add(ks2);
@@ -50,8 +50,10 @@ public class StageSwitcherPanel extends JPanel {
     private JPanel createStage1() {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBackground(new Color(240, 250, 255));
-        panel.add(new TaskCard("Task 1", "Shape Recognition", "Identify basic 2D shapes...", "Ages 5–7", new Color(76, 175, 80), loadIcon("shapes.png")));
-        panel.add(new TaskCard("Task 2", "Angle Types", "Learn right, acute, obtuse...", "Ages 5–7", new Color(76, 175, 80), loadIcon("angles.png")));
+        panel.add(new TaskCard("Task 1", "Shape Recognition", "Learn to identify basic 2D shapes like circles, squares, triangles, rectangles, and more!", "Ages 5–7", new Color(76, 175, 80), loadIcon("shapes.png")));
+        panel.add(new TaskCard("Task 2", "Angle Types", "Learn about different types of angles: right angles, acute angles, and obtuse angles!\n" +
+                "\n" +
+                "Ages 5-7", "Ages 5–7", new Color(76, 175, 80), loadIcon("angles.png")));
         return panel;
     }
 
@@ -62,13 +64,13 @@ public class StageSwitcherPanel extends JPanel {
 
         JPanel row1 = new JPanel(new FlowLayout());
         row1.setOpaque(false);
-        row1.add(new TaskCard("Task 3", "Shape Area", "Area of rectangles, triangles...", "Ages 7–10", new Color(33, 150, 243), loadIcon("area.png")));
-        row1.add(new TaskCard("Task 4", "Circle Area & Circumference", "Using π to calculate...", "Ages 7–10", new Color(33, 150, 243), loadIcon("circle.png")));
+        row1.add(new TaskCard("Task 3", "Shape Area", "Learn how to calculate the area of rectangles, triangles, and other 2D shapes!", "Ages 7–10", new Color(33, 150, 243), loadIcon("area.png")));
+        row1.add(new TaskCard("Task 4", "Circle Area & Circumference", "Discover how to calculate the area and circumference of circles using π!", "Ages 7–10", new Color(33, 150, 243), loadIcon("circle.png")));
 
         JPanel row2 = new JPanel(new FlowLayout());
         row2.setOpaque(false);
-        row2.add(new TaskCard("Challenge 1", "Compound Shapes", "Break complex shapes...", "Advanced", new Color(156, 39, 176), loadIcon("compound.png")));
-        row2.add(new TaskCard("Challenge 2", "Sectors & Arcs", "Sector area and arc length...", "Advanced", new Color(156, 39, 176), loadIcon("sectors.png")));
+        row2.add(new TaskCard("Challenge 1", "Compound Shapes", "Learn to calculate the area of compound shapes by breaking them into simpler shapes!", "Advanced", new Color(156, 39, 176), loadIcon("compound.png")));
+        row2.add(new TaskCard("Challenge 2", "Sectors & Arcs", "Master calculating the area of sectors and the length of arcs in circles!", "Advanced", new Color(156, 39, 176), loadIcon("sectors.png")));
 
         panel.add(row1);
         panel.add(row2);

@@ -9,12 +9,27 @@ public class ShapevilleMainContent extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(new Color(240, 248, 255)); // 淡蓝背景
 
+//        // 欢迎标题区域
+//        add(Box.createVerticalStrut(20));
+//        JLabel welcomeIcon = new JLabel("\u2714", SwingConstants.CENTER); // ✔️ 作为图标
+//        welcomeIcon.setFont(new Font("Arial", Font.PLAIN, 48));
+//        welcomeIcon.setAlignmentX(CENTER_ALIGNMENT);
+//        add(welcomeIcon);
         // 欢迎标题区域
         add(Box.createVerticalStrut(20));
-        JLabel welcomeIcon = new JLabel("\u2714", SwingConstants.CENTER); // ✔️ 作为图标
-        welcomeIcon.setFont(new Font("Arial", Font.PLAIN, 48));
-        welcomeIcon.setAlignmentX(CENTER_ALIGNMENT);
-        add(welcomeIcon);
+
+// 加载图片图标
+        ImageIcon welcomeIcon = new ImageIcon(getClass().getClassLoader().getResource("images/img_1.png"));
+
+// 设置图片图标为指定大小（可选，视情况而定）
+        Image img = welcomeIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // 调整为 100x100
+        welcomeIcon = new ImageIcon(img);
+
+// 创建 JLabel 用于显示图片
+        JLabel welcomeIconLabel = new JLabel(welcomeIcon, SwingConstants.CENTER);
+        welcomeIconLabel.setAlignmentX(CENTER_ALIGNMENT);  // 让图片居中
+
+        add(welcomeIconLabel);
 
         JLabel welcomeText = new JLabel("Welcome to Shapeville!");
         welcomeText.setFont(new Font("Arial", Font.BOLD, 28));
