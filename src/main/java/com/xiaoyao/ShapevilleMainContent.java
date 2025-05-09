@@ -14,7 +14,7 @@ public class ShapevilleMainContent extends JPanel {
         add(Box.createVerticalStrut(20));
 
         // 加载图片图标
-        ImageIcon welcomeIcon = new ImageIcon(getClass().getClassLoader().getResource("images/img_1.png"));
+        ImageIcon welcomeIcon = new ImageIcon(getClass().getClassLoader().getResource("images/tick.png"));
 
         // 设置图片图标为指定大小（可选，视情况而定）
         Image img = welcomeIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // 调整为 100x100

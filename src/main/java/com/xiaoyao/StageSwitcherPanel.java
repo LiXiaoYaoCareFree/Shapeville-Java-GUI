@@ -50,8 +50,15 @@ public class StageSwitcherPanel extends JPanel {
     private JPanel createStage1() {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBackground(new Color(240, 250, 255));
-        panel.add(new TaskCard("Task 1", "Shape Recognition", "Learn to identify basic 2D shapes like circles, squares, triangles, rectangles, and more!", "Ages 5–7", new Color(76, 175, 80), loadIcon("shapes.png")));
-        panel.add(new TaskCard("Task 2", "Angle Types", "Learn about different types of angles: right angles, acute angles, and obtuse angles!\n", "Ages 5–7", new Color(76, 175, 80), loadIcon("angles.png")));
+
+        TaskCard task1 = new TaskCard("Task 1", "Shape Recognition", "Learn to identify basic 2D shapes like circles, squares, triangles, rectangles, and more!", "Ages 5–7", new Color(76, 175, 80), loadIcon("shapes.png"));
+        task1.addStartButtonListener(e -> startTask1());
+
+        TaskCard task2 = new TaskCard("Task 2", "Angle Types", "Learn about different types of angles: right angles, acute angles, and obtuse angles!", "Ages 5–7", new Color(76, 175, 80), loadIcon("angles.png"));
+        task2.addStartButtonListener(e -> startTask2());
+
+        panel.add(task1);
+        panel.add(task2);
         return panel;
     }
 
@@ -60,15 +67,29 @@ public class StageSwitcherPanel extends JPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(new Color(240, 250, 255));
 
+        // 第一行的任务
         JPanel row1 = new JPanel(new FlowLayout());
         row1.setOpaque(false);
-        row1.add(new TaskCard("Task 3", "Shape Area", "Learn how to calculate the area of rectangles, triangles, and other 2D shapes!", "Ages 7–10", new Color(33, 150, 243), loadIcon("area.png")));
-        row1.add(new TaskCard("Task 4", "Circle Area & Circumference", "Discover how to calculate the area and circumference of circles using π!", "Ages 7–10", new Color(33, 150, 243), loadIcon("Circle.png")));
+        TaskCard task3 = new TaskCard("Task 3", "Shape Area", "Learn how to calculate the area of rectangles, triangles, and other 2D shapes!", "Ages 7–10", new Color(33, 150, 243), loadIcon("area.png"));
+        task3.addStartButtonListener(e -> startTask3());
 
+        TaskCard task4 = new TaskCard("Task 4", "Circle Area & Circumference", "Discover how to calculate the area and circumference of circles using π!", "Ages 7–10", new Color(33, 150, 243), loadIcon("Circle.png"));
+        task4.addStartButtonListener(e -> startTask4());
+
+        row1.add(task3);
+        row1.add(task4);
+
+        // 第二行的任务
         JPanel row2 = new JPanel(new FlowLayout());
         row2.setOpaque(false);
-        row2.add(new TaskCard("Challenge 1", "Compound Shapes", "Learn to calculate the area of compound shapes by breaking them into simpler shapes!", "Advanced", new Color(156, 39, 176), loadIcon("compound.png")));
-        row2.add(new TaskCard("Challenge 2", "Sectors & Arcs", "Master calculating the area of sectors and the length of arcs in circles!", "Advanced", new Color(156, 39, 176), loadIcon("sectors.png")));
+        TaskCard task5 = new TaskCard("Challenge 1", "Compound Shapes", "Learn to calculate the area of compound shapes by breaking them into simpler shapes!", "Advanced", new Color(156, 39, 176), loadIcon("compound.png"));
+        task5.addStartButtonListener(e -> startTask5());
+
+        TaskCard task6 = new TaskCard("Challenge 2", "Sectors & Arcs", "Master calculating the area of sectors and the length of arcs in circles!", "Advanced", new Color(156, 39, 176), loadIcon("sectors.png"));
+        task6.addStartButtonListener(e -> startTask6());
+
+        row2.add(task5);
+        row2.add(task6);
 
         panel.add(row1);
         panel.add(row2);
@@ -84,5 +105,48 @@ public class StageSwitcherPanel extends JPanel {
             return null;
         }
     }
-}
 
+    // 启动任务1
+    private void startTask1() {
+        System.out.println("Starting Task 1: Shape Recognition");
+        TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setTaskName("Shape Recognition");  // 设置任务名称
+        taskScreen.setVisible(true);  // 显示任务界面
+    }
+
+    // 启动任务2
+    private void startTask2() {
+        System.out.println("Starting Task 2: Angle Types");
+        TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setTaskName("Angle Types");  // 设置任务名称
+        taskScreen.setVisible(true);  // 显示任务界面
+    }
+
+    // 启动任务3
+    private void startTask3() {
+        System.out.println("Starting Task 3: Shape Area");
+        TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setVisible(true);  // 显示任务界面
+    }
+
+    // 启动任务4
+    private void startTask4() {
+        System.out.println("Starting Task 4: Circle Area & Circumference");
+        TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setVisible(true);  // 显示任务界面
+    }
+
+    // 启动任务5
+    private void startTask5() {
+        System.out.println("Starting Task 5: Compound Shapes");
+        TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setVisible(true);  // 显示任务界面
+    }
+
+    // 启动任务6
+    private void startTask6() {
+        System.out.println("Starting Task 6: Sectors & Arcs");
+        TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setVisible(true);  // 显示任务界面
+    }
+}

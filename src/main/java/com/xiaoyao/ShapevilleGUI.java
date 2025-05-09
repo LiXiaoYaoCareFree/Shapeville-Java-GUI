@@ -38,6 +38,7 @@ public class ShapevilleGUI extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    // 创建自定义面板，绘制渐变色背景
     private static JPanel getJPanel() {
         JPanel gradientTopWrapper = new JPanel() {
             @Override
@@ -53,6 +54,7 @@ public class ShapevilleGUI extends JFrame {
         return gradientTopWrapper;
     }
 
+    // 绑定按钮监听事件
     private void bindListeners() {
         topPanel.homeButton.addActionListener(e -> JOptionPane.showMessageDialog(null, "Returning to Home Screen..."));
         topPanel.endSessionButton.addActionListener(e -> {
@@ -61,6 +63,7 @@ public class ShapevilleGUI extends JFrame {
         });
     }
 
+    // 色盲模式
     private void toggleColorBlindMode() {
         isColorBlindMode = bottomPanel.colorBlindModeCheckBox.isSelected();
         // 可加入按钮颜色调整逻辑（如 level1Button, level2Button 等）根据 isColorBlindMode 调整颜色

@@ -2,8 +2,12 @@ package com.xiaoyao;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class TaskCard extends JPanel {
+    private JButton startButton;
+
     public TaskCard(String badge, String title, String description, String age, Color themeColor, ImageIcon icon) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.WHITE);
@@ -47,19 +51,19 @@ public class TaskCard extends JPanel {
         JPanel footer = new JPanel(new BorderLayout());
         footer.setOpaque(false);
         footer.add(new JLabel(age), BorderLayout.WEST);
-        JButton startBtn = new JButton("Start");
-        startBtn.setBackground(themeColor);
-        startBtn.setForeground(Color.WHITE);
-        footer.add(startBtn, BorderLayout.EAST);
 
-        // 添加事件监听器
-        startBtn.addActionListener(e -> {
-            // 当点击 "Start" 按钮时，打开 TaskScreen
-            TaskScreen taskScreen = new TaskScreen();
-            taskScreen.setVisible(true);  // 显示 TaskScreen 窗口
-        });
+        // Start Button
+        startButton = new JButton("Start");
+        startButton.setBackground(themeColor);
+        startButton.setForeground(Color.WHITE);
+        footer.add(startButton, BorderLayout.EAST);
 
         add(Box.createVerticalStrut(10));
         add(footer);
+    }
+
+    // 添加 Start 按钮事件监听器
+    public void addStartButtonListener(ActionListener listener) {
+        startButton.addActionListener(listener);
     }
 }

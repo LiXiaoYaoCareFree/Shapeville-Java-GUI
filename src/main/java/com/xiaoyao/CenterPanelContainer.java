@@ -8,6 +8,7 @@ public class CenterPanelContainer extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(new Color(240, 248, 255));
 
+        //
         ShapevilleMainContent mainContent = new ShapevilleMainContent();
         StageSwitcherPanel stagePanel = new StageSwitcherPanel();
 

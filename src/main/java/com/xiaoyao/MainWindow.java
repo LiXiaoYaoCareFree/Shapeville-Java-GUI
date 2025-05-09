@@ -2,7 +2,7 @@ package com.xiaoyao;
 
 import javax.swing.*;
 
-public class Main {
+public class MainWindow {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
