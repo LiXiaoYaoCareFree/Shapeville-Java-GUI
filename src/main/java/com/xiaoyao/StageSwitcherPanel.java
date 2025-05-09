@@ -51,9 +51,7 @@ public class StageSwitcherPanel extends JPanel {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBackground(new Color(240, 250, 255));
         panel.add(new TaskCard("Task 1", "Shape Recognition", "Learn to identify basic 2D shapes like circles, squares, triangles, rectangles, and more!", "Ages 5–7", new Color(76, 175, 80), loadIcon("shapes.png")));
-        panel.add(new TaskCard("Task 2", "Angle Types", "Learn about different types of angles: right angles, acute angles, and obtuse angles!\n" +
-                "\n" +
-                "Ages 5-7", "Ages 5–7", new Color(76, 175, 80), loadIcon("angles.png")));
+        panel.add(new TaskCard("Task 2", "Angle Types", "Learn about different types of angles: right angles, acute angles, and obtuse angles!\n", "Ages 5–7", new Color(76, 175, 80), loadIcon("angles.png")));
         return panel;
     }
 

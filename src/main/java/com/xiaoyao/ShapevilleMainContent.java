@@ -9,12 +9,7 @@ public class ShapevilleMainContent extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(new Color(240, 248, 255)); // 淡蓝背景
 
-//        // 欢迎标题区域
-//        add(Box.createVerticalStrut(20));
-//        JLabel welcomeIcon = new JLabel("\u2714", SwingConstants.CENTER); // ✔️ 作为图标
-//        welcomeIcon.setFont(new Font("Arial", Font.PLAIN, 48));
-//        welcomeIcon.setAlignmentX(CENTER_ALIGNMENT);
-//        add(welcomeIcon);
+
         // 欢迎标题区域
         add(Box.createVerticalStrut(20));
 
