@@ -51,6 +51,14 @@ public class TaskCard extends JPanel {
         startBtn.setBackground(themeColor);
         startBtn.setForeground(Color.WHITE);
         footer.add(startBtn, BorderLayout.EAST);
+
+        // 添加事件监听器
+        startBtn.addActionListener(e -> {
+            // 当点击 "Start" 按钮时，打开 TaskScreen
+            TaskScreen taskScreen = new TaskScreen();
+            taskScreen.setVisible(true);  // 显示 TaskScreen 窗口
+        });
+
         add(Box.createVerticalStrut(10));
         add(footer);
     }

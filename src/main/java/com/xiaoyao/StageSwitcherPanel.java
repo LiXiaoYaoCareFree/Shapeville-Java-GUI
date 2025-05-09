@@ -63,7 +63,7 @@ public class StageSwitcherPanel extends JPanel {
         JPanel row1 = new JPanel(new FlowLayout());
         row1.setOpaque(false);
         row1.add(new TaskCard("Task 3", "Shape Area", "Learn how to calculate the area of rectangles, triangles, and other 2D shapes!", "Ages 7–10", new Color(33, 150, 243), loadIcon("area.png")));
-        row1.add(new TaskCard("Task 4", "Circle Area & Circumference", "Discover how to calculate the area and circumference of circles using π!", "Ages 7–10", new Color(33, 150, 243), loadIcon("circle.png")));
+        row1.add(new TaskCard("Task 4", "Circle Area & Circumference", "Discover how to calculate the area and circumference of circles using π!", "Ages 7–10", new Color(33, 150, 243), loadIcon("Circle.png")));
 
         JPanel row2 = new JPanel(new FlowLayout());
         row2.setOpaque(false);
