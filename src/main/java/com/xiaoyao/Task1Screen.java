@@ -20,7 +20,7 @@ public class Task1Screen extends JFrame {
     private final Color gray = new Color(229, 231, 235); // 灰色 #e5e7eb
     private final Color red = new Color(239, 68, 68); // 红色 #ef4444
     private final Color green = new Color(34, 197, 94); // 绿色
-
+    private final Color yellow = new Color(254,249,195);
     public Task1Screen() {
         // 设置窗口
         setTitle("Task 1: Shape Recognition");
@@ -75,18 +75,75 @@ public class Task1Screen extends JFrame {
         inputPanel.setLayout(new FlowLayout());
         JLabel questionLabel = new JLabel("What shape is this?");
         questionLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        JTextField answerField = new JTextField(20);
+        JTextField styledTextField = new JTextField(20);
+        styledTextField.setPreferredSize(new Dimension(300, 40));
+        // 设置字体
+        styledTextField.setFont(new Font("Arial", Font.PLAIN, 16));  // 设置字体大小
+        styledTextField.setForeground(Color.BLACK);  // 设置文本颜色
+
+        // 设置背景颜色和边框
+        styledTextField.setBackground(new Color(245, 245, 245));  // 设置背景色
+        styledTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 2));  // 设置边框颜色和厚度
+
+        // 设置圆角效果
+        styledTextField.setCaretColor(Color.BLACK);  // 设置输入光标的颜色
+        styledTextField.setSelectionColor(yellow);  // 设置选中文本的背景色
+        styledTextField.setSelectionColor(Color.WHITE);  // 设置选中文本的前景色
+
+        // 鼠标悬停效果，改变边框颜色
+        styledTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                styledTextField.setBorder(BorderFactory.createLineBorder(new Color(33, 150, 243), 2)); // 聚焦时改变边框颜色
+            }
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                styledTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 2)); // 失去焦点时恢复边框颜色
+            }
+        });
         JButton submitButton = new JButton("Submit");
+        // 设置按钮颜色和样式
+        submitButton.setBackground(new Color(33, 150, 243));  // 背景颜色（蓝色）
+        submitButton.setForeground(Color.WHITE);  // 文本颜色（白色）
+        submitButton.setFont(new Font("Arial", Font.BOLD, 16));  // 设置字体大小和加粗
+        submitButton.setPreferredSize(new Dimension(100, 40));  // 设置按钮尺寸
+        submitButton.setFocusPainted(false);  // 去掉按钮的焦点框
+        submitButton.setBorder(BorderFactory.createLineBorder(new Color(33, 150, 243), 2));  // 设置边框颜色和宽度
+
+        // 设置圆角和阴影
+        submitButton.setBorder(BorderFactory.createCompoundBorder(
+                submitButton.getBorder(),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20) // 增加内边距，圆角效果会更好
+        ));
+
+        submitButton.setBackground(new Color(33, 150, 243));
+        submitButton.setOpaque(true);
+        submitButton.setBorderPainted(false); // 去除按钮边框
+        submitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // 鼠标样式
+
+        // 鼠标悬停效果
+        submitButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                submitButton.setBackground(new Color(23, 132, 204)); // 鼠标悬停时变暗
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                submitButton.setBackground(new Color(33, 150, 243)); // 恢复默认颜色
+            }
+        });
         inputPanel.add(questionLabel);
-        inputPanel.add(answerField);
+        inputPanel.add(styledTextField);
         inputPanel.add(submitButton);
         taskPanel.add(inputPanel);
 
         // 错误提示框
         JPanel hintPanel = new JPanel();
         hintPanel.setLayout(new FlowLayout());
-        hintPanel.setBackground(Color.YELLOW);
+        hintPanel.setBackground(yellow);
         hintLabel = new JLabel("Not quite right. Hint: This shape has no corners or edges.");
+        hintLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        hintLabel.setForeground(red);  // 设置提示为绿色
         hintPanel.add(hintLabel);
         taskPanel.add(hintPanel);
 
@@ -94,7 +151,7 @@ public class Task1Screen extends JFrame {
         JPanel attemptPanel = new JPanel();
         attemptPanel.setLayout(new FlowLayout());
         attemptDots = new JLabel("Attempts: ");
-        attemptDots.setFont(new Font("Arial", Font.PLAIN, 14));
+        attemptDots.setFont(new Font("Arial", Font.BOLD, 14));
         attemptPanel.add(attemptDots);
         taskPanel.add(attemptPanel);
 
@@ -102,10 +159,11 @@ public class Task1Screen extends JFrame {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String userAnswer = answerField.getText().trim();
+                String userAnswer = styledTextField.getText().trim();
                 if (userAnswer.equalsIgnoreCase(correctAnswer)) {
                     // 显示正确答案界面
                     hintLabel.setText("Correct! ✅ This is indeed a circle.");
+                    hintLabel.setFont(new Font(null, Font.BOLD, 16));  // 设置字体为 Arial，字体加粗，大小为 18
                     hintLabel.setForeground(green);  // 设置提示为绿色
                     attempts = 3;  // 重置尝试次数
                     updateAttempts();
@@ -115,8 +173,12 @@ public class Task1Screen extends JFrame {
                     attempts--;
                     if (attempts > 0) {
                         hintLabel.setText("Not quite right. Hint: This shape has no corners or edges. Try again! (" + attempts + " attempts left)");
+                        hintLabel.setFont(new Font(null, Font.BOLD, 16));
+                        hintLabel.setForeground(red);
                     } else {
                         hintLabel.setText("No more attempts. The correct answer is: " + correctAnswer);
+                        hintLabel.setFont(new Font(null, Font.BOLD, 16));
+                        hintLabel.setForeground(red);
                         submitButton.setEnabled(false);  // 禁用提交按钮
                         taskPanel.add(createNextShapeButton());  // 添加下一题按钮
                     }
