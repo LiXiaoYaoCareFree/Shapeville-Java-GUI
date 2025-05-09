@@ -51,16 +51,6 @@ public class ShapevilleGUI extends JFrame {
         Image scaledImage = rawIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH); // 调整大小为 30x30
         ImageIcon icon = new ImageIcon(scaledImage); // 创建新的 ImageIcon 对象
 
-        // 创建左侧的应用程序图标和名称
-//        JPanel leftPanel = new JPanel();
-//        leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-//        leftPanel.setBackground(new Color(0, 0, 0, 0));  // 设置左侧面板背景透明
-//        JLabel iconLabel = new JLabel(icon);
-//        JLabel appName = new JLabel("Shapeville");
-//        appName.setFont(new Font("Arial", Font.BOLD, 24));
-//        appName.setForeground(Color.WHITE);
-//        leftPanel.add(appName);
-//        leftPanel.add(iconLabel);
         // 创建带图标和文字的 JLabel
         JLabel logoLabel = new JLabel("Shapeville", icon, JLabel.LEFT);
         logoLabel.setFont(new Font("Arial", Font.BOLD, 24));
@@ -121,40 +111,6 @@ public class ShapevilleGUI extends JFrame {
         setLocationRelativeTo(null);
 
 
-//        topPanel.setLayout(new BorderLayout());
-//        JLabel titleLabel = new JLabel("Welcome to Shapeville!");
-//        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-//        topPanel.add(titleLabel);
-
-        // 创建进度条和进度标签
-//        progressLabel = new JLabel("Your Progress: " + currentProgress + "/100 points");
-//        progressBar = new JProgressBar(0, 100);
-//        progressBar.setValue(currentProgress);  // 当前进度
-//        progressBar.setStringPainted(true);  // 显示百分比
-//
-//        topPanel.add(progressLabel);
-//        topPanel.add(progressBar);
-
-        // 创建关卡选择区域
-        JPanel levelsPanel = new JPanel();
-        levelsPanel.setLayout(new GridLayout(1, 3, 10, 10));
-
-        level1Button = new JButton("Level 1\nShape Recognition");
-        level1Button.setFont(new Font("Arial", Font.PLAIN, 14));
-        setButtonColor(level1Button, "green");
-
-        level2Button = new JButton("Level 2\nAngles & Lines");
-        level2Button.setFont(new Font("Arial", Font.PLAIN, 14));
-        setButtonColor(level2Button, "blue");
-
-        level3Button = new JButton("Level 3\nShape Properties");
-        level3Button.setFont(new Font("Arial", Font.PLAIN, 14));
-        setButtonColor(level3Button, "purple");
-
-        levelsPanel.add(level1Button);
-        levelsPanel.add(level2Button);
-        levelsPanel.add(level3Button);
-
         // 创建色盲模式复选框
         colorBlindModeCheckBox = new JCheckBox("Enable Color Blind Mode");
         colorBlindModeCheckBox.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -176,7 +132,6 @@ public class ShapevilleGUI extends JFrame {
 
         // 添加面板到窗口
         add(topPanel, BorderLayout.NORTH);
-        add(levelsPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
         add(new ShapevilleMainContent(), BorderLayout.CENTER);
 
