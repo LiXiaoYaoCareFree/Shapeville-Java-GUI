@@ -43,9 +43,30 @@ public class Task1Screen extends JFrame {
         JPanel progressPanel = new JPanel();
         progressPanel.setLayout(new FlowLayout());
         JLabel progressLabel = new JLabel("Your Progress: 0/8 shapes identified");
+        progressPanel.setFont(new Font("Arial", Font.BOLD, 24));
+
+        // 自定义进度条
         progressBar = new JProgressBar(0, 8);
-        progressBar.setValue(0);
-        progressBar.setPreferredSize(new Dimension(300, 20));
+        progressBar.setValue(0);  // 设置初始进度为0
+        progressBar.setPreferredSize(new Dimension(300, 20)); // 设置进度条的尺寸
+        progressBar.setStringPainted(true); // 显示进度文本
+
+        // 设置进度条的前景色和背景色
+        progressBar.setForeground(new Color(23, 181, 67));  // 设置前景色（进度条颜色）
+        progressBar.setBackground(new Color(229, 231, 235)); // 设置背景色（进度条背景色）
+
+        // 设置进度条的圆角效果
+        progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
+            @Override
+            protected void paintDeterminate(Graphics g, JComponent c) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setColor(progressBar.getForeground());
+                g2d.fillRoundRect(0, 0, progressBar.getWidth(), progressBar.getHeight(), 20, 20); // 绘制圆角进度条
+                super.paintDeterminate(g, c);
+            }
+        });
+
         progressPanel.add(progressLabel);
         progressPanel.add(progressBar);
         taskPanel.add(progressPanel);
@@ -54,9 +75,11 @@ public class Task1Screen extends JFrame {
         JPanel levelPanel = new JPanel();
         levelPanel.setLayout(new FlowLayout());
         JButton basicButton = new JButton("2D Shapes (Basic Level)");
+        basicButton.setFont(new Font("Roboto", Font.BOLD, 12));
         basicButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
         basicButton.setForeground(Color.WHITE);
         JButton advancedButton = new JButton("3D Shapes (Advanced Level)");
+        advancedButton.setFont(new Font("Roboto", Font.BOLD, 12));
         advancedButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
         advancedButton.setForeground(Color.WHITE);
         levelPanel.add(basicButton);
@@ -74,11 +97,11 @@ public class Task1Screen extends JFrame {
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new FlowLayout());
         JLabel questionLabel = new JLabel("What shape is this?");
-        questionLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        questionLabel.setFont(new Font("Roboto", Font.BOLD, 16));
         JTextField styledTextField = new JTextField(20);
         styledTextField.setPreferredSize(new Dimension(300, 40));
         // 设置字体
-        styledTextField.setFont(new Font("Arial", Font.PLAIN, 16));  // 设置字体大小
+        styledTextField.setFont(new Font("Roboto", Font.PLAIN, 16));  // 设置字体大小
         styledTextField.setForeground(Color.BLACK);  // 设置文本颜色
 
         // 设置背景颜色和边框
@@ -104,7 +127,7 @@ public class Task1Screen extends JFrame {
         // 设置按钮颜色和样式
         submitButton.setBackground(new Color(33, 150, 243));  // 背景颜色（蓝色）
         submitButton.setForeground(Color.WHITE);  // 文本颜色（白色）
-        submitButton.setFont(new Font("Arial", Font.BOLD, 16));  // 设置字体大小和加粗
+        submitButton.setFont(new Font("Roboto", Font.BOLD, 16));  // 设置字体大小和加粗
         submitButton.setPreferredSize(new Dimension(100, 40));  // 设置按钮尺寸
         submitButton.setFocusPainted(false);  // 去掉按钮的焦点框
         submitButton.setBorder(BorderFactory.createLineBorder(new Color(33, 150, 243), 2));  // 设置边框颜色和宽度
@@ -142,7 +165,7 @@ public class Task1Screen extends JFrame {
         hintPanel.setLayout(new FlowLayout());
         hintPanel.setBackground(yellow);
         hintLabel = new JLabel("Not quite right. Hint: This shape has no corners or edges.");
-        hintLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));
         hintLabel.setForeground(red);  // 设置提示为绿色
         hintPanel.add(hintLabel);
         taskPanel.add(hintPanel);
@@ -151,7 +174,7 @@ public class Task1Screen extends JFrame {
         JPanel attemptPanel = new JPanel();
         attemptPanel.setLayout(new FlowLayout());
         attemptDots = new JLabel("Attempts: ");
-        attemptDots.setFont(new Font("Arial", Font.BOLD, 14));
+        attemptDots.setFont(new Font("Roboto", Font.BOLD, 14));
         attemptPanel.add(attemptDots);
         taskPanel.add(attemptPanel);
 
@@ -163,7 +186,7 @@ public class Task1Screen extends JFrame {
                 if (userAnswer.equalsIgnoreCase(correctAnswer)) {
                     // 显示正确答案界面
                     hintLabel.setText("Correct! ✅ This is indeed a circle.");
-                    hintLabel.setFont(new Font(null, Font.BOLD, 16));  // 设置字体为 Arial，字体加粗，大小为 18
+                    hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));  // 设置字体为 Arial，字体加粗，大小为 18
                     hintLabel.setForeground(green);  // 设置提示为绿色
                     attempts = 3;  // 重置尝试次数
                     updateAttempts();
@@ -173,11 +196,11 @@ public class Task1Screen extends JFrame {
                     attempts--;
                     if (attempts > 0) {
                         hintLabel.setText("Not quite right. Hint: This shape has no corners or edges. Try again! (" + attempts + " attempts left)");
-                        hintLabel.setFont(new Font(null, Font.BOLD, 16));
+                        hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));
                         hintLabel.setForeground(red);
                     } else {
                         hintLabel.setText("No more attempts. The correct answer is: " + correctAnswer);
-                        hintLabel.setFont(new Font(null, Font.BOLD, 16));
+                        hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));
                         hintLabel.setForeground(red);
                         submitButton.setEnabled(false);  // 禁用提交按钮
                         taskPanel.add(createNextShapeButton());  // 添加下一题按钮
