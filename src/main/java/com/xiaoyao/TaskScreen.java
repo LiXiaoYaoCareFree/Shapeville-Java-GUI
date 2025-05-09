@@ -4,9 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TaskScreen extends JFrame {
-    private String taskName;
+    String taskName;
 
-    public TaskScreen() {
+    public TaskScreen(String taskName) {
+        this.taskName = taskName;
         // 设置窗口标题
         setTitle("Task Screen");
         setSize(800, 600);
@@ -17,7 +18,10 @@ public class TaskScreen extends JFrame {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         // 任务名称
-        JLabel taskTitle = new JLabel("Welcome to " + taskName, SwingConstants.CENTER);
+        System.out.println(this.taskName);
+
+        JLabel taskTitle = new JLabel("Welcome to " + (taskName != null ? taskName : "No Task"), SwingConstants.CENTER);
+
         taskTitle.setFont(new Font("Arial", Font.BOLD, 24));
         panel.add(taskTitle);
 

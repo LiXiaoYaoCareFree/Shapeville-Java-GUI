@@ -109,48 +109,42 @@ public class StageSwitcherPanel extends JPanel {
     // 启动任务1
     private void startTask1() {
         System.out.println("Starting Task 1: Shape Recognition");
-        TaskScreen taskScreen = new TaskScreen();
-        taskScreen.setTaskName("Shape Recognition");  // 设置任务名称
+        TaskScreen taskScreen = new TaskScreen("Shape Recognition");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务2
     private void startTask2() {
         System.out.println("Starting Task 2: Angle Types");
-        TaskScreen taskScreen = new TaskScreen();
-        taskScreen.setTaskName("Angle Types");  // 设置任务名称
+        TaskScreen taskScreen = new TaskScreen("Angle Types");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务3
     private void startTask3() {
         System.out.println("Starting Task 3: Shape Area");
-        TaskScreen taskScreen = new TaskScreen();
-        taskScreen.setTaskName("Shape Area");  // 设置任务名称
+        TaskScreen taskScreen = new TaskScreen("Shape Area");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务4
     private void startTask4() {
         System.out.println("Starting Task 4: Circle Area & Circumference");
-        TaskScreen taskScreen = new TaskScreen();
-        taskScreen.setTaskName("Circle Area & Circumference");  // 设置任务名称
+        TaskScreen taskScreen = new TaskScreen("Circle Area & Circumference");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务5
     private void startTask5() {
         System.out.println("Starting Task 5: Compound Shapes");
-        TaskScreen taskScreen = new TaskScreen();
-        taskScreen.setTaskName("Compound Shapes");  // 设置任务名称
+        TaskScreen taskScreen = new TaskScreen("Compound Shapes");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务6
     private void startTask6() {
         System.out.println("Starting Task 6: Sectors & Arcs");
-        TaskScreen taskScreen = new TaskScreen();
-        taskScreen.setTaskName("Sectors & Arcs");  // 设置任务名称
+        TaskScreen taskScreen = new TaskScreen("Sectors & Arcs");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 }
