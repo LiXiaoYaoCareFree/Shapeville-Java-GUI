@@ -43,11 +43,24 @@ public class TaskScreen extends JFrame {
         } else if ("Angle Types".equals(taskName)) {
             // 任务2内容，角度类型
             panel.add(new JLabel("Identify different angles like Acute, Right, and Obtuse."));
+        } else if ("Shape Area".equals(taskName)) {
+            // 任务3内容，计算形状面积
+            panel.add(new JLabel("Learn how to calculate the area of rectangles, triangles, and other 2D shapes!"));
+        } else if ("Circle Area & Circumference".equals(taskName)) {
+            // 任务4内容，圆的面积与周长
+            panel.add(new JLabel("Discover how to calculate the area and circumference of circles using π!"));
+        } else if ("Compound Shapes".equals(taskName)) {
+            // 任务5内容，复合形状
+            panel.add(new JLabel("Learn to calculate the area of compound shapes by breaking them into simpler shapes!"));
+        } else if ("Sectors & Arcs".equals(taskName)) {
+            // 任务6内容，扇形与弧长
+            panel.add(new JLabel("Master calculating the area of sectors and the length of arcs in circles!"));
         } else {
             // 其他任务内容
             panel.add(new JLabel("Other tasks will be shown here."));
         }
     }
+
 
     // 设置任务名称
     public void setTaskName(String taskName) {

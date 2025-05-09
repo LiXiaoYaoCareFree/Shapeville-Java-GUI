@@ -126,6 +126,7 @@ public class StageSwitcherPanel extends JPanel {
     private void startTask3() {
         System.out.println("Starting Task 3: Shape Area");
         TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setTaskName("Shape Area");  // 设置任务名称
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
@@ -133,6 +134,7 @@ public class StageSwitcherPanel extends JPanel {
     private void startTask4() {
         System.out.println("Starting Task 4: Circle Area & Circumference");
         TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setTaskName("Circle Area & Circumference");  // 设置任务名称
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
@@ -140,6 +142,7 @@ public class StageSwitcherPanel extends JPanel {
     private void startTask5() {
         System.out.println("Starting Task 5: Compound Shapes");
         TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setTaskName("Compound Shapes");  // 设置任务名称
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
@@ -147,6 +150,7 @@ public class StageSwitcherPanel extends JPanel {
     private void startTask6() {
         System.out.println("Starting Task 6: Sectors & Arcs");
         TaskScreen taskScreen = new TaskScreen();
+        taskScreen.setTaskName("Sectors & Arcs");  // 设置任务名称
         taskScreen.setVisible(true);  // 显示任务界面
     }
 }
