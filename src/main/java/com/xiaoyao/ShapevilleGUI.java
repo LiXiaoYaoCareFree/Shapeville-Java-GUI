@@ -15,6 +15,9 @@ public class ShapevilleGUI extends JFrame {
     private JButton homeButton, endSessionButton;
     private JButton level1Button, level2Button, level3Button;
     private JCheckBox colorBlindModeCheckBox;
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
+
 
     private boolean isColorBlindMode = false;  // 色盲模式标志
     private int currentProgress = 18;  // 当前进度
@@ -24,7 +27,7 @@ public class ShapevilleGUI extends JFrame {
         setTitle("Shapeville");
 
         // 设置窗口大小
-        setSize(1000, 600);
+        setSize(1000, 900);
 
         // 设置默认关闭操作
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -133,8 +136,29 @@ public class ShapevilleGUI extends JFrame {
         // 添加面板到窗口
         add(topPanel, BorderLayout.NORTH);
         add(bottomPanel, BorderLayout.SOUTH);
-        add(new ShapevilleMainContent(), BorderLayout.CENTER);
+        //add(new ShapevilleMainContent(), BorderLayout.CENTER);
 
+
+        // 创建中间容器，垂直布局
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setBackground(new Color(240, 248, 255)); // 淡蓝背景（可选）
+
+        // 添加两个内容面板
+        ShapevilleMainContent mainContent = new ShapevilleMainContent();
+        StageSwitcherPanel stagePanel = new StageSwitcherPanel();
+
+        // 可设置最大高度（例如 mainContent 占 300px，高度可控）
+        mainContent.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
+        mainContent.setAlignmentX(Component.CENTER_ALIGNMENT);
+        stagePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        centerPanel.add(mainContent);
+        centerPanel.add(Box.createVerticalStrut(10)); // 间隔
+        centerPanel.add(stagePanel);
+
+        // 添加到窗口中部
+        add(centerPanel, BorderLayout.CENTER);
 
         // 设置按钮事件
         homeButton.addActionListener(new ActionListener() {
@@ -155,7 +179,9 @@ public class ShapevilleGUI extends JFrame {
         // 设置窗口居中显示
         setLocationRelativeTo(null);
 
+
     }
+
 
     // 设置按钮颜色
     private void setButtonColor(JButton button, String color) {
