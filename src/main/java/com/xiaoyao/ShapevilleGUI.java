@@ -178,6 +178,8 @@ public class ShapevilleGUI extends JFrame {
         add(topPanel, BorderLayout.NORTH);
         add(levelsPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
+        add(new ShapevilleMainContent(), BorderLayout.CENTER);
+
 
         // 设置按钮事件
         homeButton.addActionListener(new ActionListener() {
@@ -247,14 +249,6 @@ public class ShapevilleGUI extends JFrame {
         progressBar.setValue(currentProgress);
         progressLabel.setText("Your Progress: " + currentProgress + "/100 points");
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ShapevilleGUI frame = new ShapevilleGUI();
-                frame.setVisible(true);
-            }
-        });
-    }
 }
+
+
