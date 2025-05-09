@@ -14,6 +14,11 @@ public class Task1Screen extends JFrame {
     private JLabel hintLabel;
     private JLabel attemptDots;
     private TopNavBarPanel topPanel;
+    private JPanel shapePanel;  // 显示形状的面板
+
+    // 2D 和 3D 形状数组
+    private String[] shapes2D = {"Circle", "Rectangle", "Triangle", "Oval", "Octagon", "Square", "Heptagon", "Rhombus", "Pentagon", "Hexagon", "Kite"};
+    private String[] shapes3D = {"Cube", "Cuboid", "Cylinder", "Sphere", "Triangular", "Square-based pyramid", "Cone", "Tetrahedron"};
 
     // 颜色常量
     private final Color orange = new Color(245, 158, 11); // 橙色 #f59e0b
@@ -71,15 +76,18 @@ public class Task1Screen extends JFrame {
         progressPanel.add(progressBar);
         taskPanel.add(progressPanel);
 
+
         // 选择 2D 或 3D 形状
         JPanel levelPanel = new JPanel();
         levelPanel.setLayout(new FlowLayout());
         JButton basicButton = new JButton("2D Shapes (Basic Level)");
-        basicButton.setFont(new Font("Roboto", Font.BOLD, 12));
+        basicButton.setPreferredSize(new Dimension(300, 40));  // 设置按钮尺寸
+        basicButton.setFont(new Font("Roboto", Font.BOLD, 16));
         basicButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
         basicButton.setForeground(Color.WHITE);
         JButton advancedButton = new JButton("3D Shapes (Advanced Level)");
-        advancedButton.setFont(new Font("Roboto", Font.BOLD, 12));
+        advancedButton.setPreferredSize(new Dimension(300, 40));  // 设置按钮尺寸
+        advancedButton.setFont(new Font("Roboto", Font.BOLD, 16));
         advancedButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
         advancedButton.setForeground(Color.WHITE);
         levelPanel.add(basicButton);
@@ -87,7 +95,7 @@ public class Task1Screen extends JFrame {
         taskPanel.add(levelPanel);
 
         // 形状显示区域
-        JPanel shapePanel = new JPanel();
+        shapePanel = new JPanel();
         shapePanel.setLayout(new FlowLayout());
         JLabel shapeIcon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/task1/circle.png")));
         shapePanel.add(shapeIcon);
@@ -262,14 +270,22 @@ public class Task1Screen extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 在此处理下一题的逻辑
-                JOptionPane.showMessageDialog(null, "Loading next shape...");
+//                JOptionPane.showMessageDialog(null, "Loading next shape...");
+                loadNextShape();  // 调用重新加载形状的方法
             }
         });
         // 将按钮面板添加到框架的底部
         this.add(buttonPanel, BorderLayout.SOUTH);
         return nextButton;
     }
-
+    // 加载下一个形状
+    private void loadNextShape() {
+        JLabel nextShape = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/task1/Square.png")));
+        shapePanel.removeAll();  // 清除当前形状
+        shapePanel.add(nextShape);  // 添加新形状
+        shapePanel.revalidate();  // 重新验证面板，以更新显示
+        shapePanel.repaint();  // 重新绘制面板以显示新形状
+    }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
