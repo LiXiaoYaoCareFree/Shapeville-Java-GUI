@@ -39,7 +39,7 @@ public class ShapevilleGUI extends JFrame {
     }
 
     // 创建自定义面板，绘制渐变色背景
-    private static JPanel getJPanel() {
+    static JPanel getJPanel() {
         JPanel gradientTopWrapper = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {

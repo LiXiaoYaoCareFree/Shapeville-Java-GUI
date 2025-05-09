@@ -5,12 +5,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static com.xiaoyao.ShapevilleGUI.getJPanel;
+
 public class Task1Screen extends JFrame {
     private int attempts = 3; // 尝试次数
     private String correctAnswer = "Circle"; // 正确答案
     private JProgressBar progressBar;
     private JLabel hintLabel;
     private JLabel attemptDots;
+    private TopNavBarPanel topPanel;
 
     // 颜色常量
     private final Color orange = new Color(245, 158, 11); // 橙色 #f59e0b
@@ -26,8 +29,10 @@ public class Task1Screen extends JFrame {
         setLayout(new BorderLayout());
 
         // 顶部导航栏
-        TopNavBarPanel topPanel = new TopNavBarPanel();
-        add(topPanel, BorderLayout.NORTH);
+        JPanel gradientTopWrapper = getJPanel();
+        topPanel = new TopNavBarPanel();
+        gradientTopWrapper.add(topPanel);
+        add(gradientTopWrapper, BorderLayout.NORTH);
 
         // 任务显示面板
         JPanel taskPanel = new JPanel();
@@ -129,6 +134,7 @@ public class Task1Screen extends JFrame {
     private String getColorHex(Color color) {
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
+
     // 更新尝试次数显示
     private void updateAttempts() {
         String attemptsText = "<html>Attempts: ";
@@ -153,12 +159,20 @@ public class Task1Screen extends JFrame {
         attemptDots.setText(attemptsText);
     }
 
-    // 下一题按钮
     private JButton createNextShapeButton() {
         JButton nextButton = new JButton("Next Shape");
         nextButton.setBackground(new Color(33, 150, 243));
         nextButton.setForeground(Color.WHITE);
-        nextButton.setPreferredSize(new Dimension(150, 40));
+        nextButton.setPreferredSize(new Dimension(10, 40));
+        nextButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // 使用 BoxLayout 来确保按钮居中
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS)); // 使用垂直方向的 BoxLayout
+
+        // 将按钮添加到面板
+        buttonPanel.add(nextButton);
+
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,6 +180,8 @@ public class Task1Screen extends JFrame {
                 JOptionPane.showMessageDialog(null, "Loading next shape...");
             }
         });
+        // 将按钮面板添加到框架的底部
+        this.add(buttonPanel, BorderLayout.SOUTH);
         return nextButton;
     }
 
