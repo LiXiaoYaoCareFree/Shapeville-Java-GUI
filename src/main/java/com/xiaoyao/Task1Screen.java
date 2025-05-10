@@ -4,6 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static com.xiaoyao.ShapevilleGUI.getJPanel;
 
@@ -18,7 +22,13 @@ public class Task1Screen extends JFrame {
 
     // 2D 和 3D 形状数组
     private String[] shapes2D = {"Circle", "Rectangle", "Triangle", "Oval", "Octagon", "Square", "Heptagon", "Rhombus", "Pentagon", "Hexagon", "Kite"};
-    private String[] shapes3D = {"Cube", "Cuboid", "Cylinder", "Sphere", "Triangular", "Square-based pyramid", "Cone", "Tetrahedron"};
+    private String[] shapes3D = {"Cube", "Cuboid", "Cylinder", "Sphere", "Triangular prism", "Square-based pyramid", "Cone", "Tetrahedron"};
+
+    // 从2D形状数组中随机选择4个
+    List<String> selected2DShapes = getRandomElements(shapes2D, 4);
+    // 从3D形状数组中随机选择4个
+    List<String> selected3DShapes = getRandomElements(shapes3D, 4);
+
 
     // 颜色常量
     private final Color orange = new Color(245, 158, 11); // 橙色 #f59e0b
@@ -78,28 +88,30 @@ public class Task1Screen extends JFrame {
 
 
         // 选择 2D 或 3D 形状
-        JPanel levelPanel = new JPanel();
-        levelPanel.setLayout(new FlowLayout());
-        JButton basicButton = new JButton("2D Shapes (Basic Level)");
-        basicButton.setPreferredSize(new Dimension(300, 40));  // 设置按钮尺寸
-        basicButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        basicButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
-        basicButton.setForeground(Color.WHITE);
-        JButton advancedButton = new JButton("3D Shapes (Advanced Level)");
-        advancedButton.setPreferredSize(new Dimension(300, 40));  // 设置按钮尺寸
-        advancedButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        advancedButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
-        advancedButton.setForeground(Color.WHITE);
-        levelPanel.add(basicButton);
-        levelPanel.add(advancedButton);
-        taskPanel.add(levelPanel);
+//        JPanel levelPanel = new JPanel();
+//        levelPanel.setLayout(new FlowLayout());
+
+        // 创建按钮组，用于管理互斥选择
+//        JButton basicButton = new JButton("2D Shapes (Basic Level)");
+//        basicButton.setPreferredSize(new Dimension(300, 40));  // 设置按钮尺寸
+//        basicButton.setFont(new Font("Roboto", Font.BOLD, 16));
+//        basicButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
+//        basicButton.setForeground(Color.WHITE);
+//        JButton advancedButton = new JButton("3D Shapes (Advanced Level)");
+//        advancedButton.setPreferredSize(new Dimension(300, 40));  // 设置按钮尺寸
+//        advancedButton.setFont(new Font("Roboto", Font.BOLD, 16));
+//        advancedButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
+//        advancedButton.setForeground(Color.WHITE);
+//        levelPanel.add(basicButton);
+//        levelPanel.add(advancedButton);
+//        taskPanel.add(levelPanel);
+
 
         // 形状显示区域
         shapePanel = new JPanel();
         shapePanel.setLayout(new FlowLayout());
-        JLabel shapeIcon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/task1/circle.png")));
-        shapePanel.add(shapeIcon);
         taskPanel.add(shapePanel);
+
 
         // 问题和答案输入框
         JPanel inputPanel = new JPanel();
@@ -285,6 +297,36 @@ public class Task1Screen extends JFrame {
         shapePanel.add(nextShape);  // 添加新形状
         shapePanel.revalidate();  // 重新验证面板，以更新显示
         shapePanel.repaint();  // 重新绘制面板以显示新形状
+    }
+    // 从数组中随机选择指定数量的元素
+    private java.util.List<String> getRandomElements(String[] array, int count) {
+        List<String> list = new ArrayList<>(Arrays.asList(array));
+        Collections.shuffle(list);
+        return list.subList(0, Math.min(count, list.size()));
+    }
+    private void configureButton(JToggleButton button) {
+        button.setPreferredSize(new Dimension(300, 40));
+        button.setFont(new Font("Roboto", Font.BOLD, 16));
+        button.setForeground(Color.WHITE);
+
+        // 配置按钮样式
+        button.setContentAreaFilled(false);
+        button.setOpaque(true);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setFocusPainted(false);
+
+        // 自定义按钮状态颜色
+        button.addChangeListener(e -> {
+            if (button.isSelected()) {
+                button.setBackground(new Color(25, 118, 210)); // 深蓝色选中状态
+            } else {
+                button.setBackground(new Color(33, 150, 243)); // 浅蓝色默认状态
+            }
+        });
+
+        // 默认背景颜色
+        button.setBackground(new Color(33, 150, 243));
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
