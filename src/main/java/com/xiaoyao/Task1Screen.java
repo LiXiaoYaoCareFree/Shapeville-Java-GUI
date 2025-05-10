@@ -194,7 +194,7 @@ public class Task1Screen extends JFrame {
                 } else {
                     attempts--;
                     if (attempts > 0) {
-                        hintLabel.setText("Not quite right. Hint: This shape has no corners or edges. Try again! (" + attempts + " attempts left)");
+                        hintLabel.setText("Not quite right.Try again! (" + attempts + " attempts left)");
                         hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));
                         hintLabel.setForeground(red);
                     } else {
@@ -215,7 +215,7 @@ public class Task1Screen extends JFrame {
         hintPanel = new JPanel();
         hintPanel.setLayout(new FlowLayout());
         hintPanel.setBackground(yellow);
-        hintLabel = new JLabel("Not quite right. Hint: This shape has no corners or edges.");
+        hintLabel = new JLabel("You are allowed three attempts.");
         hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));
         hintLabel.setForeground(red);  // 设置提示为绿色
         hintPanel.add(hintLabel);
@@ -274,6 +274,18 @@ public class Task1Screen extends JFrame {
 //                JOptionPane.showMessageDialog(null, "Loading next shape...");
                 loadNextShape();  // 调用重新加载形状的方法
 
+                // 重置 submitButton 按钮的状态
+                submitButton.setEnabled(true); // 启用提交按钮
+                submitButton.setBackground(new Color(33, 150, 243)); // 恢复默认背景颜色
+                hintLabel.setText("You are allowed three attempts."); // 清空提示信息
+                hintLabel.setForeground(red); // 恢复提示信息颜色
+                attempts = 3; // 重置尝试次数
+                updateAttempts(); // 更新尝试次数显示
+
+                // 移除下一题按钮
+                taskPanel.remove(nextButton);
+                taskPanel.revalidate();
+                taskPanel.repaint();
             }
         });
         return nextButton;
