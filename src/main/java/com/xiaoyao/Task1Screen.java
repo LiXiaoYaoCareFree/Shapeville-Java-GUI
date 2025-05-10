@@ -219,6 +219,13 @@ public class Task1Screen extends JFrame {
         hintPanel.add(hintLabel);
     }
 
+    private void CreateTask1AttemptPanel() {
+        attemptPanel = new JPanel();
+        attemptPanel.setLayout(new FlowLayout());
+        attemptDots = new JLabel("Attempts: ");
+        attemptDots.setFont(new Font("Roboto", Font.BOLD, 14));
+        attemptPanel.add(attemptDots);
+    }
 
     // 获取颜色的Hex值
     private String getColorHex(Color color) {
@@ -375,13 +382,8 @@ public class Task1Screen extends JFrame {
         taskPanel.add(hintPanel);
 
         // 尝试次数显示
-        attemptPanel = new JPanel();
-        attemptPanel.setLayout(new FlowLayout());
-        attemptDots = new JLabel("Attempts: ");
-        attemptDots.setFont(new Font("Roboto", Font.BOLD, 14));
-        attemptPanel.add(attemptDots);
+        CreateTask1AttemptPanel();
         taskPanel.add(attemptPanel);
-
 
         add(taskPanel, BorderLayout.CENTER);  // 将任务面板添加到主窗口
 
