@@ -1,4 +1,4 @@
-package com.xiaoyao;
+package com.Shapeville;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.xiaoyao.ShapevilleGUI.getJPanel;
+import static com.Shapeville.ShapevilleGUI.getJPanel;
 
 public class Task1Screen extends JFrame {
     private int attempts = 3; // 尝试次数

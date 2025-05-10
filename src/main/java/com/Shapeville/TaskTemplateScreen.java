@@ -1,13 +1,11 @@
-package com.xiaoyao;
+package com.Shapeville;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
-import static com.xiaoyao.ShapevilleGUI.getJPanel;
+import static com.Shapeville.ShapevilleGUI.getJPanel;
 
 public class TaskTemplateScreen extends JFrame {
     private int attempts = 3;

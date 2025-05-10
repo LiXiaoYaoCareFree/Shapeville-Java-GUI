@@ -1,7 +1,4 @@
-package com.xiaoyao;
-
-import com.xiaoyao.BottomBarPanel;
-import com.xiaoyao.TopNavBarPanel;
+package com.Shapeville;
 
 import javax.swing.*;
 import java.awt.*;

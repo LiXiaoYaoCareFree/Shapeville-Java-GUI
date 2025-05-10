@@ -1,4 +1,4 @@
-package com.xiaoyao;
+package com.Shapeville;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.xiaoyao.ShapevilleGUI.getJPanel;
+import static com.Shapeville.ShapevilleGUI.getJPanel;
 
 public class Task2Screen extends JFrame {
     private int attempts = 3;
@@ -38,6 +38,8 @@ public class Task2Screen extends JFrame {
     private String attemptsText;
     private Boolean isBasic;
     private int currentShapeIndex = 0;
+    private JLabel angleLabel;
+    private JButton homeButton;
 
     // 颜色常量
     private final Color orange = new Color(245, 158, 11); // 橙色 #f59e0b
@@ -54,7 +56,7 @@ public class Task2Screen extends JFrame {
         angleCanvas.setAngle(currentAngle);
         angleCanvas.repaint();
         attempts = 3;
-        resultLabel.setText("");
+        hintLabel.setText("");
     }
 
     private String getAngleType(int angle) {
@@ -88,10 +90,10 @@ public class Task2Screen extends JFrame {
                 String correctType = getAngleType(currentAngle);
 
                 if (userAnswer.equalsIgnoreCase(correctType)) {
-                    resultLabel.setText("Correct! This is a " + correctType + " angle.");
+                    hintLabel.setText("Correct! This is a " + correctType + " angle.");
                     identifiedAngles.add(correctType);
                     if (isAllAnglesIdentified()) {
-                        resultLabel.setText("Congratulations! You have identified all 4 types of angles.");
+                        hintLabel.setText("Congratulations! You have identified all 4 types of angles.");
                         submitButton.setEnabled(false);
                     } else {
                         generateNewAngle();
@@ -99,12 +101,12 @@ public class Task2Screen extends JFrame {
                 } else {
                     attempts--;
                     if (attempts > 0) {
-                        resultLabel.setText("Incorrect. You have " + attempts + " attempts left.");
+                        hintLabel.setText("Incorrect. You have " + attempts + " attempts left.");
                     } else {
-                        resultLabel.setText("No more attempts. The correct answer is: " + correctType);
+                        hintLabel.setText("No more attempts. The correct answer is: " + correctType);
                         identifiedAngles.add(correctType);
                         if (isAllAnglesIdentified()) {
-                            resultLabel.setText("Congratulations! You have identified all 4 types of angles.");
+                            hintLabel.setText("Congratulations! You have identified all 4 types of angles.");
                             submitButton.setEnabled(false);
                         } else {
                             generateNewAngle();
@@ -112,7 +114,7 @@ public class Task2Screen extends JFrame {
                     }
                 }
             } catch (NumberFormatException ex) {
-                resultLabel.setText("Please enter a valid angle.");
+                hintLabel.setText("Please enter a valid angle.");
             }
         }
     }
@@ -464,21 +466,56 @@ public class Task2Screen extends JFrame {
         taskPanel.add(progressPanel);
 
         // 创建角度
+        angleLabel = new JLabel("Enter an angle between 0 and 360 (in multiples of 10):");
+        angleInput = new JTextField(10);
+        //resultLabel = new JLabel("");
+//        submitButton = new JButton("Submit");
+        //homeButton = new JButton("Home");
         angleCanvas = new AngleCanvas();
-        angleCanvas.setPreferredSize(new Dimension(300, 300));
+
+        // 添加组件到面板
+        JPanel inputPanel = new JPanel();
+        inputPanel.add(angleLabel);
+        inputPanel.add(angleInput);
+        //inputPanel.add(submitButton);
+
+        //JPanel buttonPanel = new JPanel();
+        //buttonPanel.add(homeButton);
+
+
+        // 添加面板到窗口
+//        add(inputPanel, BorderLayout.NORTH);
+//        add(angleCanvas, BorderLayout.CENTER);
+//        add(resultLabel, BorderLayout.SOUTH);
+        taskPanel.add(inputPanel, BorderLayout.NORTH);
+
         taskPanel.add(angleCanvas);
+        //taskPanel.add(resultLabel);
+
+        //add(buttonPanel, BorderLayout.SOUTH);
+
+        // 添加事件监听器
+
+        //homeButton.addActionListener(e -> dispose());
+
+        // 生成第一个角度
         //generateNewAngle();
+
+//        setLocationRelativeTo(null); // 居中显示
 
         // 问题和答案输入框
         CreateTask1InputPanel();
 
         // 创建 submitButton
         CreateTask1submitButton();
+        submitButton.addActionListener(new SubmitButtonListener());
+
+
 
         inputPanel.add(questionLabel);
         inputPanel.add(styledTextField);
         inputPanel.add(submitButton);
-        taskPanel.add(inputPanel);
+
 
         // 错误提示框
         CreateTask1HintPanel();
