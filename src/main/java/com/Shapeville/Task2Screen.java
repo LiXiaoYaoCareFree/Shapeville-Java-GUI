@@ -35,11 +35,12 @@ public class Task2Screen extends JFrame {
     private JLabel questionLabel;
     private JTextField styledTextField;
     private JButton nextButton;
+    private JButton angleSubmitButton;
     private String attemptsText;
     private Boolean isBasic;
     private int currentShapeIndex = 0;
     private JLabel angleLabel;
-    private JButton homeButton;
+    private JPanel inputAnglePanel;
 
     // 颜色常量
     private final Color orange = new Color(245, 158, 11); // 橙色 #f59e0b
@@ -54,6 +55,7 @@ public class Task2Screen extends JFrame {
             currentAngle = (int) (Math.random() * 37) * 10;
         } while (isAllAnglesIdentified() || isAngleTypeAlreadyIdentified(getAngleType(currentAngle)));
         angleCanvas.setAngle(currentAngle);
+        angleCanvas.setPreferredSize(new Dimension(600, 600));
         angleCanvas.repaint();
         attempts = 3;
         hintLabel.setText("");
@@ -465,19 +467,23 @@ public class Task2Screen extends JFrame {
 
         taskPanel.add(progressPanel);
 
+        inputAnglePanel = new JPanel();
+        inputAnglePanel.setLayout(new FlowLayout());
+
         // 创建角度
         angleLabel = new JLabel("Enter an angle between 0 and 360 (in multiples of 10):");
         angleInput = new JTextField(10);
         //resultLabel = new JLabel("");
-//        submitButton = new JButton("Submit");
+        angleSubmitButton = new JButton("Angle Submit");
         //homeButton = new JButton("Home");
         angleCanvas = new AngleCanvas();
 
         // 添加组件到面板
-        JPanel inputPanel = new JPanel();
-        inputPanel.add(angleLabel);
-        inputPanel.add(angleInput);
-        //inputPanel.add(submitButton);
+        inputAnglePanel.add(angleLabel);
+        inputAnglePanel.add(angleInput);
+        inputAnglePanel.add(angleSubmitButton);
+        taskPanel.add(inputAnglePanel);
+
 
         //JPanel buttonPanel = new JPanel();
         //buttonPanel.add(homeButton);
@@ -487,10 +493,12 @@ public class Task2Screen extends JFrame {
 //        add(inputPanel, BorderLayout.NORTH);
 //        add(angleCanvas, BorderLayout.CENTER);
 //        add(resultLabel, BorderLayout.SOUTH);
-        taskPanel.add(inputPanel, BorderLayout.NORTH);
 
-        taskPanel.add(angleCanvas);
-        //taskPanel.add(resultLabel);
+        JPanel visualizationPanel = new JPanel(new BorderLayout());
+        visualizationPanel.setPreferredSize(new Dimension(400, 400));
+        visualizationPanel.add(angleCanvas, BorderLayout.CENTER);
+        taskPanel.add(visualizationPanel);
+
 
         //add(buttonPanel, BorderLayout.SOUTH);
 
@@ -515,7 +523,7 @@ public class Task2Screen extends JFrame {
         inputPanel.add(questionLabel);
         inputPanel.add(styledTextField);
         inputPanel.add(submitButton);
-
+        taskPanel.add(inputPanel);
 
         // 错误提示框
         CreateTask1HintPanel();
