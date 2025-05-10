@@ -13,23 +13,18 @@ public class Task2Screen extends JFrame {
     private int attempts = 3;
     private int currentAngle;
     private List<String> identifiedAngles = new ArrayList<>();
-    private JLabel angleLabel;
     private JTextField angleInput;
     private JLabel resultLabel;
     private JButton submitButton;
-    private JButton homeButton;
     private AngleCanvas angleCanvas;
 
     private String correctAnswer; // 正确答案
     public int score = 0; // 分数
     private JProgressBar progressBar;
     private TopNavBarPanel topPanel;
-    private JToggleButton basicButton;
-    private JToggleButton advancedButton;
     private JPanel shapePanel;  // 显示形状的面板
     private JPanel progressPanel;
     private JPanel taskPanel;
-    private JPanel levelPanel;
     private JPanel inputPanel;
     private JPanel hintPanel;
     private JPanel attemptPanel;
@@ -468,6 +463,7 @@ public class Task2Screen extends JFrame {
 
         taskPanel.add(progressPanel);
 
+        // 创建角度画布angleCanvas
 
         // 问题和答案输入框
         CreateTask1InputPanel();
