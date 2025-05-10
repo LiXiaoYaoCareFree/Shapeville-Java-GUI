@@ -173,8 +173,10 @@ public class Task1Screen extends JFrame {
                 submitButton.setBackground(new Color(33, 150, 243)); // 恢复默认颜色
             }
         });
+        SubmitButtonEvent();
+    }
 
-
+    private void SubmitButtonEvent() {
         // 提交按钮事件
         submitButton.addActionListener(new ActionListener() {
             @Override
@@ -271,6 +273,7 @@ public class Task1Screen extends JFrame {
                 // 在此处理下一题的逻辑
 //                JOptionPane.showMessageDialog(null, "Loading next shape...");
                 loadNextShape();  // 调用重新加载形状的方法
+
             }
         });
         return nextButton;
