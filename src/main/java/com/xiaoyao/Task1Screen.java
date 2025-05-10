@@ -13,7 +13,8 @@ import static com.xiaoyao.ShapevilleGUI.getJPanel;
 
 public class Task1Screen extends JFrame {
     private int attempts = 3; // 尝试次数
-    private String correctAnswer = "Circle"; // 正确答案
+    private String correctAnswer; // 正确答案
+    public int score = 0; // 分数
     private JProgressBar progressBar;
     private TopNavBarPanel topPanel;
     private JToggleButton basicButton;
@@ -34,12 +35,16 @@ public class Task1Screen extends JFrame {
     private JButton submitButton;
     private JButton nextButton;
     private String attemptsText;
+    private Boolean isBasic;
 
 
 
     // 2D 和 3D 形状数组
     private String[] shapes2D = {"Circle", "Rectangle", "Triangle", "Oval", "Octagon", "Square", "Heptagon", "Rhombus", "Pentagon", "Hexagon", "Kite"};
     private String[] shapes3D = {"Cube", "Cuboid", "Cylinder", "Sphere", "Triangular prism", "Square-based pyramid", "Cone", "Tetrahedron"};
+
+    private int currentShapeIndex = 0; // 记录当前加载的图形索引
+    private List<String> allShapes = new ArrayList<>(); // 存储所有待加载的图形
 
     // 颜色常量
     private final Color orange = new Color(245, 158, 11); // 橙色 #f59e0b
@@ -185,6 +190,16 @@ public class Task1Screen extends JFrame {
                 if (userAnswer.equalsIgnoreCase(correctAnswer)) {
                     // 显示正确答案界面
                     hintLabel.setText("Correct! ✅ This is indeed a circle.");
+                    if (currentShapeIndex <= 3) {
+                        isBasic = true;
+                    } else {
+                        isBasic = false;
+                    }
+                    score += calculateScore(isBasic, attempts);
+                    System.out.println(score);
+                    // 清空输入框（三次错误后）
+                    styledTextField.setText("");
+                    JOptionPane.showMessageDialog(null, "Correct! Your current score: " + score);
                     hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));  // 设置字体为 Arial，字体加粗，大小为 18
                     hintLabel.setForeground(green);  // 设置提示为绿色
                     attempts = 3;  // 重置尝试次数
@@ -201,6 +216,8 @@ public class Task1Screen extends JFrame {
                         hintLabel.setText("No more attempts. The correct answer is: " + correctAnswer);
                         hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));
                         hintLabel.setForeground(red);
+                        // 清空输入框（三次错误后）
+                        styledTextField.setText("");
                         submitButton.setEnabled(false);  // 禁用提交按钮
                         taskPanel.add(createNextShapeButton());  // 添加下一题按钮
                     }
@@ -227,6 +244,20 @@ public class Task1Screen extends JFrame {
         attemptDots = new JLabel("Attempts: ");
         attemptDots.setFont(new Font("Roboto", Font.BOLD, 14));
         attemptPanel.add(attemptDots);
+    }
+
+    // 根据级别和尝试次数计算分数
+    private int calculateScore(boolean isBasic, int attempts) {
+        switch (attempts) {
+            case 1:
+                return isBasic? 1 : 2;
+            case 2:
+                return isBasic? 2 : 4;
+            case 3:
+                return isBasic? 3 : 6;
+            default:
+                return 0;
+        }
     }
 
     // 获取颜色的Hex值
@@ -295,11 +326,50 @@ public class Task1Screen extends JFrame {
 
     // 加载下一个形状
     private void loadNextShape() {
-        JLabel nextShape = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/task1/Square.png")));
-        shapePanel.removeAll();  // 清除当前形状
-        shapePanel.add(nextShape);  // 添加新形状
-        shapePanel.revalidate();  // 重新验证面板，以更新显示
-        shapePanel.repaint();  // 重新绘制面板以显示新形状
+        if (currentShapeIndex < allShapes.size()) {
+            String nextShapeName = allShapes.get(currentShapeIndex);
+            try {
+                // 加载图片
+                ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/task1/" + nextShapeName + ".png"));
+                JLabel nextShape = new JLabel(icon);
+
+                shapePanel.removeAll();  // 清除当前形状
+                shapePanel.add(nextShape);  // 添加新形状
+                shapePanel.revalidate();  // 重新验证面板，以更新显示
+                shapePanel.repaint();  // 重新绘制面板以显示新形状
+
+                correctAnswer = nextShapeName; // 更新正确答案
+                attempts = 3; // 重置尝试次数
+                updateAttempts();
+
+                // 重置 submitButton 按钮的状态
+                submitButton.setEnabled(true); // 启用提交按钮
+                submitButton.setBackground(new Color(33, 150, 243)); // 恢复默认背景颜色
+                hintLabel.setText("Not quite right. Hint: Try to identify the shape."); // 重置提示信息
+                hintLabel.setForeground(red); // 恢复提示信息颜色
+
+                currentShapeIndex++; // 移动到下一个图形
+
+                // 更新进度条
+                progressBar.setValue(currentShapeIndex - 1);
+                progressLabel.setText("Your Progress: " + (currentShapeIndex - 1) + "/8 shapes identified");
+
+                // 如果所有图形都已加载，移除下一题按钮
+                if (currentShapeIndex >= allShapes.size()) {
+                    taskPanel.remove(nextButton);
+                    taskPanel.revalidate();
+                    taskPanel.repaint();
+                }
+            } catch (Exception e) {
+                // 图片加载失败时显示默认文本
+                JLabel errorLabel = new JLabel("图片未找到: " + nextShapeName, JLabel.CENTER);
+                shapePanel.removeAll();
+                shapePanel.add(errorLabel);
+                shapePanel.revalidate();
+                shapePanel.repaint();
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -399,6 +469,13 @@ public class Task1Screen extends JFrame {
         // 尝试次数显示
         CreateTask1AttemptPanel();
         taskPanel.add(attemptPanel);
+
+        // 将2D和3D形状合并到一个列表中
+        allShapes.addAll(selected2DShapes);
+        allShapes.addAll(selected3DShapes);
+
+        // 加载第一个形状
+        loadNextShape();
 
         add(taskPanel, BorderLayout.CENTER);  // 将任务面板添加到主窗口
 
