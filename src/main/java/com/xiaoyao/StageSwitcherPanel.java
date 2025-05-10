@@ -107,42 +107,42 @@ public class StageSwitcherPanel extends JPanel {
     }
 
     // 启动任务1
-    private void startTask1() {
+    public void startTask1() {
         System.out.println("Starting Task 1: Shape Recognition");
         Task1Screen task1Screen = new Task1Screen();
         task1Screen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务2
-    private void startTask2() {
+    public void startTask2() {
         System.out.println("Starting Task 2: Angle Types");
         TaskScreen taskScreen = new TaskScreen("Angle Types");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务3
-    private void startTask3() {
+    public void startTask3() {
         System.out.println("Starting Task 3: Shape Area");
         TaskScreen taskScreen = new TaskScreen("Shape Area");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务4
-    private void startTask4() {
+    public void startTask4() {
         System.out.println("Starting Task 4: Circle Area & Circumference");
         TaskScreen taskScreen = new TaskScreen("Circle Area & Circumference");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务5
-    private void startTask5() {
+    public void startTask5() {
         System.out.println("Starting Task 5: Compound Shapes");
         TaskScreen taskScreen = new TaskScreen("Compound Shapes");
         taskScreen.setVisible(true);  // 显示任务界面
     }
 
     // 启动任务6
-    private void startTask6() {
+    public void startTask6() {
         System.out.println("Starting Task 6: Sectors & Arcs");
         TaskScreen taskScreen = new TaskScreen("Sectors & Arcs");
         taskScreen.setVisible(true);  // 显示任务界面

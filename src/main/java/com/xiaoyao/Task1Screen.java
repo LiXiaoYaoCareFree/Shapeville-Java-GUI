@@ -37,6 +37,8 @@ public class Task1Screen extends JFrame {
     private String attemptsText;
     private Boolean isBasic;
 
+    // 创建一个计数器来记录点击次数
+    int[] clickCount = {0}; // 使用数组来使其在 Lambda 表达式中可变
 
 
     // 2D 和 3D 形状数组
@@ -72,6 +74,16 @@ public class Task1Screen extends JFrame {
         topPanel = new TopNavBarPanel();
         gradientTopWrapper.add(topPanel);
         add(gradientTopWrapper, BorderLayout.NORTH);
+        // 绑定按钮监听事件
+        topPanel.homeButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null, "Returning to Home Screen...");
+            dispose();
+        });
+
+        topPanel.endSessionButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null, "You earned " + score + " points in this session. Goodbye!");
+            dispose();
+        });
     }
 
     private void CreateTask1ProgressBarPanel() {
@@ -220,6 +232,7 @@ public class Task1Screen extends JFrame {
                         styledTextField.setText("");
                         submitButton.setEnabled(false);  // 禁用提交按钮
                         taskPanel.add(createNextShapeButton());  // 添加下一题按钮
+                        // 当处理完所有形状（第8次按下nextShape）时，关闭窗口
                     }
                     updateAttempts();
                 }
@@ -292,35 +305,31 @@ public class Task1Screen extends JFrame {
         scorePanel.add(scoreValueLabel);
         scorePanel.add(scoreValue);
         contentPanel.add(scorePanel);
-
+        Timer timer = new Timer( 2000, e -> dialog.dispose());
+        timer.setRepeats(false);
+        timer.start();
         // 继续按钮
         JButton continueButton = new JButton("Continue");
         continueButton.setBackground(new Color(240, 248, 255));
         continueButton.setForeground(new Color(59, 130, 246));
         continueButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        continueButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
+        continueButton.addActionListener(e -> dialog.dispose());
         contentPanel.add(continueButton);
 
         dialog.add(contentPanel, BorderLayout.CENTER);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
-
-        // 启动计时器，两秒后关闭对话框
-        Timer timer = new Timer(2000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
-        timer.setRepeats(false);
-        timer.start();
     }
 
+    // 根据形状名称更新级别按钮状态
+    private void updateLevelButtonState(String shapeName) {
+        // 检查形状是否属于Basic级别（2D形状）
+        boolean isBasic = selected2DShapes.contains(shapeName);
+
+        // 更新按钮状态
+        basicButton.setSelected(!isBasic);
+        advancedButton.setSelected(isBasic);
+    }
     // 获取颜色的Hex值
     private String getColorHex(Color color) {
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
@@ -378,6 +387,16 @@ public class Task1Screen extends JFrame {
                 taskPanel.remove(nextButton);
                 taskPanel.revalidate();
                 taskPanel.repaint();
+
+                clickCount[0]++; // 每次点击增加计数器
+                System.out.println("Next Shape clicked: " + clickCount[0] + " times");
+
+                // 检查是否点击了第8次
+                if (clickCount[0] == 8) {
+                    dispose(); // 第8次点击时关闭窗口
+                    System.out.println("task1Screen closed after 8 clicks.");
+                    showCustomDialog(score); // 调用自定义对话框方法
+                }
             }
         });
         return nextButton;
@@ -415,6 +434,9 @@ public class Task1Screen extends JFrame {
                 progressBar.setValue(currentShapeIndex - 1);
                 progressLabel.setText("Your Progress: " + (currentShapeIndex - 1) + "/8 shapes identified");
 
+                // 根据当前形状所属类别更新按钮状态
+                updateLevelButtonState(nextShapeName);
+
                 // 如果所有图形都已加载，移除下一题按钮
                 if (currentShapeIndex >= allShapes.size()) {
                     taskPanel.remove(nextButton);
@@ -432,8 +454,6 @@ public class Task1Screen extends JFrame {
             }
         }
     }
-
-
 
     // 从数组中随机选择指定数量的元素
     private java.util.List<String> getRandomElements(String[] array, int count) {
