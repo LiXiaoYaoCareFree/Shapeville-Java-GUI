@@ -1,0 +1,947 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shapeville - Geometry Learning Adventure</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Comic Neue', cursive;
+      background-color: #f0f9ff;
+      color: #333;
+    }
+
+    .game-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-bar {
+      height: 24px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #e5e7eb;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #4ade80, #22c55e);
+      transition: width 0.5s ease;
+    }
+
+    .btn {
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Accessible color combinations for color blind students */
+    .level-ks1 {
+      background-color: #22c55e;
+      color: #000;
+    }
+
+    .level-ks2 {
+      background-color: #3b82f6;
+      color: #fff;
+    }
+
+    .level-challenge {
+      background-color: #8b5cf6;
+      color: #fff;
+    }
+
+    /* Animations */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .animate-bounce {
+      animation: bounce 2s infinite;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      max-width: 500px;
+      width: 90%;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .tab-btn {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 10px 10px 0;
+      border-style: solid;
+      border-color: #3b82f6 transparent transparent;
+    }
+  </style>
+</head>
+<body>
+<div class="min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#FFD700" stroke="white" stroke-width="2"/>
+          <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h1 class="text-3xl font-bold">Shapeville</h1>
+      </div>
+      <div class="flex gap-3">
+        <button id="homeBtn" class="btn bg-white text-blue-600 px-4 py-2 rounded-full font-bold shadow-md">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            Home
+                        </span>
+        </button>
+        <button id="endSessionBtn" class="btn bg-white text-red-500 px-4 py-2 rounded-full font-bold shadow-md">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            End Session
+                        </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto p-6">
+    <!-- Welcome Section -->
+    <section class="mb-10 text-center">
+      <div class="flex justify-center mb-4">
+        <div class="animate-bounce">
+          <svg class="w-16 h-16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" fill="#3b82f6"/>
+            <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <h2 class="text-3xl font-bold mb-2">Welcome to Shapeville!</h2>
+      <p class="text-xl mb-6">Let's explore shapes, angles, and geometry together!</p>
+
+      <!-- Progress Bar -->
+      <div class="max-w-2xl mx-auto mb-8">
+        <div class="flex justify-between mb-2">
+          <span class="font-bold">Your Progress</span>
+          <span class="font-bold" id="progressText">0/100 points</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs for Key Stages -->
+    <div class="mb-8">
+      <div class="flex justify-center space-x-4 mb-8">
+        <button class="tab-btn active px-6 py-3 rounded-lg font-bold bg-gray-200" data-tab="ks1">
+          Key Stage 1<br>
+          <span class="text-sm">(Years 1-2)</span>
+        </button>
+        <button class="tab-btn px-6 py-3 rounded-lg font-bold bg-gray-200" data-tab="ks2">
+          Key Stage 2<br>
+          <span class="text-sm">(Years 3-6)</span>
+        </button>
+      </div>
+
+      <!-- KS1 Content -->
+      <div id="ks1-content" class="tab-content active">
+        <h3 class="text-2xl font-bold mb-6 text-center">Key Stage 1 Tasks</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Task 1: Shape Recognition -->
+          <div class="game-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="level-ks1 p-4 text-center">
+              <span class="inline-block px-3 py-1 rounded-full bg-white text-green-600 font-bold mb-1">Task 1</span>
+              <h4 class="text-xl font-bold">Shape Recognition</h4>
+            </div>
+            <div class="p-6">
+              <div class="flex justify-center mb-4">
+                <svg class="w-24 h-24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="30" cy="30" r="20" fill="#22c55e" />
+                  <rect x="60" y="10" width="30" height="30" fill="#3b82f6" />
+                  <polygon points="30,60 10,90 50,90" fill="#8b5cf6" />
+                  <polygon points="70,60 60,90 90,80 80,60" fill="#ef4444" />
+                </svg>
+              </div>
+              <p class="mb-4">Learn to identify basic 2D shapes like circles, squares, triangles, rectangles, and more!</p>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-bold">Ages 5-7</span>
+                <button class="btn bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold" onclick="startGame('shape-recognition')">Start</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task 2: Angle Types -->
+          <div class="game-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="level-ks1 p-4 text-center">
+              <span class="inline-block px-3 py-1 rounded-full bg-white text-green-600 font-bold mb-1">Task 2</span>
+              <h4 class="text-xl font-bold">Angle Types</h4>
+            </div>
+            <div class="p-6">
+              <div class="flex justify-center mb-4">
+                <svg class="w-24 h-24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Right angle -->
+                  <path d="M10,90 L10,50 L50,50" stroke="#22c55e" stroke-width="4" fill="none" />
+                  <path d="M20,50 A 10 10 0 0 0 10 60" stroke="#22c55e" stroke-width="2" fill="none" />
+
+                  <!-- Acute angle -->
+                  <path d="M60,90 L60,50 L90,70" stroke="#3b82f6" stroke-width="4" fill="none" />
+                  <path d="M70,50 A 10 10 0 0 0 65 60" stroke="#3b82f6" stroke-width="2" fill="none" />
+
+                  <!-- Obtuse angle -->
+                  <path d="M10,10 L50,30 L50,10" stroke="#8b5cf6" stroke-width="4" fill="none" />
+                  <path d="M30,20 A 15 15 0 0 0 40 25" stroke="#8b5cf6" stroke-width="2" fill="none" />
+                </svg>
+              </div>
+              <p class="mb-4">Learn about different types of angles: right angles, acute angles, and obtuse angles!</p>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-bold">Ages 5-7</span>
+                <button class="btn bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold" onclick="startGame('angle-types')">Start</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KS2 Content -->
+      <div id="ks2-content" class="tab-content">
+        <h3 class="text-2xl font-bold mb-6 text-center">Key Stage 2 Tasks</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Task 3: Shape Area -->
+          <div class="game-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="level-ks2 p-4 text-center">
+              <span class="inline-block px-3 py-1 rounded-full bg-white text-blue-600 font-bold mb-1">Task 3</span>
+              <h4 class="text-xl font-bold">Shape Area</h4>
+            </div>
+            <div class="p-6">
+              <div class="flex justify-center mb-4">
+                <svg class="w-24 h-24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="10" y="10" width="80" height="40" fill="#3b82f6" fill-opacity="0.7" />
+                  <text x="50" y="35" text-anchor="middle" fill="white" font-size="12">Area = l × w</text>
+                  <polygon points="20,60 50,60 35,90" fill="#8b5cf6" fill-opacity="0.7" />
+                  <text x="35" y="75" text-anchor="middle" fill="white" font-size="10">Area = ½bh</text>
+                </svg>
+              </div>
+              <p class="mb-4">Learn how to calculate the area of rectangles, triangles, and other 2D shapes!</p>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-bold">Ages 7-10</span>
+                <button class="btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-bold" onclick="startGame('shape-area')">Start</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task 4: Circle Area & Perimeter -->
+          <div class="game-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="level-ks2 p-4 text-center">
+              <span class="inline-block px-3 py-1 rounded-full bg-white text-blue-600 font-bold mb-1">Task 4</span>
+              <h4 class="text-xl font-bold">Circle Area & Circumference</h4>
+            </div>
+            <div class="p-6">
+              <div class="flex justify-center mb-4">
+                <svg class="w-24 h-24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="35" fill="#3b82f6" fill-opacity="0.7" />
+                  <line x1="50" y1="50" x2="85" y2="50" stroke="white" stroke-width="2" />
+                  <text x="67" y="45" text-anchor="middle" fill="white" font-size="10">r</text>
+                  <text x="50" y="30" text-anchor="middle" fill="white" font-size="10">A = πr²</text>
+                  <text x="50" y="75" text-anchor="middle" fill="white" font-size="10">C = 2πr</text>
+                </svg>
+              </div>
+              <p class="mb-4">Discover how to calculate the area and circumference of circles using π!</p>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-bold">Ages 7-10</span>
+                <button class="btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-bold" onclick="startGame('circle-calculations')">Start</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-bold mb-6 text-center">Additional Challenges</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Additional Task 1: Compound Shapes -->
+          <div class="game-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="level-challenge p-4 text-center">
+              <span class="inline-block px-3 py-1 rounded-full bg-white text-purple-600 font-bold mb-1">Challenge 1</span>
+              <h4 class="text-xl font-bold">Compound Shapes</h4>
+            </div>
+            <div class="p-6">
+              <div class="flex justify-center mb-4">
+                <svg class="w-24 h-24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="10" y="10" width="50" height="50" fill="#8b5cf6" fill-opacity="0.7" />
+                  <rect x="40" y="40" width="50" height="50" fill="#3b82f6" fill-opacity="0.7" />
+                  <text x="50" y="50" text-anchor="middle" fill="white" font-size="10">?</text>
+                </svg>
+              </div>
+              <p class="mb-4">Learn to calculate the area of compound shapes by breaking them into simpler shapes!</p>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-bold">Advanced</span>
+                <button class="btn bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-bold" onclick="startGame('compound-shapes')">Start</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Task 2: Sectors & Arcs -->
+          <div class="game-card bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="level-challenge p-4 text-center">
+              <span class="inline-block px-3 py-1 rounded-full bg-white text-purple-600 font-bold mb-1">Challenge 2</span>
+              <h4 class="text-xl font-bold">Sectors & Arcs</h4>
+            </div>
+            <div class="p-6">
+              <div class="flex justify-center mb-4">
+                <svg class="w-24 h-24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50,50 L85,50 A35,35 0 0,1 67.5,82.5 z" fill="#8b5cf6" fill-opacity="0.7" />
+                  <text x="67" y="65" text-anchor="middle" fill="white" font-size="10">θ</text>
+                  <path d="M50,50 L67.5,82.5 A35,35 0 0,1 15,50 z" fill="#3b82f6" fill-opacity="0.7" />
+                </svg>
+              </div>
+              <p class="mb-4">Master calculating the area of sectors and the length of arcs in circles!</p>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-bold">Advanced</span>
+                <button class="btn bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-bold" onclick="startGame('sectors-arcs')">Start</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips Section -->
+    <section class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg">
+      <h3 class="text-xl font-bold mb-2 flex items-center">
+        <svg class="w-6 h-6 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        Helpful Tips
+      </h3>
+      <ul class="list-disc pl-6 space-y-2">
+        <li>Click on any task to start learning!</li>
+        <li>Key Stage 1 tasks are perfect for children aged 5-7 years.</li>
+        <li>Key Stage 2 tasks are designed for children aged 7-10 years.</li>
+        <li>Complete activities to earn points and track your progress.</li>
+        <li>You can always return to this page by clicking the "Home" button.</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white p-4 text-center">
+    <p>© 2023 Shapeville - Queen Mary University of London Primary School</p>
+  </footer>
+</div>
+
+<!-- Game Interface Modal -->
+<div id="gameModal" class="modal-overlay">
+  <div class="modal-content max-w-4xl w-full">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-2xl font-bold" id="gameTitle">Game Title</h3>
+      <button id="closeGameBtn" class="text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div id="gameContent" class="mb-4">
+      <!-- Game content will be dynamically inserted here -->
+    </div>
+
+    <div class="flex justify-between">
+      <button id="backToHomeBtn" class="btn bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-bold">
+        Back to Home
+      </button>
+      <button id="submitAnswerBtn" class="btn bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold">
+        Check Answer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- End Session Modal -->
+<div id="endSessionModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="text-center">
+      <svg class="w-16 h-16 mx-auto mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <h3 class="text-2xl font-bold mb-2">Great job today!</h3>
+      <p class="text-xl mb-6" id="finalScoreText">You earned 0 points in this session.</p>
+      <div class="flex justify-center">
+        <button id="confirmEndBtn" class="btn bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-bold">
+          Goodbye!
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Initialize variables
+  let currentScore = 0;
+  const maxScore = 100;
+  let currentGame = null;
+
+  // DOM elements
+  const progressBar = document.querySelector('.progress-fill');
+  const progressText = document.getElementById('progressText');
+  const endSessionBtn = document.getElementById('endSessionBtn');
+  const homeBtn = document.getElementById('homeBtn');
+  const endSessionModal = document.getElementById('endSessionModal');
+  const finalScoreText = document.getElementById('finalScoreText');
+  const confirmEndBtn = document.getElementById('confirmEndBtn');
+  const gameModal = document.getElementById('gameModal');
+  const gameTitle = document.getElementById('gameTitle');
+  const gameContent = document.getElementById('gameContent');
+  const closeGameBtn = document.getElementById('closeGameBtn');
+  const backToHomeBtn = document.getElementById('backToHomeBtn');
+  const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  // Update progress bar and text
+  function updateProgress(score) {
+    currentScore = score;
+    const percentage = (score / maxScore) * 100;
+    progressBar.style.width = `${percentage}%`;
+    progressText.textContent = `${score}/${maxScore} points`;
+  }
+
+  // Initialize with random score for demo purposes
+  updateProgress(Math.floor(Math.random() * 30));
+
+  // Tab functionality
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.getAttribute('data-tab');
+
+      // Update active tab button
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Show corresponding tab content
+      tabContents.forEach(content => content.classList.remove('active'));
+      document.getElementById(`${tabId}-content`).classList.add('active');
+    });
+  });
+
+  // Game content templates
+  const gameTemplates = {
+    'shape-recognition': {
+      title: 'Shape Recognition',
+      content: `
+                    <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                        <h4 class="text-xl font-bold mb-4">Match the shapes with their names!</h4>
+                        <p class="mb-4">Drag each shape to its correct name.</p>
+
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h5 class="font-bold mb-3 text-center">Shapes</h5>
+                                <div class="flex flex-wrap justify-center gap-4">
+                                    <div class="shape-item" draggable="true" data-shape="circle">
+                                        <svg class="w-16 h-16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="50" cy="50" r="40" fill="#22c55e" />
+                                        </svg>
+                                    </div>
+                                    <div class="shape-item" draggable="true" data-shape="square">
+                                        <svg class="w-16 h-16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="10" y="10" width="80" height="80" fill="#3b82f6" />
+                                        </svg>
+                                    </div>
+                                    <div class="shape-item" draggable="true" data-shape="triangle">
+                                        <svg class="w-16 h-16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <polygon points="50,10 90,90 10,90" fill="#8b5cf6" />
+                                        </svg>
+                                    </div>
+                                    <div class="shape-item" draggable="true" data-shape="rectangle">
+                                        <svg class="w-16 h-16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="10" y="30" width="80" height="40" fill="#ef4444" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h5 class="font-bold mb-3 text-center">Names</h5>
+                                <div class="flex flex-col gap-3">
+                                    <div class="shape-target p-3 border-2 border-dashed border-gray-300 rounded-lg text-center" data-shape="circle">
+                                        Circle
+                                    </div>
+                                    <div class="shape-target p-3 border-2 border-dashed border-gray-300 rounded-lg text-center" data-shape="square">
+                                        Square
+                                    </div>
+                                    <div class="shape-target p-3 border-2 border-dashed border-gray-300 rounded-lg text-center" data-shape="triangle">
+                                        Triangle
+                                    </div>
+                                    <div class="shape-target p-3 border-2 border-dashed border-gray-300 rounded-lg text-center" data-shape="rectangle">
+                                        Rectangle
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="font-bold">Remember:</p>
+                        <ul class="list-disc pl-6">
+                            <li>A <strong>circle</strong> is a round shape with no corners.</li>
+                            <li>A <strong>square</strong> has 4 equal sides and 4 right angles.</li>
+                            <li>A <strong>triangle</strong> has 3 sides and 3 corners.</li>
+                            <li>A <strong>rectangle</strong> has 4 sides and 4 right angles, with opposite sides equal.</li>
+                        </ul>
+                    </div>
+                `
+    },
+    'angle-types': {
+      title: 'Angle Types',
+      content: `
+                    <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                        <h4 class="text-xl font-bold mb-4">Identify the angle types!</h4>
+                        <p class="mb-4">Select the correct type for each angle shown below.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <div class="flex justify-center mb-3">
+                                    <svg class="w-32 h-32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10,90 L10,10 L90,10" stroke="#22c55e" stroke-width="4" fill="none" />
+                                        <path d="M20,20 A 15 15 0 0 0 10 30" stroke="#22c55e" stroke-width="2" fill="none" />
+                                        <text x="25" y="40" font-size="16">?</text>
+                                    </svg>
+                                </div>
+                                <div class="flex justify-center gap-2">
+                                    <button class="angle-option px-3 py-1 rounded-lg border-2 border-gray-300" data-angle="angle1" data-type="right">Right Angle</button>
+                                    <button class="angle-option px-3 py-1 rounded-lg border-2 border-gray-300" data-angle="angle1" data-type="acute">Acute Angle</button>
+                                    <button class="angle-option px-3 py-1 rounded-lg border-2 border-gray-300" data-angle="angle1" data-type="obtuse">Obtuse Angle</button>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <div class="flex justify-center mb-3">
+                                    <svg class="w-32 h-32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10,50 L50,50 L70,20" stroke="#3b82f6" stroke-width="4" fill="none" />
+                                        <path d="M50,40 A 10 10 0 0 0 60 50" stroke="#3b82f6" stroke-width="2" fill="none" />
+                                        <text x="55" y="35" font-size="16">?</text>
+                                    </svg>
+                                </div>
+                                <div class="flex justify-center gap-2">
+                                    <button class="angle-option px-3 py-1 rounded-lg border-2 border-gray-300" data-angle="angle2" data-type="right">Right Angle</button>
+                                    <button class="angle-option px-3 py-1 rounded-lg border-2 border-gray-300" data-angle="angle2" data-type="acute">Acute Angle</button>
+                                    <button class="angle-option px-3 py-1 rounded-lg border-2 border-gray-300" data-angle="angle2" data-type="obtuse">Obtuse Angle</button>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <div class="flex justify-center mb-3">
+                                    <svg class="w-32 h-32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10,90 L50,50 L90,70" stroke="#8b5cf6" stroke-width="4" fill="none" />
+                                        <path d="M40,60 A 15 15 0 0 0 60 55" stroke="#8b5cf6" stroke-width="2" fill="none" />
+                                        <text x="50" y="45" font-size="16">?</text>
+                                    </svg>
+                                </div>
+                                <div class="flex justify-center gap-2">
+                                    <button class="angle-option px-3 py-1 rounded-lg border-2 border-gray-300" data-angle="angle3" data-type="right">Right Angle</button>
+                                    <button class="angle-option px-3 py-1 rounded-lg border-2 border-gray-300" data-angle="angle3" data-type="acute">Acute Angle</button>
+                                    <button class="angle-option px-3 py-1 rounded-lg border-2 border-gray-300" data-angle="angle3" data-type="obtuse">Obtuse Angle</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="font-bold">Remember:</p>
+                        <ul class="list-disc pl-6">
+                            <li>A <strong>right angle</strong> is exactly 90 degrees (like the corner of a square).</li>
+                            <li>An <strong>acute angle</strong> is less than 90 degrees (smaller than a right angle).</li>
+                            <li>An <strong>obtuse angle</strong> is greater than 90 degrees but less than 180 degrees (larger than a right angle).</li>
+                        </ul>
+                    </div>
+                `
+    },
+    'shape-area': {
+      title: 'Shape Area Calculation',
+      content: `
+                    <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                        <h4 class="text-xl font-bold mb-4">Calculate the area of these shapes!</h4>
+                        <p class="mb-4">Use the formulas to find the area of each shape.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h5 class="font-bold mb-3 text-center">Rectangle</h5>
+                                <div class="flex justify-center mb-3">
+                                    <svg class="w-32 h-32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="10" y="20" width="80" height="60" fill="#3b82f6" fill-opacity="0.7" />
+                                        <text x="50" y="55" text-anchor="middle" fill="white" font-size="14">?</text>
+                                        <text x="50" y="15" text-anchor="middle" font-size="12">8 cm</text>
+                                        <text x="5" y="50" text-anchor="middle" font-size="12">6 cm</text>
+                                    </svg>
+                                </div>
+                                <div class="mb-2">
+                                    <p class="mb-1">Formula: Area = length × width</p>
+                                    <p class="mb-1">Length = 8 cm, Width = 6 cm</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <label>Area = </label>
+                                    <input type="number" class="area-input border-2 border-gray-300 rounded px-2 py-1 w-20" data-shape="rectangle" data-answer="48">
+                                    <span>cm²</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h5 class="font-bold mb-3 text-center">Triangle</h5>
+                                <div class="flex justify-center mb-3">
+                                    <svg class="w-32 h-32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <polygon points="10,80 90,80 50,20" fill="#8b5cf6" fill-opacity="0.7" />
+                                        <text x="50" y="60" text-anchor="middle" fill="white" font-size="14">?</text>
+                                        <text x="50" y="90" text-anchor="middle" font-size="12">8 cm</text>
+                                        <line x1="50" y1="20" x2="50" y2="80" stroke="white" stroke-dasharray="4" />
+                                        <text x="55" y="50" text-anchor="start" font-size="12">6 cm</text>
+                                    </svg>
+                                </div>
+                                <div class="mb-2">
+                                    <p class="mb-1">Formula: Area = ½ × base × height</p>
+                                    <p class="mb-1">Base = 8 cm, Height = 6 cm</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <label>Area = </label>
+                                    <input type="number" class="area-input border-2 border-gray-300 rounded px-2 py-1 w-20" data-shape="triangle" data-answer="24">
+                                    <span>cm²</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="font-bold">Remember:</p>
+                        <ul class="list-disc pl-6">
+                            <li>Rectangle area = length × width</li>
+                            <li>Triangle area = ½ × base × height</li>
+                            <li>Square area = side × side (or side²)</li>
+                        </ul>
+                    </div>
+                `
+    },
+    'circle-calculations': {
+      title: 'Circle Area & Circumference',
+      content: `
+                    <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                        <h4 class="text-xl font-bold mb-4">Calculate the area and circumference of circles!</h4>
+                        <p class="mb-4">Use π = 3.14 for your calculations.</p>
+
+                        <div class="grid grid-cols-1 gap-6">
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h5 class="font-bold mb-3 text-center">Circle</h5>
+                                <div class="flex justify-center mb-3">
+                                    <svg class="w-32 h-32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="50" cy="50" r="40" fill="#3b82f6" fill-opacity="0.7" />
+                                        <line x1="50" y1="50" x2="90" y2="50" stroke="white" stroke-width="2" />
+                                        <text x="70" y="45" text-anchor="middle" fill="white" font-size="12">5 cm</text>
+                                    </svg>
+                                </div>
+                                <div class="mb-2">
+                                    <p class="mb-1">Formulas:</p>
+                                    <p class="mb-1">Area = π × radius²</p>
+                                    <p class="mb-1">Circumference = 2 × π × radius</p>
+                                    <p class="mb-1">Radius = 5 cm</p>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <label>Area = </label>
+                                        <input type="number" step="0.01" class="circle-input border-2 border-gray-300 rounded px-2 py-1 w-20" data-property="area" data-answer="78.5">
+                                        <span>cm²</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <label>Circumference = </label>
+                                        <input type="number" step="0.01" class="circle-input border-2 border-gray-300 rounded px-2 py-1 w-20" data-property="circumference" data-answer="31.4">
+                                        <span>cm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="font-bold">Remember:</p>
+                        <ul class="list-disc pl-6">
+                            <li>Circle area = π × r²</li>
+                            <li>Circle circumference = 2 × π × r</li>
+                            <li>π (pi) is approximately 3.14</li>
+                        </ul>
+                    </div>
+                `
+    },
+    'compound-shapes': {
+      title: 'Compound Shapes',
+      content: `
+                    <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                        <h4 class="text-xl font-bold mb-4">Calculate the area of compound shapes!</h4>
+                        <p class="mb-4">Break down the shapes and add or subtract the areas.</p>
+
+                        <div class="grid grid-cols-1 gap-6">
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h5 class="font-bold mb-3 text-center">L-Shape</h5>
+                                <div class="flex justify-center mb-3">
+                                    <svg class="w-40 h-40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10,10 L60,10 L60,40 L90,40 L90,90 L10,90 Z" fill="#8b5cf6" fill-opacity="0.7" />
+                                        <text x="35" y="25" text-anchor="middle" fill="white" font-size="10">Rectangle 1</text>
+                                        <text x="75" y="65" text-anchor="middle" fill="white" font-size="10">Rectangle 2</text>
+                                        <text x="35" y="5" text-anchor="middle" font-size="10">5 cm</text>
+                                        <text x="5" y="50" text-anchor="start" font-size="10">8 cm</text>
+                                        <text x="75" y="35" text-anchor="middle" font-size="10">3 cm</text>
+                                        <text x="95" y="65" text-anchor="start" font-size="10">5 cm</text>
+                                    </svg>
+                                </div>
+                                <div class="mb-2">
+                                    <p class="mb-1">Hint: Break this into two rectangles</p>
+                                    <p class="mb-1">Rectangle 1: 5 cm × 8 cm</p>
+                                    <p class="mb-1">Rectangle 2: 3 cm × 5 cm</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <label>Total Area = </label>
+                                    <input type="number" class="compound-input border-2 border-gray-300 rounded px-2 py-1 w-20" data-shape="l-shape" data-answer="55">
+                                    <span>cm²</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="font-bold">Strategy for compound shapes:</p>
+                        <ol class="list-decimal pl-6">
+                            <li>Break the compound shape into simple shapes you know (rectangles, triangles, etc.)</li>
+                            <li>Calculate the area of each simple shape</li>
+                            <li>Add the areas together (or subtract if there's an overlap)</li>
+                        </ol>
+                    </div>
+                `
+    },
+    'sectors-arcs': {
+      title: 'Sectors & Arcs',
+      content: `
+                    <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                        <h4 class="text-xl font-bold mb-4">Calculate the area of sectors and length of arcs!</h4>
+                        <p class="mb-4">Use π = 3.14 for your calculations.</p>
+
+                        <div class="grid grid-cols-1 gap-6">
+                            <div class="bg-white p-4 rounded-lg shadow-md">
+                                <h5 class="font-bold mb-3 text-center">Sector of a Circle</h5>
+                                <div class="flex justify-center mb-3">
+                                    <svg class="w-32 h-32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M50,50 L85,50 A35,35 0 0,1 67.5,82.5 z" fill="#8b5cf6" fill-opacity="0.7" />
+                                        <text x="67" y="65" text-anchor="middle" fill="white" font-size="10">90°</text>
+                                        <line x1="50" y1="50" x2="85" y2="50" stroke="white" stroke-width="1" />
+                                        <line x1="50" y1="50" x2="67.5" y2="82.5" stroke="white" stroke-width="1" />
+                                        <text x="70" y="45" text-anchor="middle" font-size="10">6 cm</text>
+                                    </svg>
+                                </div>
+                                <div class="mb-2">
+                                    <p class="mb-1">Formulas:</p>
+                                    <p class="mb-1">Sector area = (θ/360°) × π × radius²</p>
+                                    <p class="mb-1">Arc length = (θ/360°) × 2 × π × radius</p>
+                                    <p class="mb-1">Radius = 6 cm, Angle = 90°</p>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <label>Sector Area = </label>
+                                        <input type="number" step="0.01" class="sector-input border-2 border-gray-300 rounded px-2 py-1 w-20" data-property="area" data-answer="28.26">
+                                        <span>cm²</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <label>Arc Length = </label>
+                                        <input type="number" step="0.01" class="sector-input border-2 border-gray-300 rounded px-2 py-1 w-20" data-property="arc" data-answer="9.42">
+                                        <span>cm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="font-bold">Remember:</p>
+                        <ul class="list-disc pl-6">
+                            <li>Sector area = (θ/360°) × π × r²</li>
+                            <li>Arc length = (θ/360°) × 2 × π × r</li>
+                            <li>θ is the angle of the sector in degrees</li>
+                        </ul>
+                    </div>
+                `
+    }
+  };
+
+  // Start game function
+  function startGame(gameId) {
+    currentGame = gameId;
+
+    // Set game title and content
+    gameTitle.textContent = gameTemplates[gameId].title;
+    gameContent.innerHTML = gameTemplates[gameId].content;
+
+    // Show game modal
+    gameModal.classList.add('active');
+
+    // Add event listeners for game interactions
+    setupGameInteractions(gameId);
+  }
+
+  // Setup game interactions based on game type
+  function setupGameInteractions(gameId) {
+    if (gameId === 'shape-recognition') {
+      // Drag and drop functionality would be implemented here
+      // For demo purposes, we'll just show an alert
+      submitAnswerBtn.addEventListener('click', function() {
+        alert("Great job! You've correctly matched all the shapes!");
+        currentScore += 10;
+        updateProgress(currentScore);
+        gameModal.classList.remove('active');
+      });
+    } else if (gameId === 'angle-types') {
+      // Angle selection functionality
+      const angleOptions = document.querySelectorAll('.angle-option');
+      angleOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const angle = this.getAttribute('data-angle');
+          const selectedType = this.getAttribute('data-type');
+
+          // Remove active class from all options for this angle
+          document.querySelectorAll(`.angle-option[data-angle="${angle}"]`).forEach(opt => {
+            opt.classList.remove('bg-blue-500', 'text-white');
+          });
+
+          // Add active class to selected option
+          this.classList.add('bg-blue-500', 'text-white');
+        });
+      });
+
+      submitAnswerBtn.addEventListener('click', function() {
+        alert("Well done! You've correctly identified the angle types!");
+        currentScore += 10;
+        updateProgress(currentScore);
+        gameModal.classList.remove('active');
+      });
+    } else if (gameId === 'shape-area' || gameId === 'circle-calculations' ||
+            gameId === 'compound-shapes' || gameId === 'sectors-arcs') {
+      // Form validation would be implemented here
+      // For demo purposes, we'll just show an alert
+      submitAnswerBtn.addEventListener('click', function() {
+        alert("Great job! Your calculations are correct!");
+        currentScore += 15;
+        updateProgress(currentScore);
+        gameModal.classList.remove('active');
+      });
+    }
+  }
+
+  // End session button click handler
+  endSessionBtn.addEventListener('click', function() {
+    finalScoreText.textContent = `You earned ${currentScore} points in this session.`;
+    endSessionModal.classList.add('active');
+  });
+
+  // Confirm end session button click handler
+  confirmEndBtn.addEventListener('click', function() {
+    endSessionModal.classList.remove('active');
+    // In a real application, this would close the application
+    alert("In a real application, this would close the program. Thank you for playing!");
+  });
+
+  // Home button click handler
+  homeBtn.addEventListener('click', function() {
+    // Since we're already on the home page in this demo, just show a message
+    alert("You're already on the home page!");
+  });
+
+  // Close game modal handlers
+  closeGameBtn.addEventListener('click', function() {
+    gameModal.classList.remove('active');
+  });
+
+  backToHomeBtn.addEventListener('click', function() {
+    gameModal.classList.remove('active');
+  });
+
+  // Close modals if clicking outside
+  gameModal.addEventListener('click', function(e) {
+    if (e.target === gameModal) {
+      gameModal.classList.remove('active');
+    }
+  });
+
+  endSessionModal.addEventListener('click', function(e) {
+    if (e.target === endSessionModal) {
+      endSessionModal.classList.remove('active');
+    }
+  });
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93d7f2ade25b878e',t:'MTc0Njg2NDQ5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

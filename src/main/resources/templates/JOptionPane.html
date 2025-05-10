@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Improved Score Notification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f9ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .notification-hidden {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+
+        .notification-visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ff0;
+            animation: fall 3s ease-in infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(500px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="relative">
+    <!-- Demo controls -->
+    <div class="absolute top-4 left-4 bg-white p-4 rounded-lg shadow-md">
+        <h3 class="text-lg font-bold mb-2">Demo Controls</h3>
+        <div class="flex items-center mb-2">
+            <label for="scoreInput" class="mr-2">Score:</label>
+            <input type="number" id="scoreInput" value="10" min="0" class="border rounded px-2 py-1 w-16">
+        </div>
+        <button id="showNotification" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
+            Show Notification
+        </button>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="fixed top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-xl shadow-2xl p-6 w-80 transition-all duration-500 notification-hidden z-10">
+        <div class="absolute -top-3 -right-3">
+            <div class="bg-green-500 rounded-full w-8 h-8 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="text-2xl font-bold text-green-600 mb-1">Correct!</div>
+            <div class="flex items-center justify-center gap-2 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                <span class="text-lg font-semibold">Your current score: <span id="scoreValue" class="text-blue-600">10</span></span>
+            </div>
+            <button id="closeNotification" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg transition-colors">
+                Continue
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to show notification
+    function showNotification(score) {
+        const notification = document.getElementById('notification');
+        const scoreValue = document.getElementById('scoreValue');
+
+        // Update score
+        scoreValue.textContent = score;
+
+        // Show notification with animation
+        notification.classList.remove('notification-hidden');
+        notification.classList.add('notification-visible');
+
+        // Create confetti effect
+        createConfetti();
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            hideNotification();
+        }, 5000);
+    }
+
+    // Function to hide notification
+    function hideNotification() {
+        const notification = document.getElementById('notification');
+        notification.classList.remove('notification-visible');
+        notification.classList.add('notification-hidden');
+
+        // Remove confetti
+        document.querySelectorAll('.confetti').forEach(el => el.remove());
+    }
+
+    // Function to create confetti effect
+    function createConfetti() {
+        const colors = ['#ff0', '#f0f', '#0ff', '#0f0', '#00f', '#f00'];
+
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.width = Math.random() * 10 + 5 + 'px';
+            confetti.style.height = Math.random() * 10 + 5 + 'px';
+            confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(confetti);
+        }
+    }
+    // Event listeners
+    document.getElementById('showNotification').addEventListener('click', () => {
+        const score = document.getElementById('scoreInput').value;
+        showNotification(score);
+    });
+
+    document.getElementById('closeNotification').addEventListener('click', hideNotification);
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93d7e616f210868a',t:'MTc0Njg2Mzk4My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

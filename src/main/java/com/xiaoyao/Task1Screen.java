@@ -189,7 +189,7 @@ public class Task1Screen extends JFrame {
                 String userAnswer = styledTextField.getText().trim();
                 if (userAnswer.equalsIgnoreCase(correctAnswer)) {
                     // 显示正确答案界面
-                    hintLabel.setText("Correct! ✅ This is indeed a circle.");
+                    hintLabel.setText("Correct! ✅ This is indeed a " + correctAnswer + ".");
                     if (currentShapeIndex <= 3) {
                         isBasic = true;
                     } else {
@@ -199,7 +199,7 @@ public class Task1Screen extends JFrame {
                     System.out.println(score);
                     // 清空输入框（三次错误后）
                     styledTextField.setText("");
-                    JOptionPane.showMessageDialog(null, "Correct! Your current score: " + score);
+                    showCustomDialog(score); // 调用自定义对话框方法
                     hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));  // 设置字体为 Arial，字体加粗，大小为 18
                     hintLabel.setForeground(green);  // 设置提示为绿色
                     attempts = 3;  // 重置尝试次数
@@ -258,6 +258,64 @@ public class Task1Screen extends JFrame {
             default:
                 return 0;
         }
+    }
+    // 自定义正确提示对话框
+    private void showCustomDialog(int score) {
+        JDialog dialog = new JDialog(this, "Congratulations!", true);
+        dialog.setSize(300, 200);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(new Color(240, 248, 255));
+
+        // 顶部绿色图标区域
+        JPanel iconPanel = new JPanel();
+        iconPanel.setBackground(new Color(255, 255, 255));
+        iconPanel.setPreferredSize(new Dimension(300, 40));
+        JLabel icon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/img_1.png"))); // 替换为实际图标路径
+        iconPanel.add(icon);
+        contentPanel.add(iconPanel);
+
+//        // 正确提示文本
+//        JLabel correctLabel = new JLabel("Correct!");
+//        correctLabel.setForeground(new Color(51, 161, 224));
+//        correctLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+//        correctLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+//        contentPanel.add(correctLabel);
+
+        // 分数显示区域
+        JPanel scorePanel = new JPanel();
+        scorePanel.setLayout(new FlowLayout());
+        scorePanel.setBackground(new Color(240, 248, 255));
+
+        JLabel scoreIcon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/img_2.png"))); // 替换为实际图标路径
+        JLabel scoreValueLabel = new JLabel("Your current score: ");
+        JLabel scoreValue = new JLabel(String.valueOf(score));
+        scoreValue.setForeground(new Color(59, 130, 246));
+        scoreValue.setFont(new Font("Segoe UI", Font.BOLD, 16));
+
+        scorePanel.add(scoreIcon);
+        scorePanel.add(scoreValueLabel);
+        scorePanel.add(scoreValue);
+        contentPanel.add(scorePanel);
+
+        // 继续按钮
+        JButton continueButton = new JButton("Continue");
+        continueButton.setBackground(new Color(240, 248, 255));
+        continueButton.setForeground(new Color(59, 130, 246));
+        continueButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        continueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+        contentPanel.add(continueButton);
+
+        dialog.add(contentPanel, BorderLayout.CENTER);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }
 
     // 获取颜色的Hex值
