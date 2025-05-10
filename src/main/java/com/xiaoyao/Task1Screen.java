@@ -261,7 +261,7 @@ public class Task1Screen extends JFrame {
     }
     // 自定义正确提示对话框
     private void showCustomDialog(int score) {
-        JDialog dialog = new JDialog(this, "Congratulations!", true);
+        JDialog dialog = new JDialog(this, null, true);
         dialog.setSize(300, 200);
         dialog.setLayout(new BorderLayout());
 
@@ -273,23 +273,16 @@ public class Task1Screen extends JFrame {
         JPanel iconPanel = new JPanel();
         iconPanel.setBackground(new Color(255, 255, 255));
         iconPanel.setPreferredSize(new Dimension(300, 40));
-        JLabel icon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/img_1.png"))); // 替换为实际图标路径
+        JLabel icon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/img_1.png")));
         iconPanel.add(icon);
         contentPanel.add(iconPanel);
-
-//        // 正确提示文本
-//        JLabel correctLabel = new JLabel("Correct!");
-//        correctLabel.setForeground(new Color(51, 161, 224));
-//        correctLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-//        correctLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        contentPanel.add(correctLabel);
 
         // 分数显示区域
         JPanel scorePanel = new JPanel();
         scorePanel.setLayout(new FlowLayout());
         scorePanel.setBackground(new Color(240, 248, 255));
 
-        JLabel scoreIcon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/img_2.png"))); // 替换为实际图标路径
+        JLabel scoreIcon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/img_2.png")));
         JLabel scoreValueLabel = new JLabel("Your current score: ");
         JLabel scoreValue = new JLabel(String.valueOf(score));
         scoreValue.setForeground(new Color(59, 130, 246));
@@ -316,6 +309,16 @@ public class Task1Screen extends JFrame {
         dialog.add(contentPanel, BorderLayout.CENTER);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
+
+        // 启动计时器，两秒后关闭对话框
+        Timer timer = new Timer(2000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     // 获取颜色的Hex值
