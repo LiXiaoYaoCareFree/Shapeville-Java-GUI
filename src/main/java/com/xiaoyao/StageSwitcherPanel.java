@@ -116,8 +116,8 @@ public class StageSwitcherPanel extends JPanel {
     // 启动任务2
     public void startTask2() {
         System.out.println("Starting Task 2: Angle Types");
-        TaskScreen taskScreen = new TaskScreen("Angle Types");
-        taskScreen.setVisible(true);  // 显示任务界面
+        Task2Screen task2Screen = new Task2Screen();
+        task2Screen.setVisible(true);
     }
 
     // 启动任务3
