@@ -463,7 +463,11 @@ public class Task2Screen extends JFrame {
 
         taskPanel.add(progressPanel);
 
-        // 创建角度画布angleCanvas
+        // 创建角度
+        angleCanvas = new AngleCanvas();
+        angleCanvas.setPreferredSize(new Dimension(300, 300));
+        taskPanel.add(angleCanvas);
+        //generateNewAngle();
 
         // 问题和答案输入框
         CreateTask1InputPanel();
