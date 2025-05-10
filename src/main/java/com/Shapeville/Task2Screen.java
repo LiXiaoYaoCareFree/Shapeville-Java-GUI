@@ -41,6 +41,7 @@ public class Task2Screen extends JFrame {
     private int currentShapeIndex = 0;
     private JLabel angleLabel;
     private JPanel inputAnglePanel;
+    private int userAngle;
 
     // 颜色常量
     private final Color orange = new Color(245, 158, 11); // 橙色 #f59e0b
@@ -52,7 +53,7 @@ public class Task2Screen extends JFrame {
 
     private void generateNewAngle() {
         do {
-            currentAngle = (int) (Math.random() * 37) * 10;
+            currentAngle = (int) (userAngle);
         } while (isAllAnglesIdentified() || isAngleTypeAlreadyIdentified(getAngleType(currentAngle)));
         angleCanvas.setAngle(currentAngle);
         angleCanvas.setPreferredSize(new Dimension(600, 600));
@@ -346,6 +347,7 @@ public class Task2Screen extends JFrame {
     }
 
 
+
     private void SubmitButtonEvent() {
         // 提交按钮事件
         submitButton.addActionListener(new ActionListener() {
@@ -475,6 +477,14 @@ public class Task2Screen extends JFrame {
         angleInput = new JTextField(10);
         //resultLabel = new JLabel("");
         angleSubmitButton = new JButton("Angle Submit");
+        angleSubmitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                    // 获取输入的文本
+                    String inputText = angleInput.getText().trim();
+                    // 将文本转换为整数
+                    userAngle = Integer.parseInt(inputText);
+            }
+        });
         //homeButton = new JButton("Home");
         angleCanvas = new AngleCanvas();
 
@@ -517,8 +527,6 @@ public class Task2Screen extends JFrame {
         // 创建 submitButton
         CreateTask1submitButton();
         submitButton.addActionListener(new SubmitButtonListener());
-
-
 
         inputPanel.add(questionLabel);
         inputPanel.add(styledTextField);
