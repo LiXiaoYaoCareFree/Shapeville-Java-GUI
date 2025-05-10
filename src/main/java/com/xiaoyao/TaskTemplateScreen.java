@@ -9,27 +9,17 @@ import java.util.List;
 
 import static com.xiaoyao.ShapevilleGUI.getJPanel;
 
-public class Task2Screen extends JFrame {
+public class TaskTemplateScreen extends JFrame {
     private int attempts = 3;
-    private int currentAngle;
-    private List<String> identifiedAngles = new ArrayList<>();
-    private JLabel angleLabel;
-    private JTextField angleInput;
-    private JLabel resultLabel;
     private JButton submitButton;
-    private JButton homeButton;
-    private AngleCanvas angleCanvas;
 
     private String correctAnswer; // 正确答案
     public int score = 0; // 分数
     private JProgressBar progressBar;
     private TopNavBarPanel topPanel;
-    private JToggleButton basicButton;
-    private JToggleButton advancedButton;
     private JPanel shapePanel;  // 显示形状的面板
     private JPanel progressPanel;
     private JPanel taskPanel;
-    private JPanel levelPanel;
     private JPanel inputPanel;
     private JPanel hintPanel;
     private JPanel attemptPanel;
@@ -52,108 +42,7 @@ public class Task2Screen extends JFrame {
     private final Color yellow = new Color(254,249,195);
 
 
-    private void generateNewAngle() {
-        do {
-            currentAngle = (int) (Math.random() * 37) * 10;
-        } while (isAllAnglesIdentified() || isAngleTypeAlreadyIdentified(getAngleType(currentAngle)));
-        angleCanvas.setAngle(currentAngle);
-        angleCanvas.repaint();
-        attempts = 3;
-        resultLabel.setText("");
-    }
-
-    private String getAngleType(int angle) {
-        if (angle > 0 && angle < 90) {
-            return "Acute";
-        } else if (angle == 90) {
-            return "Right";
-        } else if (angle > 90 && angle < 180) {
-            return "Obtuse";
-        } else if (angle > 180 && angle < 360) {
-            return "Reflex";
-        } else {
-            return "None";
-        }
-    }
-
-    private boolean isAllAnglesIdentified() {
-        return identifiedAngles.contains("Acute") && identifiedAngles.contains("Right")
-                && identifiedAngles.contains("Obtuse") && identifiedAngles.contains("Reflex");
-    }
-
-    private boolean isAngleTypeAlreadyIdentified(String angleType) {
-        return identifiedAngles.contains(angleType);
-    }
-
-    private class SubmitButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                String userAnswer = angleInput.getText().trim();
-                String correctType = getAngleType(currentAngle);
-
-                if (userAnswer.equalsIgnoreCase(correctType)) {
-                    resultLabel.setText("Correct! This is a " + correctType + " angle.");
-                    identifiedAngles.add(correctType);
-                    if (isAllAnglesIdentified()) {
-                        resultLabel.setText("Congratulations! You have identified all 4 types of angles.");
-                        submitButton.setEnabled(false);
-                    } else {
-                        generateNewAngle();
-                    }
-                } else {
-                    attempts--;
-                    if (attempts > 0) {
-                        resultLabel.setText("Incorrect. You have " + attempts + " attempts left.");
-                    } else {
-                        resultLabel.setText("No more attempts. The correct answer is: " + correctType);
-                        identifiedAngles.add(correctType);
-                        if (isAllAnglesIdentified()) {
-                            resultLabel.setText("Congratulations! You have identified all 4 types of angles.");
-                            submitButton.setEnabled(false);
-                        } else {
-                            generateNewAngle();
-                        }
-                    }
-                }
-            } catch (NumberFormatException ex) {
-                resultLabel.setText("Please enter a valid angle.");
-            }
-        }
-    }
-
-    private static class AngleCanvas extends JPanel {
-        private int angle = 0;
-
-        public void setAngle(int angle) {
-            this.angle = angle;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            int centerX = getWidth() / 2;
-            int centerY = getHeight() / 2;
-            int radius = Math.min(centerX, centerY) - 20;
-
-            // 绘制角度
-            g.setColor(Color.BLUE);
-            g.drawLine(centerX, centerY, centerX + radius, centerY);
-            int endX = (int) (centerX + radius * Math.cos(Math.toRadians(angle)));
-            int endY = (int) (centerY - radius * Math.sin(Math.toRadians(angle)));
-            g.drawLine(centerX, centerY, endX, endY);
-
-            // 绘制圆弧
-            g.setColor(Color.RED);
-            g.drawArc(centerX - radius, centerY - radius, 2 * radius, 2 * radius, 0, -angle);
-
-            // 显示角度值
-            g.setColor(Color.BLACK);
-            g.drawString(angle + "°", centerX + 10, centerY - 10);
-        }
-    }
-
-    private void CreateTask2Screen() {
+    private void CreateTaskScreen() {
         // 设置窗口
         setTitle("Task 2: Angle Types");
         setSize(800, 600);
@@ -161,7 +50,7 @@ public class Task2Screen extends JFrame {
         setLayout(new BorderLayout());
     }
 
-    private void CreateTask2TopNavigationBar() {
+    private void CreateTaskTopNavigationBar() {
         // 顶部导航栏
         gradientTopWrapper = getJPanel();
         topPanel = new TopNavBarPanel();
@@ -179,7 +68,7 @@ public class Task2Screen extends JFrame {
         });
     }
 
-    private void CreateTask2ProgressBarPanel() {
+    private void CreateTaskProgressBarPanel() {
         // 自定义进度条
         progressBar = new JProgressBar(0, 8);
         progressBar.setValue(0);  // 设置初始进度为0
@@ -203,7 +92,7 @@ public class Task2Screen extends JFrame {
         });
     }
 
-    private void CreateTask1InputPanel() {
+    private void CreateTaskInputPanel() {
         // 问题和答案输入框
         inputPanel = new JPanel();
         inputPanel.setLayout(new FlowLayout());
@@ -236,7 +125,7 @@ public class Task2Screen extends JFrame {
         });
     }
 
-    private void CreateTask1submitButton() {
+    private void CreateTasksubmitButton() {
         submitButton = new JButton("Submit");
         // 设置按钮颜色和样式
         submitButton.setBackground(new Color(33, 150, 243));  // 背景颜色（蓝色）
@@ -393,7 +282,7 @@ public class Task2Screen extends JFrame {
         });
     }
 
-    private void CreateTask1HintPanel() {
+    private void CreateTaskHintPanel() {
         // 错误提示框
         hintPanel = new JPanel();
         hintPanel.setLayout(new FlowLayout());
@@ -404,7 +293,7 @@ public class Task2Screen extends JFrame {
         hintPanel.add(hintLabel);
     }
 
-    private void CreateTask1AttemptPanel() {
+    private void CreateTaskAttemptPanel() {
         attemptPanel = new JPanel();
         attemptPanel.setLayout(new FlowLayout());
         attemptDots = new JLabel("Attempts: ");
@@ -442,12 +331,12 @@ public class Task2Screen extends JFrame {
     }
 
 
-    public Task2Screen() {
+    public TaskTemplateScreen() {
         // 设置窗口
-        CreateTask2Screen();
+        CreateTaskScreen();
 
         // 顶部导航栏
-        CreateTask2TopNavigationBar();
+        CreateTaskTopNavigationBar();
 
         // 任务显示面板
         taskPanel = new JPanel();
@@ -461,7 +350,7 @@ public class Task2Screen extends JFrame {
         progressPanel.setFont(new Font("Arial", Font.BOLD, 24));
 
         // 自定义进度条
-        CreateTask2ProgressBarPanel();
+        CreateTaskProgressBarPanel();
 
         progressPanel.add(progressLabel);
         progressPanel.add(progressBar);
@@ -470,10 +359,10 @@ public class Task2Screen extends JFrame {
 
 
         // 问题和答案输入框
-        CreateTask1InputPanel();
+        CreateTaskInputPanel();
 
         // 创建 submitButton
-        CreateTask1submitButton();
+        CreateTasksubmitButton();
 
         inputPanel.add(questionLabel);
         inputPanel.add(styledTextField);
@@ -481,11 +370,11 @@ public class Task2Screen extends JFrame {
         taskPanel.add(inputPanel);
 
         // 错误提示框
-        CreateTask1HintPanel();
+        CreateTaskHintPanel();
         taskPanel.add(hintPanel);
 
         // 尝试次数显示
-        CreateTask1AttemptPanel();
+        CreateTaskAttemptPanel();
         taskPanel.add(attemptPanel);
 
         // 加载第一个形状
@@ -498,11 +387,6 @@ public class Task2Screen extends JFrame {
 
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new Task2Screen().setVisible(true);
-            }
-        });
+        SwingUtilities.invokeLater(() -> new TaskTemplateScreen().setVisible(true));
     }
 }
