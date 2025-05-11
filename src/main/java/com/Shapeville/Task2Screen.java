@@ -19,6 +19,38 @@ public class Task2Screen extends JFrame {
     private JButton submitButton;
     private JButton nextButton;
 
+    // Panel to draw the angle
+    class AnglePanel extends JPanel {
+        private int angle;
+        private static final int RADIUS = 100;
+
+        public AnglePanel(int angle) {
+            this.angle = angle;
+            setPreferredSize(new Dimension(300, 300));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setStroke(new BasicStroke(3));
+            int cx = getWidth() / 2;
+            int cy = getHeight() / 2;
+            // Draw base line
+            g2.drawLine(cx, cy, cx + RADIUS, cy);
+            // Draw rotated line
+            double rad = Math.toRadians(angle);
+            int x2 = cx + (int) (RADIUS * Math.cos(rad));
+            int y2 = cy - (int) (RADIUS * Math.sin(rad));
+            g2.drawLine(cx, cy, x2, y2);
+            // Draw arc indicating angle
+            g2.drawArc(cx - 30, cy - 30, 60, 60, 0, -angle);
+            // Draw angle label
+            g2.drawString(angle + "°", cx + 5, cy - 5);
+        }
+    }
+
+
     public Task2Screen() {
         setTitle("Task 2: Angle Type Identification");
         setSize(600, 600);
@@ -165,33 +197,3 @@ public class Task2Screen extends JFrame {
     }
 }
 
-// Panel to draw the angle
-class AnglePanel extends JPanel {
-    private int angle;
-    private static final int RADIUS = 100;
-
-    public AnglePanel(int angle) {
-        this.angle = angle;
-        setPreferredSize(new Dimension(300, 300));
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(3));
-        int cx = getWidth() / 2;
-        int cy = getHeight() / 2;
-        // Draw base line
-        g2.drawLine(cx, cy, cx + RADIUS, cy);
-        // Draw rotated line
-        double rad = Math.toRadians(angle);
-        int x2 = cx + (int) (RADIUS * Math.cos(rad));
-        int y2 = cy - (int) (RADIUS * Math.sin(rad));
-        g2.drawLine(cx, cy, x2, y2);
-        // Draw arc indicating angle
-        g2.drawArc(cx - 30, cy - 30, 60, 60, 0, -angle);
-        // Draw angle label
-        g2.drawString(angle + "°", cx + 5, cy - 5);
-    }
-}
