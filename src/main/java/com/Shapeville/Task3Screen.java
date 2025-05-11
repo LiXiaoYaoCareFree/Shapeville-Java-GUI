@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Line2D;
 import java.util.Random;
 
 import static com.Shapeville.ShapevilleGUI.getJPanel;
@@ -391,6 +392,37 @@ public class Task3Screen extends JFrame {
             }
         }
     }
+
+    /** 通用：绘制带双向箭头的标注 */
+    private void drawDimension(Graphics2D g, int x1, int y1, int x2, int y2, String label, Color color) {
+        Stroke old = g.getStroke();
+        g.setColor(color);
+        g.setStroke(new BasicStroke(2));
+        // 画中间线
+        g.drawLine(x1, y1, x2, y2);
+        // 画两端箭头
+        drawArrowHead(g, x1, y1, x2, y2);
+        drawArrowHead(g, x2, y2, x1, y1);
+        // 文字标签（略微偏移，避免贴在线上）
+        int mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+        g.setFont(new Font("Arial", Font.BOLD, 14));
+        g.drawString(label, mx + 4, my - 4);
+        g.setStroke(old);
+    }
+
+    /** 辅助：在 (x,y) 处画一端箭头，指向 (tx,ty) */
+    private void drawArrowHead(Graphics2D g, int x, int y, int tx, int ty) {
+        double phi = Math.toRadians(20);
+        int barb = 10;
+        double theta = Math.atan2(y - ty, x - tx);
+        double x1 = x - barb * Math.cos(theta + phi);
+        double y1 = y - barb * Math.sin(theta + phi);
+        double x2 = x - barb * Math.cos(theta - phi);
+        double y2 = y - barb * Math.sin(theta - phi);
+        g.draw(new Line2D.Double(x, y, x1, y1));
+        g.draw(new Line2D.Double(x, y, x2, y2));
+    }
+
 
     /** 简单的圆角边框实现 */
     private static class RoundedBorder implements Border {
