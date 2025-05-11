@@ -6,14 +6,14 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
-import java.util.List;
 import java.util.*;
 import static com.Shapeville.ShapevilleGUI.getJPanel;
 
 public class Task4Screen extends JFrame {
-    private List<String> modes;
-    private int totalModes;
+    private Queue<String> modesQueue;
+    private final int totalModes = 4;
     private int currentModeIndex = 0;
+    private boolean firstIsArea;
 
     private int attempts;
     private double correctResult;
@@ -49,20 +49,15 @@ public class Task4Screen extends JFrame {
             dispose();
             return;
         }
-        // 构建练习模式顺序，先选中项的两题，再做另一类型两题
-        modes = new ArrayList<>();
-        if (choice == 0) {
-            modes.add("Area with Radius");
-            modes.add("Area with Diameter");
-            modes.add("Circumference with Radius");
-            modes.add("Circumference with Diameter");
+        firstIsArea = (choice == 0);
+        modesQueue = new LinkedList<>();
+        if (firstIsArea) {
+            modesQueue.add("Area with Radius");
+            modesQueue.add("Area with Diameter");
         } else {
-            modes.add("Circumference with Radius");
-            modes.add("Circumference with Diameter");
-            modes.add("Area with Radius");
-            modes.add("Area with Diameter");
+            modesQueue.add("Circumference with Radius");
+            modesQueue.add("Circumference with Diameter");
         }
-        totalModes = modes.size();
 
         // 北：导航栏
         JPanel topWrapper = getJPanel();
@@ -104,7 +99,6 @@ public class Task4Screen extends JFrame {
         bindTimer();
         setLocationRelativeTo(null);
         setVisible(true);
-
         loadNextMode();
     }
 
@@ -121,6 +115,16 @@ public class Task4Screen extends JFrame {
     }
 
     private void loadNextMode() {
+        // 第三题之前，自动添加另一类型的两题
+        if (currentModeIndex == 2) {
+            if (firstIsArea) {
+                modesQueue.add("Circumference with Radius");
+                modesQueue.add("Circumference with Diameter");
+            } else {
+                modesQueue.add("Area with Radius");
+                modesQueue.add("Area with Diameter");
+            }
+        }
         if (currentModeIndex >= totalModes) {
             JOptionPane.showMessageDialog(this, "练习结束！");
             dispose();
@@ -135,7 +139,7 @@ public class Task4Screen extends JFrame {
         progressLabel.setText("Progress: " + currentModeIndex + " / " + totalModes);
         progressBar.setValue(currentModeIndex);
 
-        String mode = modes.get(currentModeIndex);
+        String mode = modesQueue.poll();
         currentModeIndex++;
         Random rnd = new Random();
         value = rnd.nextInt(20) + 1;
@@ -146,7 +150,6 @@ public class Task4Screen extends JFrame {
             case "Circumference with Radius":   correctResult = 2 * Math.PI * value; break;
             default:                        correctResult = Math.PI * value;
         }
-
         cardPanel.updateQuestion(mode, value, correctResult, this::onSubmit);
     }
 
@@ -179,7 +182,7 @@ public class Task4Screen extends JFrame {
         finishRound();
     }
 
-    /** 卡片式面板 */
+    /** 卡片式面板及画布，代码与之前保持一致 **/
     private class CardPanel extends JPanel {
         private CircleCanvas canvas;
         private JLabel title, formulaLabel, paramLabel, feedbackLabel;
@@ -229,12 +232,11 @@ public class Task4Screen extends JFrame {
         }
 
         void updateQuestion(String mode, int val, double correct, Runnable cb) {
-            title.setText(mode.replace("with", "with "));
+            title.setText(mode);
             formulaLabel.setText("Formula: " + canvas.getFormulaText(mode));
             paramLabel.setText("Given: " + (mode.contains("Radius") ? "r = " : "d = ") + val + " cm");
             canvas.setQuestion(mode, val);
 
-            // 按钮绑定
             submitBtn.setVisible(true);
             nextBtn.setVisible(false);
             feedbackLabel.setText("You have 3 attempts");
@@ -267,20 +269,19 @@ public class Task4Screen extends JFrame {
         }
     }
 
-    /** 画圆和标注 */
     private class CircleCanvas extends JPanel {
-        String mode;
-        int val;
+        private String mode;
+        private int val;
         boolean showResult = false;
-        static final int SCALE = 10;
+        private static final int SCALE = 10;
 
         void setQuestion(String m, int v) {
-            this.mode = m;
-            this.val = v;
+            mode = m;
+            val = v;
         }
 
-        String getFormulaText(String mode) {
-            switch (mode) {
+        String getFormulaText(String m) {
+            switch (m) {
                 case "Area with Radius":      return "A = π × r²";
                 case "Area with Diameter":    return "A = π / 4 × d²";
                 case "Circumference with Radius":   return "C = 2π × r";
@@ -300,13 +301,11 @@ public class Task4Screen extends JFrame {
             int diameterPx = val * SCALE;
             int cx = getWidth() / 2, cy = getHeight() / 2;
 
-            // 画圆
             g.setColor(new Color(100, 149, 237));
             g.fillOval(cx - radiusPx, cy - radiusPx, 2 * radiusPx, 2 * radiusPx);
             g.setColor(Color.BLACK);
             g.drawOval(cx - radiusPx, cy - radiusPx, 2 * radiusPx, 2 * radiusPx);
 
-            // 标注半径或直径
             g.setColor(Color.RED);
             if (mode.contains("Radius")) {
                 drawDimension(g, cx, cy, cx + radiusPx, cy, "r = " + val + " cm");
@@ -314,7 +313,6 @@ public class Task4Screen extends JFrame {
                 drawDimension(g, cx - diameterPx/2, cy, cx + diameterPx/2, cy, "d = " + val + " cm");
             }
 
-            // 显示计算结果
             if (showResult) {
                 String resTxt;
                 if (mode.startsWith("Area")) {
@@ -329,7 +327,6 @@ public class Task4Screen extends JFrame {
             }
         }
 
-        // 绘制带箭头的标注线
         private void drawDimension(Graphics2D g, int x1, int y1, int x2, int y2, String label) {
             Stroke old = g.getStroke();
             g.setStroke(new BasicStroke(2));
@@ -354,7 +351,6 @@ public class Task4Screen extends JFrame {
         }
     }
 
-    /** 圆角边框 */
     private static class RoundedBorder implements Border {
         private final int r;
         RoundedBorder(int radius) { this.r = radius; }
