@@ -73,15 +73,9 @@ public class Task3Screen extends JFrame {
         cardPanel = new RoundedCardPanel();
         add(cardPanel, BorderLayout.CENTER);
 
-        bindActions();
-        loadShape();
 
         setLocationRelativeTo(null);
         setVisible(true);
-
-//        remainingShapes = new java.util.ArrayList<>(
-//                java.util.Arrays.asList(shapes)
-//        );
 
         bindActions();
         loadShape();  // 现在会先弹出选择对话框
