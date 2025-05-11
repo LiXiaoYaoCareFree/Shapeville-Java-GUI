@@ -12,6 +12,8 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 public class Task3Screen extends JFrame {
     private final String[] shapes = {"Rectangle", "Parallelogram", "Triangle", "Trapezoid"};
     private int currentShapeIndex = 0;
+    private java.util.List<String> remainingShapes;
+
 
     private int attempts = 3;
     private double correctArea;
@@ -29,6 +31,7 @@ public class Task3Screen extends JFrame {
     private JLabel hintLabel;
 
     public Task3Screen() {
+        remainingShapes = new java.util.ArrayList<>(java.util.Arrays.asList(shapes));
         setTitle("Task 3: Shape Area Calculation");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -75,6 +78,17 @@ public class Task3Screen extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
+
+//        remainingShapes = new java.util.ArrayList<>(
+//                java.util.Arrays.asList(shapes)
+//        );
+
+        bindActions();
+        loadShape();  // 现在会先弹出选择对话框
+
+        setLocationRelativeTo(null);
+        setVisible(true);
+
     }
 
     /** 绑定倒计时和按钮逻辑 */
@@ -101,9 +115,34 @@ public class Task3Screen extends JFrame {
         progressLabel.setText("Progress: " + currentShapeIndex + " / " + shapes.length);
         progressBar.setValue(currentShapeIndex);
 
+        // 如果已经完成全部4种，结束
+        if (currentShapeIndex >= shapes.length) {
+            JOptionPane.showMessageDialog(this, "练习结束，您完成了所有题目！");
+            dispose();
+            return;
+        }
+
+        // 弹出对话框，让用户从剩余图形中选一个
+        String[] options = remainingShapes.toArray(new String[0]);
+        String shape = (String) JOptionPane.showInputDialog(
+                this,
+                "请选择一个图形：",
+                "选择图形",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+        if (shape == null) { // 用户点“取消”
+            dispose();
+            return;
+        }
+        // 从列表中移除，防止重复练习
+        remainingShapes.remove(shape);
+
+
         // 生成随机参数并计算面积
         Random rand = new Random();
-        String shape = shapes[currentShapeIndex];
         switch (shape) {
             case "Rectangle":
                 dims = new int[]{rand.nextInt(20)+1, rand.nextInt(20)+1};
@@ -124,7 +163,9 @@ public class Task3Screen extends JFrame {
                 dims = new int[]{a,b,h};
                 correctArea = (a + b) * h / 2.0;
         }
-        cardPanel.updateShape(shapes[currentShapeIndex], dims, correctArea, this::onSubmit);
+        // 把所选图形名称、参数和计算逻辑传给 cardPanel
+        cardPanel.updateShape(shape, dims, correctArea, this::onSubmit);
+
     }
 
     /** 用户提交答案的回调 */
