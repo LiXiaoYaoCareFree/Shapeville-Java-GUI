@@ -82,7 +82,6 @@ public class Task3Screen extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
-
     }
 
     /** 绑定倒计时和按钮逻辑 */

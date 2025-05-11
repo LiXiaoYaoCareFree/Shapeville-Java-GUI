@@ -11,15 +11,8 @@ import java.util.*;
 import static com.Shapeville.ShapevilleGUI.getJPanel;
 
 public class Task4Screen extends JFrame {
-    // 四种练习模式
-    private final String[] modes = {
-            "Area with Radius",
-            "Area with Diameter",
-            "Circumference with Radius",
-            "Circumference with Diameter"
-    };
+    private List<String> modes;
     private int totalModes;
-    private List<String> remainingModes;
     private int currentModeIndex = 0;
 
     private int attempts;
@@ -40,11 +33,11 @@ public class Task4Screen extends JFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        // 初始选择：面积 或 周长
+        // 初始选择：先练习 Area 还是 Circumference
         String[] options = {"Area", "Circumference"};
         int choice = JOptionPane.showOptionDialog(
                 this,
-                "请选择练习类型:",
+                "请选择先练习的计算类型:",
                 "选择计算类型",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
@@ -52,24 +45,26 @@ public class Task4Screen extends JFrame {
                 options,
                 options[0]
         );
-        // 如果用户关闭对话框，取消
         if (choice < 0) {
             dispose();
             return;
         }
-        boolean isArea = (choice == 0);
-        // 根据选择初始化练习模式
-        remainingModes = new ArrayList<>();
-        if (isArea) {
-            remainingModes.add("Area with Radius");
-            remainingModes.add("Area with Diameter");
+        // 构建练习模式顺序，先选中项的两题，再做另一类型两题
+        modes = new ArrayList<>();
+        if (choice == 0) {
+            modes.add("Area with Radius");
+            modes.add("Area with Diameter");
+            modes.add("Circumference with Radius");
+            modes.add("Circumference with Diameter");
         } else {
-            remainingModes.add("Circumference with Radius");
-            remainingModes.add("Circumference with Diameter");
+            modes.add("Circumference with Radius");
+            modes.add("Circumference with Diameter");
+            modes.add("Area with Radius");
+            modes.add("Area with Diameter");
         }
-        totalModes = remainingModes.size();
+        totalModes = modes.size();
 
-        // ─── 北：导航栏 ─────────────────────────
+        // 北：导航栏
         JPanel topWrapper = getJPanel();
         TopNavBarPanel topNav = new TopNavBarPanel();
         topWrapper.add(topNav);
@@ -81,7 +76,7 @@ public class Task4Screen extends JFrame {
             dispose();
         });
 
-        // ─── 东：倒计时 + 进度 ────────────────────
+        // 东：计时与进度
         JPanel east = new JPanel();
         east.setLayout(new BoxLayout(east, BoxLayout.Y_AXIS));
         east.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -102,7 +97,7 @@ public class Task4Screen extends JFrame {
         east.add(progressBar);
         add(east, BorderLayout.EAST);
 
-        // ─── 中央：题目卡片 ────────────────────
+        // 中：题目卡片
         cardPanel = new CardPanel();
         add(cardPanel, BorderLayout.CENTER);
 
@@ -113,7 +108,6 @@ public class Task4Screen extends JFrame {
         loadNextMode();
     }
 
-    /** 绑定倒计时逻辑 */
     private void bindTimer() {
         countdownTimer = new Timer(1000, e -> {
             remainingSeconds--;
@@ -126,15 +120,12 @@ public class Task4Screen extends JFrame {
         });
     }
 
-    /** 加载下一种模式：随机生成半径/直径并计算正确值 */
     private void loadNextMode() {
-        // 如果无模式则完成
-        if (remainingModes.isEmpty()) {
+        if (currentModeIndex >= totalModes) {
             JOptionPane.showMessageDialog(this, "练习结束！");
             dispose();
             return;
         }
-        // 重置计时与机会
         attempts = 3;
         remainingSeconds = 180;
         countdownTimer.restart();
@@ -144,13 +135,11 @@ public class Task4Screen extends JFrame {
         progressLabel.setText("Progress: " + currentModeIndex + " / " + totalModes);
         progressBar.setValue(currentModeIndex);
 
-        // 获取当前模式
-        String mode = remainingModes.remove(0);
+        String mode = modes.get(currentModeIndex);
         currentModeIndex++;
         Random rnd = new Random();
         value = rnd.nextInt(20) + 1;
 
-        // 计算正确答案
         switch (mode) {
             case "Area with Radius":      correctResult = Math.PI * value * value; break;
             case "Area with Diameter":    correctResult = Math.PI * value * value / 4.0; break;
@@ -158,12 +147,9 @@ public class Task4Screen extends JFrame {
             default:                        correctResult = Math.PI * value;
         }
 
-        // 更新卡片显示
         cardPanel.updateQuestion(mode, value, correctResult, this::onSubmit);
     }
 
-
-    /** 提交回调 */
     private void onSubmit() {
         try {
             double ans = Double.parseDouble(cardPanel.inputField.getText().trim());
@@ -183,13 +169,11 @@ public class Task4Screen extends JFrame {
         }
     }
 
-    /** 完成本题后的处理 */
     private void finishRound() {
         countdownTimer.stop();
         cardPanel.showFormulaAndNext(this::loadNextMode);
     }
 
-    /** 时间或机会用尽时公布答案 */
     private void revealAnswer() {
         cardPanel.showFeedback(String.format("Answer: %.2f", correctResult));
         finishRound();
