@@ -8,6 +8,8 @@ import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.*;
 import static com.Shapeville.ShapevilleGUI.getJPanel;
+import static com.Shapeville.ShapevilleMainContent.flag2;
+import static com.Shapeville.ShapevilleMainContent.flag4;
 
 public class Task4Screen extends JFrame {
     private Queue<String> modesQueue;
@@ -28,6 +30,10 @@ public class Task4Screen extends JFrame {
     private CardPanel cardPanel;
 
     public Task4Screen() {
+        if (flag4 == 0) {
+            ShapevilleMainContent.updateProgress();
+            flag4 = 1;
+        }
         setTitle("Task 4: Circle Area & Circumference");
         setSize(800, 600);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

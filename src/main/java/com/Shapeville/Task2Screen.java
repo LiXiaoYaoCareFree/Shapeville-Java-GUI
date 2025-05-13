@@ -6,6 +6,9 @@ import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.Shapeville.ShapevilleMainContent.flag1;
+import static com.Shapeville.ShapevilleMainContent.flag2;
+
 public class Task2Screen extends JFrame {
     private Set<String> recognizedTypes = new HashSet<>();
     private int attempts;
@@ -52,6 +55,10 @@ public class Task2Screen extends JFrame {
 
 
     public Task2Screen() {
+        if (flag2 == 0) {
+            ShapevilleMainContent.updateProgress();
+            flag2 = 1;
+        }
         setTitle("Task 2: Angle Type Identification");
         setSize(600, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

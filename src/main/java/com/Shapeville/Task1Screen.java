@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.Shapeville.ShapevilleGUI.getJPanel;
+import static com.Shapeville.ShapevilleMainContent.flag1;
 
 public class Task1Screen extends JFrame {
     private int attempts = 3; // 尝试次数
@@ -96,18 +97,6 @@ public class Task1Screen extends JFrame {
         // 设置进度条的前景色和背景色
         progressBar.setForeground(new Color(23, 181, 67));  // 设置前景色（进度条颜色）
         progressBar.setBackground(new Color(229, 231, 235)); // 设置背景色（进度条背景色）
-
-        // 设置进度条的圆角效果
-        progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
-            @Override
-            protected void paintDeterminate(Graphics g, JComponent c) {
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2d.setColor(progressBar.getForeground());
-                g2d.fillRoundRect(0, 0, progressBar.getWidth(), progressBar.getHeight(), 20, 20); // 绘制圆角进度条
-                super.paintDeterminate(g, c);
-            }
-        });
     }
 
     private void CreateTask1levelPanel() {
@@ -490,6 +479,11 @@ public class Task1Screen extends JFrame {
 
 
     public Task1Screen() {
+        if (flag1 == 0) {
+            ShapevilleMainContent.updateProgress();
+            flag1 = 1;
+        }
+
         // 设置窗口
         CreateTask1Screen();
 

@@ -8,6 +8,8 @@ import java.util.*;
 import java.util.List;
 
 import static com.Shapeville.ShapevilleGUI.getJPanel;
+import static com.Shapeville.ShapevilleMainContent.flag2;
+import static com.Shapeville.ShapevilleMainContent.flag6;
 
 public class Task6Screen extends JFrame {
     private List<String> availableShapes;
@@ -38,6 +40,10 @@ public class Task6Screen extends JFrame {
     private final Color red    = new Color(239, 68, 68);
 
     public Task6Screen() {
+        if (flag6 == 0) {
+            ShapevilleMainContent.updateProgress();
+            flag6 = 1;
+        }
         setTitle("Task 5: Sector Area Calculation");
         setSize(900, 700);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

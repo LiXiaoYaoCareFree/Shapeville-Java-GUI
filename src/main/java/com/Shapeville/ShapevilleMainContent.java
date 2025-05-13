@@ -4,6 +4,18 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ShapevilleMainContent extends JPanel {
+    public static int flag1 = 0;
+    public static int flag2 = 0;
+    public static int flag3 = 0;
+    public static int flag4 = 0;
+    public static int flag5 = 0;
+    public static int flag6 = 0;
+
+
+    public static JProgressBar progressBar;
+    public static JLabel scoreLabel;
+    private static int tasksCompleted = 0;
+    private static final int TOTAL_TASKS = 6;
 
     public ShapevilleMainContent() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -16,7 +28,7 @@ public class ShapevilleMainContent extends JPanel {
         // 加载图片图标
         ImageIcon welcomeIcon = new ImageIcon(getClass().getClassLoader().getResource("images/tick.png"));
 
-        // 设置图片图标为指定大小（可选，视情况而定）
+        // 设置图片图标为指定大小
         Image img = welcomeIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // 调整为 100x100
         welcomeIcon = new ImageIcon(img);
 
@@ -43,11 +55,11 @@ public class ShapevilleMainContent extends JPanel {
         progressPanel.setOpaque(false);
 
         JLabel progressLabel = new JLabel("Your Progress");
-        JProgressBar progressBar = new JProgressBar(0, 100);
-        progressBar.setValue(18);
+        progressBar = new JProgressBar(0, 100);
+        progressBar.setValue(0);
         progressBar.setPreferredSize(new Dimension(400, 20));
         progressBar.setForeground(new Color(76, 175, 80));
-        JLabel scoreLabel = new JLabel("18/100 points");
+        scoreLabel = new JLabel("0/100 points");
 
         progressPanel.add(progressLabel, BorderLayout.WEST);
         progressPanel.add(progressBar, BorderLayout.CENTER);
@@ -55,5 +67,16 @@ public class ShapevilleMainContent extends JPanel {
 
         add(progressPanel);
     }
+    public static void updateProgress() {
+        tasksCompleted++;
+        int percentage = (int) ((tasksCompleted * 100.0) / TOTAL_TASKS);
 
+        // 确保最后一次任务完成时显示100%
+        if (tasksCompleted == TOTAL_TASKS) {
+            percentage = 100;
+        }
+
+        progressBar.setValue(percentage);
+        scoreLabel.setText(percentage + "/100 points");
+    }
 }

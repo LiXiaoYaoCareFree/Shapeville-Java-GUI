@@ -28,3 +28,12 @@
 ![](images/img_6.png)
 
 ![](images/img_7.png)
+
+可以使用 Java 自带的 javadoc 工具生成 HTML 格式的 Java 文档。具体步骤如下：
+
+1. 打开命令行工具，进入项目的源代码目录。
+2. 运行以下命令生成 Java 文档：
+```shell
+javadoc -d docs -sourcepath src/main/java -subpackages com.Shapeville
+```
+

@@ -8,6 +8,8 @@ import java.awt.geom.Line2D;
 import java.util.Random;
 
 import static com.Shapeville.ShapevilleGUI.getJPanel;
+import static com.Shapeville.ShapevilleMainContent.flag2;
+import static com.Shapeville.ShapevilleMainContent.flag3;
 
 public class Task3Screen extends JFrame {
     private final String[] shapes = {"Rectangle", "Parallelogram", "Triangle", "Trapezoid"};
@@ -31,6 +33,10 @@ public class Task3Screen extends JFrame {
     private JLabel hintLabel;
 
     public Task3Screen() {
+        if (flag3 == 0) {
+            ShapevilleMainContent.updateProgress();
+            flag3 = 1;
+        }
         remainingShapes = new java.util.ArrayList<>(java.util.Arrays.asList(shapes));
         setTitle("Task 3: Shape Area Calculation");
         setSize(1000, 700);

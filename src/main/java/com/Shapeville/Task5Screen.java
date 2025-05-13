@@ -8,6 +8,8 @@ import java.util.*;
 import java.util.List;
 
 import static com.Shapeville.ShapevilleGUI.getJPanel;
+import static com.Shapeville.ShapevilleMainContent.flag2;
+import static com.Shapeville.ShapevilleMainContent.flag5;
 
 public class Task5Screen extends JFrame {
     private List<String> availableShapes;
@@ -41,6 +43,10 @@ public class Task5Screen extends JFrame {
     private final Color yellow = new Color(254,249,195);
 
     public Task5Screen() {
+        if (flag5 == 0) {
+            ShapevilleMainContent.updateProgress();
+            flag5 = 1;
+        }
         setTitle("Task 5: Compound Shapes Area Calculation");
         setSize(900, 700);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
