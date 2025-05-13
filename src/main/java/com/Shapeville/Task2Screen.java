@@ -47,7 +47,13 @@ public class Task2Screen extends JFrame {
             int y2 = cy - (int) (RADIUS * Math.sin(rad));
             g2.drawLine(cx, cy, x2, y2);
             // Draw arc indicating angle
-            g2.drawArc(cx - 30, cy - 30, 60, 60, 0, -angle);
+            int arcAngle = angle % 360; // 确保角度在0到360之间
+            int startAngle = 0;
+            if (arcAngle < 0) {
+                arcAngle = 360 + arcAngle;
+                startAngle = 180; // 如果角度为负，调整起始角度
+            }
+            g2.drawArc(cx - RADIUS, cy - RADIUS, RADIUS * 2, RADIUS * 2, startAngle, arcAngle);
             // Draw angle label
             g2.drawString(angle + "°", cx + 5, cy - 5);
         }
