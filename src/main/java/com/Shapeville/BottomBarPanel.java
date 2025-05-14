@@ -13,6 +13,7 @@ public class BottomBarPanel extends JPanel {
         colorBlindModeCheckBox = new JCheckBox("Enable Color Blind Mode");
         colorBlindModeCheckBox.setFont(new Font("Arial", Font.PLAIN, 14));
         colorBlindModeCheckBox.addActionListener(toggleColorListener);
+        colorBlindModeCheckBox.setToolTipText("启用色盲友好的颜色方案");
 
         add(colorBlindModeCheckBox);
     }

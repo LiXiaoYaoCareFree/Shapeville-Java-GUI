@@ -12,7 +12,7 @@ import java.util.List;
 import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag1;
 
-public class Task1Screen extends JFrame {
+public class Task1Screen extends JFrame implements ColorRefreshable {
     private int attempts = 3; // 尝试次数
     private String correctAnswer; // 正确答案
     public int score = 0; // 分数
@@ -20,7 +20,7 @@ public class Task1Screen extends JFrame {
     private TopNavBarPanel topPanel;
     private JToggleButton basicButton;
     private JToggleButton advancedButton;
-    private JPanel shapePanel;  // 显示形状的面板
+    private JPanel shapePanel; // 显示形状的面板
     private JPanel progressPanel;
     private JPanel taskPanel;
     private JPanel levelPanel;
@@ -39,22 +39,25 @@ public class Task1Screen extends JFrame {
     private Boolean isBasic;
 
     // 创建一个计数器来记录点击次数
-    int[] clickCount = {0}; // 使用数组来使其在 Lambda 表达式中可变
-
+    int[] clickCount = { 0 }; // 使用数组来使其在 Lambda 表达式中可变
 
     // 2D 和 3D 形状数组
-    private String[] shapes2D = {"Circle", "Rectangle", "Triangle", "Oval", "Octagon", "Square", "Heptagon", "Rhombus", "Pentagon", "Hexagon", "Kite"};
-    private String[] shapes3D = {"Cube", "Cuboid", "Cylinder", "Sphere", "Triangular prism", "Square-based pyramid", "Cone", "Tetrahedron"};
+    private String[] shapes2D = { "Circle", "Rectangle", "Triangle", "Oval", "Octagon", "Square", "Heptagon", "Rhombus",
+            "Pentagon", "Hexagon", "Kite" };
+    private String[] shapes3D = { "Cube", "Cuboid", "Cylinder", "Sphere", "Triangular prism", "Square-based pyramid",
+            "Cone", "Tetrahedron" };
 
     private int currentShapeIndex = 0; // 记录当前加载的图形索引
     private List<String> allShapes = new ArrayList<>(); // 存储所有待加载的图形
 
-    // 颜色常量
-    private final Color orange = new Color(245, 158, 11); // 橙色 #f59e0b
-    private final Color gray = new Color(229, 231, 235); // 灰色 #e5e7eb
-    private final Color red = new Color(239, 68, 68); // 红色 #ef4444
-    private final Color green = new Color(34, 197, 94); // 绿色
-    private final Color yellow = new Color(254,249,195);
+    // 颜色常量 - 使用ColorManager来获取颜色
+    private Color orange = ColorManager.getOrange();
+    private Color gray = ColorManager.getGray();
+    private Color red = ColorManager.getRed();
+    private Color green = ColorManager.getGreen();
+    private Color yellow = ColorManager.getYellow();
+    private Color blue = ColorManager.getBlue();
+    private Color blueDark = ColorManager.getBlueDark();
 
     // 从2D形状数组中随机选择4个
     List<String> selected2DShapes = getRandomElements(shapes2D, 4);
@@ -77,12 +80,16 @@ public class Task1Screen extends JFrame {
         add(gradientTopWrapper, BorderLayout.NORTH);
         // 绑定按钮监听事件
         topPanel.homeButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null, "Returning to Home Screen...");
+            JOptionPane.showMessageDialog(this, "Returning to Home Screen...");
+            // 立即关闭窗口，不显示更多对话框
+            System.out.println("Task1Screen closing from home button");
             dispose();
         });
 
         topPanel.endSessionButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null, "You earned " + score + " points in this session. Goodbye!");
+            JOptionPane.showMessageDialog(this, "You earned " + score + " points in this session. Goodbye!");
+            // 立即关闭窗口，不显示更多对话框
+            System.out.println("Task1Screen closing from end session button");
             dispose();
         });
     }
@@ -90,26 +97,26 @@ public class Task1Screen extends JFrame {
     private void CreateTask1ProgressBarPanel() {
         // 自定义进度条
         progressBar = new JProgressBar(0, 8);
-        progressBar.setValue(0);  // 设置初始进度为0
+        progressBar.setValue(0); // 设置初始进度为0
         progressBar.setPreferredSize(new Dimension(300, 20)); // 设置进度条的尺寸
         progressBar.setStringPainted(true); // 显示进度文本
 
         // 设置进度条的前景色和背景色
-        progressBar.setForeground(new Color(23, 181, 67));  // 设置前景色（进度条颜色）
+        progressBar.setForeground(new Color(23, 181, 67)); // 设置前景色（进度条颜色）
         progressBar.setBackground(new Color(229, 231, 235)); // 设置背景色（进度条背景色）
     }
 
     private void CreateTask1levelPanel() {
-        //创建按钮组，用于管理互斥选择
+        // 创建按钮组，用于管理互斥选择
         basicButton = new JToggleButton("2D Shapes (Basic Level)");
-        basicButton.setPreferredSize(new Dimension(300, 40));  // 设置按钮尺寸
+        basicButton.setPreferredSize(new Dimension(300, 40)); // 设置按钮尺寸
         basicButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        basicButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
+        basicButton.setBackground(new Color(33, 150, 243)); // 按钮颜色
         basicButton.setForeground(Color.WHITE);
         advancedButton = new JToggleButton("3D Shapes (Advanced Level)");
-        advancedButton.setPreferredSize(new Dimension(300, 40));  // 设置按钮尺寸
+        advancedButton.setPreferredSize(new Dimension(300, 40)); // 设置按钮尺寸
         advancedButton.setFont(new Font("Roboto", Font.BOLD, 16));
-        advancedButton.setBackground(new Color(33, 150, 243));  // 按钮颜色
+        advancedButton.setBackground(new Color(33, 150, 243)); // 按钮颜色
         advancedButton.setForeground(Color.WHITE);
     }
 
@@ -122,17 +129,17 @@ public class Task1Screen extends JFrame {
         styledTextField = new JTextField(20);
         styledTextField.setPreferredSize(new Dimension(300, 40));
         // 设置字体
-        styledTextField.setFont(new Font("Roboto", Font.PLAIN, 16));  // 设置字体大小
-        styledTextField.setForeground(Color.BLACK);  // 设置文本颜色
+        styledTextField.setFont(new Font("Roboto", Font.PLAIN, 16)); // 设置字体大小
+        styledTextField.setForeground(Color.BLACK); // 设置文本颜色
 
         // 设置背景颜色和边框
-        styledTextField.setBackground(new Color(245, 245, 245));  // 设置背景色
-        styledTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 2));  // 设置边框颜色和厚度
+        styledTextField.setBackground(new Color(245, 245, 245)); // 设置背景色
+        styledTextField.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 2)); // 设置边框颜色和厚度
 
         // 设置圆角效果
-        styledTextField.setCaretColor(Color.BLACK);  // 设置输入光标的颜色
-        styledTextField.setSelectionColor(yellow);  // 设置选中文本的背景色
-        styledTextField.setSelectionColor(Color.WHITE);  // 设置选中文本的前景色
+        styledTextField.setCaretColor(Color.BLACK); // 设置输入光标的颜色
+        styledTextField.setSelectionColor(yellow); // 设置选中文本的背景色
+        styledTextField.setSelectionColor(Color.WHITE); // 设置选中文本的前景色
 
         // 鼠标悬停效果，改变边框颜色
         styledTextField.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -149,12 +156,12 @@ public class Task1Screen extends JFrame {
     private void CreateTask1submitButton() {
         submitButton = new JButton("Submit");
         // 设置按钮颜色和样式
-        submitButton.setBackground(new Color(33, 150, 243));  // 背景颜色（蓝色）
-        submitButton.setForeground(Color.WHITE);  // 文本颜色（白色）
-        submitButton.setFont(new Font("Roboto", Font.BOLD, 16));  // 设置字体大小和加粗
-        submitButton.setPreferredSize(new Dimension(100, 40));  // 设置按钮尺寸
-        submitButton.setFocusPainted(false);  // 去掉按钮的焦点框
-        submitButton.setBorder(BorderFactory.createLineBorder(new Color(33, 150, 243), 2));  // 设置边框颜色和宽度
+        submitButton.setBackground(blue); // 使用ColorManager颜色
+        submitButton.setForeground(Color.WHITE); // 文本颜色（白色）
+        submitButton.setFont(new Font("Roboto", Font.BOLD, 16)); // 设置字体大小和加粗
+        submitButton.setPreferredSize(new Dimension(100, 40)); // 设置按钮尺寸
+        submitButton.setFocusPainted(false); // 去掉按钮的焦点框
+        submitButton.setBorder(BorderFactory.createLineBorder(blue, 2)); // 设置边框颜色和宽度
 
         // 设置圆角和阴影
         submitButton.setBorder(BorderFactory.createCompoundBorder(
@@ -162,7 +169,7 @@ public class Task1Screen extends JFrame {
                 BorderFactory.createEmptyBorder(10, 20, 10, 20) // 增加内边距，圆角效果会更好
         ));
 
-        submitButton.setBackground(new Color(33, 150, 243));
+        submitButton.setBackground(blue);
         submitButton.setOpaque(true);
         submitButton.setBorderPainted(false); // 去除按钮边框
         submitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // 鼠标样式
@@ -171,12 +178,12 @@ public class Task1Screen extends JFrame {
         submitButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                submitButton.setBackground(new Color(23, 132, 204)); // 鼠标悬停时变暗
+                submitButton.setBackground(blueDark); // 鼠标悬停时变暗
             }
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                submitButton.setBackground(new Color(33, 150, 243)); // 恢复默认颜色
+                submitButton.setBackground(blue); // 恢复默认颜色
             }
         });
         SubmitButtonEvent();
@@ -201,12 +208,12 @@ public class Task1Screen extends JFrame {
                     // 清空输入框（三次错误后）
                     styledTextField.setText("");
                     showCustomDialog(score); // 调用自定义对话框方法
-                    hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));  // 设置字体为 Arial，字体加粗，大小为 18
-                    hintLabel.setForeground(green);  // 设置提示为绿色
-                    attempts = 3;  // 重置尝试次数
+                    hintLabel.setFont(new Font("Roboto", Font.BOLD, 16)); // 设置字体为 Arial，字体加粗，大小为 18
+                    hintLabel.setForeground(green); // 设置提示为绿色
+                    attempts = 3; // 重置尝试次数
                     updateAttempts();
                     submitButton.setEnabled(false); // 禁用提交按钮
-                    taskPanel.add(createNextShapeButton());  // 添加下一题按钮
+                    taskPanel.add(createNextShapeButton()); // 添加下一题按钮
                 } else {
                     attempts--;
                     if (attempts > 0) {
@@ -219,8 +226,8 @@ public class Task1Screen extends JFrame {
                         hintLabel.setForeground(red);
                         // 清空输入框（三次错误后）
                         styledTextField.setText("");
-                        submitButton.setEnabled(false);  // 禁用提交按钮
-                        taskPanel.add(createNextShapeButton());  // 添加下一题按钮
+                        submitButton.setEnabled(false); // 禁用提交按钮
+                        taskPanel.add(createNextShapeButton()); // 添加下一题按钮
                         // 当处理完所有形状（第8次按下nextShape）时，关闭窗口
                     }
                     updateAttempts();
@@ -236,7 +243,7 @@ public class Task1Screen extends JFrame {
         hintPanel.setBackground(yellow);
         hintLabel = new JLabel("You are allowed three attempts.");
         hintLabel.setFont(new Font("Roboto", Font.BOLD, 16));
-        hintLabel.setForeground(red);  // 设置提示为绿色
+        hintLabel.setForeground(red); // 设置提示为绿色
         hintPanel.add(hintLabel);
     }
 
@@ -252,20 +259,25 @@ public class Task1Screen extends JFrame {
     private int calculateScore(boolean isBasic, int attempts) {
         switch (attempts) {
             case 1:
-                return isBasic? 1 : 2;
+                return isBasic ? 1 : 2;
             case 2:
-                return isBasic? 2 : 4;
+                return isBasic ? 2 : 4;
             case 3:
-                return isBasic? 3 : 6;
+                return isBasic ? 3 : 6;
             default:
                 return 0;
         }
     }
+
     // 自定义正确提示对话框
     private void showCustomDialog(int score) {
-        JDialog dialog = new JDialog(this, null, true);
+        // 创建非模态对话框，避免阻塞主窗口恢复焦点
+        JDialog dialog = new JDialog();
+        dialog.setTitle("Score");
         dialog.setSize(300, 200);
         dialog.setLayout(new BorderLayout());
+        dialog.setLocationRelativeTo(null);
+        dialog.setAlwaysOnTop(true);
 
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
@@ -294,9 +306,12 @@ public class Task1Screen extends JFrame {
         scorePanel.add(scoreValueLabel);
         scorePanel.add(scoreValue);
         contentPanel.add(scorePanel);
-        Timer timer = new Timer( 2000, e -> dialog.dispose());
+
+        // 确保任务窗口关闭前对话框已经关闭
+        Timer timer = new Timer(2000, e -> dialog.dispose());
         timer.setRepeats(false);
         timer.start();
+
         // 继续按钮
         JButton continueButton = new JButton("Continue");
         continueButton.setBackground(new Color(240, 248, 255));
@@ -306,7 +321,6 @@ public class Task1Screen extends JFrame {
         contentPanel.add(continueButton);
 
         dialog.add(contentPanel, BorderLayout.CENTER);
-        dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
 
@@ -319,9 +333,10 @@ public class Task1Screen extends JFrame {
         basicButton.setSelected(!isBasic);
         advancedButton.setSelected(isBasic);
     }
+
     // 获取颜色的Hex值
     private String getColorHex(Color color) {
-        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        return ColorManager.getColorHex(color);
     }
 
     // 更新尝试次数显示
@@ -330,16 +345,24 @@ public class Task1Screen extends JFrame {
         // 每次都有三个圆点，颜色会根据错误次数变化
         for (int i = 0; i < 3; i++) {
             if (attempts == 3) { // 初始状态
-                if (i == 0) attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
-                else attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
+                if (i == 0)
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                else
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
             } else if (attempts == 2) { // 第一次错误
-                if (i == 0) attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
-                else if (i == 1) attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
-                else attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
+                if (i == 0)
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                else if (i == 1)
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                else
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
             } else if (attempts == 1) { // 第二次错误
-                if (i == 0) attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
-                else if (i == 1) attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
-                else attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                if (i == 0)
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                else if (i == 1)
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                else
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
             } else { // 第三次错误
                 attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 全部红色
             }
@@ -347,8 +370,6 @@ public class Task1Screen extends JFrame {
         attemptsText += "</html>";
         attemptDots.setText(attemptsText);
     }
-
-
 
     private JButton createNextShapeButton() {
         nextButton = new JButton("Next Shape");
@@ -361,8 +382,7 @@ public class Task1Screen extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 在此处理下一题的逻辑
-//                JOptionPane.showMessageDialog(null, "Loading next shape...");
-                loadNextShape();  // 调用重新加载形状的方法
+                loadNextShape(); // 调用重新加载形状的方法
 
                 // 重置 submitButton 按钮的状态
                 submitButton.setEnabled(true); // 启用提交按钮
@@ -382,16 +402,21 @@ public class Task1Screen extends JFrame {
 
                 // 检查是否点击了第8次
                 if (clickCount[0] == 8) {
-                    dispose(); // 第8次点击时关闭窗口
-                    System.out.println("task1Screen closed after 8 clicks.");
-                    showCustomDialog(score); // 调用自定义对话框方法
+                    // 先显示分数对话框
+                    showCustomDialog(score);
+
+                    // 延迟一小段时间再关闭窗口，确保对话框有时间显示和关闭
+                    Timer closeTimer = new Timer(2500, event -> {
+                        System.out.println("Task1Screen closed after 8 clicks.");
+                        dispose(); // 使用计时器延迟关闭窗口
+                    });
+                    closeTimer.setRepeats(false);
+                    closeTimer.start();
                 }
             }
         });
         return nextButton;
     }
-
-
 
     // 加载下一个形状
     private void loadNextShape() {
@@ -399,13 +424,14 @@ public class Task1Screen extends JFrame {
             String nextShapeName = allShapes.get(currentShapeIndex);
             try {
                 // 加载图片
-                ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("images/task1/" + nextShapeName + ".png"));
+                ImageIcon icon = new ImageIcon(
+                        getClass().getClassLoader().getResource("images/task1/" + nextShapeName + ".png"));
                 JLabel nextShape = new JLabel(icon);
 
-                shapePanel.removeAll();  // 清除当前形状
-                shapePanel.add(nextShape);  // 添加新形状
-                shapePanel.revalidate();  // 重新验证面板，以更新显示
-                shapePanel.repaint();  // 重新绘制面板以显示新形状
+                shapePanel.removeAll(); // 清除当前形状
+                shapePanel.add(nextShape); // 添加新形状
+                shapePanel.revalidate(); // 重新验证面板，以更新显示
+                shapePanel.repaint(); // 重新绘制面板以显示新形状
 
                 correctAnswer = nextShapeName; // 更新正确答案
                 attempts = 3; // 重置尝试次数
@@ -451,7 +477,6 @@ public class Task1Screen extends JFrame {
         return list.subList(0, Math.min(count, list.size()));
     }
 
-
     private void configureButton(JToggleButton button) {
         button.setPreferredSize(new Dimension(300, 40));
         button.setFont(new Font("Roboto", Font.BOLD, 16));
@@ -477,6 +502,92 @@ public class Task1Screen extends JFrame {
         button.setBackground(new Color(33, 150, 243));
     }
 
+    /**
+     * 刷新所有UI元素的颜色，以响应色盲模式变化
+     */
+    @Override
+    public void refreshColors() {
+        System.out.println("Task1Screen正在刷新颜色...");
+
+        // 更新颜色常量
+        orange = ColorManager.getOrange();
+        gray = ColorManager.getGray();
+        red = ColorManager.getRed();
+        green = ColorManager.getGreen();
+        yellow = ColorManager.getYellow();
+        blue = ColorManager.getBlue();
+        blueDark = ColorManager.getBlueDark();
+
+        // 更新按钮颜色
+        if (submitButton != null) {
+            submitButton.setBackground(blue);
+            submitButton.setForeground(Color.WHITE);
+        }
+
+        if (nextButton != null) {
+            nextButton.setBackground(blue);
+            nextButton.setForeground(Color.WHITE);
+        }
+
+        if (basicButton != null) {
+            basicButton.setBackground(blue);
+            if (basicButton.isSelected()) {
+                basicButton.setBackground(blueDark);
+            }
+        }
+
+        if (advancedButton != null) {
+            advancedButton.setBackground(blue);
+            if (advancedButton.isSelected()) {
+                advancedButton.setBackground(blueDark);
+            }
+        }
+
+        // 更新提示文本颜色
+        if (hintLabel != null) {
+            // 保持当前提示文本的颜色意义
+            String hintText = hintLabel.getText();
+            if (hintText.startsWith("Correct")) {
+                hintLabel.setForeground(green);
+            } else if (hintText.startsWith("Not quite") || hintText.startsWith("No more")) {
+                hintLabel.setForeground(red);
+            }
+        }
+
+        // 更新进度条颜色
+        if (progressBar != null) {
+            progressBar.setForeground(ColorManager.getProgressBarColor());
+        }
+
+        // 更新尝试次数指示器
+        updateAttempts();
+
+        // 更新输入框文本颜色
+        if (styledTextField != null) {
+            styledTextField.setSelectionColor(yellow);
+        }
+
+        // 刷新渐变背景
+        if (gradientTopWrapper != null) {
+            gradientTopWrapper.repaint();
+        }
+
+        // 重绘所有面板
+        if (taskPanel != null)
+            taskPanel.repaint();
+        if (shapePanel != null)
+            shapePanel.repaint();
+        if (inputPanel != null)
+            inputPanel.repaint();
+        if (hintPanel != null)
+            hintPanel.repaint();
+        if (attemptPanel != null)
+            attemptPanel.repaint();
+        if (progressPanel != null)
+            progressPanel.repaint();
+        if (levelPanel != null)
+            levelPanel.repaint();
+    }
 
     public Task1Screen() {
         if (flag1 == 0) {
@@ -493,7 +604,7 @@ public class Task1Screen extends JFrame {
         // 任务显示面板
         taskPanel = new JPanel();
         taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
-        taskPanel.setBackground(new Color(240, 248, 255));  // 设置背景颜色
+        taskPanel.setBackground(new Color(240, 248, 255)); // 设置背景颜色
 
         // 进度条面板
         progressPanel = new JPanel();
@@ -509,17 +620,16 @@ public class Task1Screen extends JFrame {
 
         taskPanel.add(progressPanel);
 
-         //选择 2D 或 3D 形状
+        // 选择 2D 或 3D 形状
         levelPanel = new JPanel();
         levelPanel.setLayout(new FlowLayout());
 
-        //创建按钮组，用于管理互斥选择
+        // 创建按钮组，用于管理互斥选择
         CreateTask1levelPanel();
 
         levelPanel.add(basicButton);
         levelPanel.add(advancedButton);
         taskPanel.add(levelPanel);
-
 
         // 形状显示区域
         shapePanel = new JPanel();
@@ -552,9 +662,9 @@ public class Task1Screen extends JFrame {
         // 加载第一个形状
         loadNextShape();
 
-        add(taskPanel, BorderLayout.CENTER);  // 将任务面板添加到主窗口
+        add(taskPanel, BorderLayout.CENTER); // 将任务面板添加到主窗口
 
-        setLocationRelativeTo(null);  // 居中显示
+        setLocationRelativeTo(null); // 居中显示
     }
 
     public static void main(String[] args) {

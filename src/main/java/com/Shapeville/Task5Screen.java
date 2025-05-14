@@ -11,7 +11,7 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag2;
 import static com.Shapeville.ShapevilleMainContent.flag5;
 
-public class Task5Screen extends JFrame {
+public class Task5Screen extends JFrame implements ColorRefreshable {
     private List<String> availableShapes;
     private Map<String, String> formulasMap;
     private Map<String, Double> solutionsMap;
@@ -35,33 +35,47 @@ public class Task5Screen extends JFrame {
     private Timer countdownTimer;
     private int remainingSeconds;
 
-    // 颜色常量
-    private final Color orange = new Color(245, 158, 11); // 橙色 #f59e0b
-    private final Color gray = new Color(229, 231, 235); // 灰色 #e5e7eb
-    private final Color red = new Color(239, 68, 68); // 红色 #ef4444
-    private final Color green = new Color(34, 197, 94); // 绿色
-    private final Color yellow = new Color(254,249,195);
+    // 使用ColorManager管理颜色
+    private Color orange = ColorManager.getOrange();
+    private Color gray = ColorManager.getGray();
+    private Color red = ColorManager.getRed();
+    private Color green = ColorManager.getGreen();
+    private Color yellow = ColorManager.getYellow();
+
+    private TopNavBarPanel topPanel;
+    private JPanel taskPanel;
+    private JPanel gradientTopWrapper;
 
     public Task5Screen() {
         if (flag5 == 0) {
             ShapevilleMainContent.updateProgress();
             flag5 = 1;
         }
-        setTitle("Task 5: Compound Shapes Area Calculation");
-        setSize(900, 700);
+        setTitle("Task 5: Compound Shapes");
+        setSize(800, 650);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout());
 
         // Top navigation bar
-        JPanel topWrapper = getJPanel();
-        TopNavBarPanel top = new TopNavBarPanel();
-        topWrapper.add(top);
-        add(topWrapper, BorderLayout.NORTH);
-        top.homeButton.addActionListener(e -> dispose());
-        top.endSessionButton.addActionListener(e -> dispose());
+        gradientTopWrapper = getJPanel();
+        topPanel = new TopNavBarPanel();
+        gradientTopWrapper.add(topPanel);
+        add(gradientTopWrapper, BorderLayout.NORTH);
+        topPanel.homeButton.addActionListener(e -> dispose());
+        topPanel.endSessionButton.addActionListener(e -> dispose());
 
         // Initialize data
-        initializeData();
+        formulasMap = new HashMap<>();
+        solutionsMap = new HashMap<>();
+        initFormulasAndSolutions();
+        availableShapes = new ArrayList<>(formulasMap.keySet());
+        Collections.shuffle(availableShapes);
+
+        // Task area
+        taskPanel = new JPanel();
+        taskPanel.setLayout(new BorderLayout(10, 10));
+        taskPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(taskPanel, BorderLayout.CENTER);
 
         // Progress bar
         progressBar = new JProgressBar(0, formulasMap.size());
@@ -70,7 +84,7 @@ public class Task5Screen extends JFrame {
         JPanel progressPanel = new JPanel(new FlowLayout());
         progressPanel.add(progressLabel);
         progressPanel.add(progressBar);
-        add(progressPanel, BorderLayout.SOUTH);
+        taskPanel.add(progressPanel, BorderLayout.SOUTH);
 
         // Main content
         JPanel mainPanel = new JPanel();
@@ -112,7 +126,7 @@ public class Task5Screen extends JFrame {
         nextButton.setVisible(false);
         mainPanel.add(nextButton);
 
-        add(mainPanel, BorderLayout.CENTER);
+        taskPanel.add(mainPanel, BorderLayout.CENTER);
 
         // Event handlers
         submitButton.addActionListener(e -> onSubmit());
@@ -123,57 +137,44 @@ public class Task5Screen extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    private void initializeData() {
-        availableShapes = new ArrayList<>();
-        formulasMap = new LinkedHashMap<>();
-        solutionsMap = new LinkedHashMap<>();
-
+    private void initFormulasAndSolutions() {
         // Shape 1
-        availableShapes.add("Shape 1");
         formulasMap.put("Shape 1", "A = 14×14 + 0.5×14×5 = 231 cm²");
         solutionsMap.put("Shape 1", 183.5);
 
         // Shape 2
-        availableShapes.add("Shape 2");
         formulasMap.put("Shape 2", "A = 20×21 - 10×11 = 420 - 110 = 310 cm²");
         solutionsMap.put("Shape 2", 310.0);
 
         // Shape 3
-        availableShapes.add("Shape 3");
         formulasMap.put("Shape 3", "A = (18 + 16)×19 - 16×(19 - 16) = 34×19 - 16×3 = 646 - 48 = 598 cm²");
         solutionsMap.put("Shape 3", 598.0);
 
         // Shape 4
-        availableShapes.add("Shape 4");
         formulasMap.put("Shape 4", "A = 24×6 + 12×12 = 144 + 144 = 288 m²");
         solutionsMap.put("Shape 4", 280.0);
 
         // Shape 5
-        availableShapes.add("Shape 5");
         formulasMap.put("Shape 5", "A = 4×2 + 1/2×4×(4 - 2) = 8 + 4 = 12 m²");
         solutionsMap.put("Shape 5", 12.0);
 
         // Shape 6
-        availableShapes.add("Shape 6");
         formulasMap.put("Shape 6", "A = 9×11 + 1/2×(20 - 9)×11 = 99 + 60.5 = 159.5 m²");
         solutionsMap.put("Shape 6", 159.5);
 
         // Shape 7 (需更多信息以计算)
-        availableShapes.add("Shape 7");
-        formulasMap.put("Shape 7", "A = √[s(s-a)(s-b)(s-c)] + 14×5, where s = (a+b+c)/2 = 21, A = √[21×9×7×5] + 70 = 21√15 + 70 ≈ 151.04 m²");
+        formulasMap.put("Shape 7",
+                "A = √[s(s-a)(s-b)(s-c)] + 14×5, where s = (a+b+c)/2 = 21, A = √[21×9×7×5] + 70 = 21√15 + 70 ≈ 151.04 m²");
         solutionsMap.put("Shape 7", 151.04);
 
         // Shape 8
-        availableShapes.add("Shape 8");
         formulasMap.put("Shape 8", "A = 60×36 + 36×36 = 2160 + 1296 = 3456 m²");
         solutionsMap.put("Shape 8", 3456.0);
 
         // Shape 9
-        availableShapes.add("Shape 9");
         formulasMap.put("Shape 9", "A = 18×11 - 8×3 = 198 - 24 = 174 m²");
         solutionsMap.put("Shape 9", 174.0);
     }
-
 
     private void selectNext() {
         countdownTimer.stop();
@@ -190,8 +191,7 @@ public class Task5Screen extends JFrame {
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 options,
-                options[0]
-        );
+                options[0]);
         if (selection == null) {
             return; // 用户取消选择
         }
@@ -228,22 +228,31 @@ public class Task5Screen extends JFrame {
         timerLabel.setText("Time left: 05:00");
         countdownTimer.start();
     }
+
     // 更新尝试次数显示
     private void updateAttemptsDisplay() {
         attemptsText = "<html>Attempts: ";
         // 每次都有三个圆点，颜色会根据错误次数变化
         for (int i = 0; i < 3; i++) {
             if (attempts == 3) { // 初始状态
-                if (i == 0) attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
-                else attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
+                if (i == 0)
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                else
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
             } else if (attempts == 2) { // 第一次错误
-                if (i == 0) attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
-                else if (i == 1) attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
-                else attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
+                if (i == 0)
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                else if (i == 1)
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                else
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
             } else if (attempts == 1) { // 第二次错误
-                if (i == 0) attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
-                else if (i == 1) attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
-                else attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                if (i == 0)
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                else if (i == 1)
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                else
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
             } else { // 第三次错误
                 attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 全部红色
             }
@@ -251,13 +260,13 @@ public class Task5Screen extends JFrame {
         attemptsText += "</html>";
         attemptDots.setText(attemptsText);
     }
-//    private void updateAttemptsDisplay() {
-//        StringBuilder sb = new StringBuilder("Attempts: ");
-//        for (int i = 0; i < 3; i++) {
-//            sb.append(i < attempts ? "● " : "○ ");
-//        }
-//        attemptDots.setText(sb.toString());
-//    }
+    // private void updateAttemptsDisplay() {
+    // StringBuilder sb = new StringBuilder("Attempts: ");
+    // for (int i = 0; i < 3; i++) {
+    // sb.append(i < attempts ? "● " : "○ ");
+    // }
+    // attemptDots.setText(sb.toString());
+    // }
 
     private void onSubmit() {
         try {
@@ -281,7 +290,7 @@ public class Task5Screen extends JFrame {
 
     // 获取颜色的Hex值
     private String getColorHex(Color color) {
-        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        return ColorManager.getColorHex(color);
     }
 
     private void onCorrect() {
@@ -301,6 +310,70 @@ public class Task5Screen extends JFrame {
         hintLabel.setText("Time up! " + correctFormula + " = " + correctSolution);
         submitButton.setEnabled(false);
         nextButton.setVisible(true);
+    }
+
+    /**
+     * 刷新所有UI元素的颜色，以响应色盲模式变化
+     */
+    @Override
+    public void refreshColors() {
+        System.out.println("Task5Screen正在刷新颜色...");
+
+        // 更新颜色常量
+        orange = ColorManager.getOrange();
+        gray = ColorManager.getGray();
+        red = ColorManager.getRed();
+        green = ColorManager.getGreen();
+        yellow = ColorManager.getYellow();
+
+        // 更新尝试次数指示器
+        updateAttemptsDisplay();
+
+        // 更新按钮颜色
+        if (submitButton != null) {
+            submitButton.setBackground(ColorManager.getBlue());
+            submitButton.setForeground(Color.WHITE);
+        }
+
+        if (nextButton != null) {
+            nextButton.setBackground(ColorManager.getGreen());
+            nextButton.setForeground(Color.WHITE);
+        }
+
+        // 更新提示文本颜色
+        if (hintLabel != null) {
+            String hintText = hintLabel.getText();
+            if (hintText.startsWith("Correct")) {
+                hintLabel.setForeground(green);
+            } else if (hintText.startsWith("Incorrect") || hintText.contains("Time up")) {
+                hintLabel.setForeground(red);
+            }
+        }
+
+        // 更新进度条颜色
+        if (progressBar != null) {
+            progressBar.setForeground(ColorManager.getProgressBarColor());
+        }
+
+        // 更新计时器颜色
+        if (timerLabel != null) {
+            if (remainingSeconds < 60) { // 剩余时间少于1分钟
+                timerLabel.setForeground(red);
+            } else {
+                timerLabel.setForeground(Color.BLACK);
+            }
+        }
+
+        // 刷新渐变背景
+        if (gradientTopWrapper != null) {
+            gradientTopWrapper.repaint();
+        }
+
+        // 重绘所有面板
+        if (taskPanel != null)
+            taskPanel.repaint();
+        if (shapePanel != null)
+            shapePanel.repaint();
     }
 
     public static void main(String[] args) {
