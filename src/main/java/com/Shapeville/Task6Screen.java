@@ -11,7 +11,7 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag2;
 import static com.Shapeville.ShapevilleMainContent.flag6;
 
-public class Task6Screen extends JFrame {
+public class Task6Screen extends JFrame implements ColorRefreshable {
     private List<String> availableShapes;
     private Map<String, String> formulasMap;
     private Map<String, Double> solutionsMap;
@@ -33,27 +33,31 @@ public class Task6Screen extends JFrame {
     private JLabel timerLabel;
     private Timer countdownTimer;
     private int remainingSeconds;
+    private JPanel gradientTopWrapper;
 
-    // Color constants
-    private final Color orange = new Color(245, 158, 11);
-    private final Color gray   = new Color(229, 231, 235);
-    private final Color red    = new Color(239, 68, 68);
+    // Color constants - 使用ColorManager
+    private Color orange = ColorManager.getOrange();
+    private Color gray = ColorManager.getGray();
+    private Color red = ColorManager.getRed();
+    private Color green = ColorManager.getGreen();
+    private Color blue = ColorManager.getBlue();
+    private Color progressBarColor = ColorManager.getProgressBarColor();
 
     public Task6Screen() {
         if (flag6 == 0) {
             ShapevilleMainContent.updateProgress();
             flag6 = 1;
         }
-        setTitle("Task 5: Sector Area Calculation");
+        setTitle("Task 6: Sector Area Calculation");
         setSize(900, 700);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
         // Top navigation bar
-        JPanel topWrapper = getJPanel();
+        gradientTopWrapper = getJPanel();
         TopNavBarPanel top = new TopNavBarPanel();
-        topWrapper.add(top);
-        add(topWrapper, BorderLayout.NORTH);
+        gradientTopWrapper.add(top);
+        add(gradientTopWrapper, BorderLayout.NORTH);
         top.homeButton.addActionListener(e -> dispose());
         top.endSessionButton.addActionListener(e -> dispose());
 
@@ -62,6 +66,7 @@ public class Task6Screen extends JFrame {
 
         // Progress bar
         progressBar = new JProgressBar(0, formulasMap.size());
+        progressBar.setForeground(progressBarColor);
         progressBar.setStringPainted(true);
         progressLabel = new JLabel("Completed: 0/" + formulasMap.size());
         JPanel progressPanel = new JPanel(new FlowLayout());
@@ -74,17 +79,67 @@ public class Task6Screen extends JFrame {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         // Shape display
-        shapePanel = new JPanel();
+        shapePanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (currentShape == null)
+                    return;
+
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int centerX = getWidth() / 2;
+                int centerY = getHeight() / 2;
+                int radius = Math.min(getWidth(), getHeight()) / 3;
+
+                // 解析扇形角度和半径信息
+                Map<String, Double> params = getSectorParameters(currentShape);
+                double angle = params.get("angle");
+                double r = params.get("radius");
+
+                // 绘制扇形
+                g2d.setColor(ColorManager.adaptColor(new Color(173, 216, 230))); // 浅蓝色填充
+                g2d.fillArc(centerX - radius, centerY - radius, radius * 2, radius * 2, 0, -(int) angle);
+
+                // 绘制边框
+                g2d.setColor(Color.BLACK);
+                g2d.drawArc(centerX - radius, centerY - radius, radius * 2, radius * 2, 0, -(int) angle);
+                g2d.drawLine(centerX, centerY, centerX + radius, centerY); // 右边半径线
+
+                // 计算第二条半径线的角度位置
+                double endRadian = Math.toRadians(angle);
+                int x2 = centerX + (int) (radius * Math.cos(endRadian));
+                int y2 = centerY + (int) (radius * Math.sin(endRadian));
+                g2d.drawLine(centerX, centerY, x2, y2);
+
+                // 标注角度
+                g2d.setFont(new Font("Arial", Font.BOLD, 14));
+                g2d.drawString(angle + "°", centerX + radius / 3, centerY - radius / 3);
+
+                // 标注半径
+                g2d.drawString("r = " + r, centerX + radius / 2, centerY + 15);
+            }
+        };
+        shapePanel.setPreferredSize(new Dimension(400, 400));
         mainPanel.add(shapePanel);
 
         // Timer display
         timerLabel = new JLabel("Time left: 05:00");
+        timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 16));
         mainPanel.add(timerLabel);
         countdownTimer = new Timer(1000, e -> {
             remainingSeconds--;
             int mm = remainingSeconds / 60;
             int ss = remainingSeconds % 60;
             timerLabel.setText(String.format("Time left: %02d:%02d", mm, ss));
+
+            // 当剩余时间少于1分钟时变红
+            if (remainingSeconds == 60) {
+                timerLabel.setForeground(red);
+            }
+
             if (remainingSeconds <= 0) {
                 countdownTimer.stop();
                 onTimeUp();
@@ -95,17 +150,27 @@ public class Task6Screen extends JFrame {
         JPanel inputPanel = new JPanel(new FlowLayout());
         inputPanel.add(new JLabel("Area:"));
         answerField = new JTextField(10);
+        answerField.addActionListener(e -> onSubmit());
         inputPanel.add(answerField);
         submitButton = new JButton("Submit");
+        submitButton.setBackground(blue);
+        submitButton.setForeground(Color.WHITE);
         inputPanel.add(submitButton);
         mainPanel.add(inputPanel);
 
         hintLabel = new JLabel("You have 3 attempts.");
+        hintLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        hintLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         mainPanel.add(hintLabel);
+
         attemptDots = new JLabel();
+        attemptDots.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel.add(attemptDots);
 
         nextButton = new JButton("Next");
+        nextButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nextButton.setBackground(green);
+        nextButton.setForeground(Color.WHITE);
         nextButton.setVisible(false);
         mainPanel.add(nextButton);
 
@@ -118,6 +183,113 @@ public class Task6Screen extends JFrame {
         // Start first selection
         selectNext();
         setLocationRelativeTo(null);
+    }
+
+    /**
+     * 刷新所有UI元素的颜色，以响应色盲模式变化
+     */
+    @Override
+    public void refreshColors() {
+        System.out.println("Task6Screen正在刷新颜色...");
+
+        // 更新颜色常量
+        orange = ColorManager.getOrange();
+        gray = ColorManager.getGray();
+        red = ColorManager.getRed();
+        green = ColorManager.getGreen();
+        blue = ColorManager.getBlue();
+        progressBarColor = ColorManager.getProgressBarColor();
+
+        // 更新进度条颜色
+        if (progressBar != null) {
+            progressBar.setForeground(progressBarColor);
+        }
+
+        // 更新按钮颜色
+        if (submitButton != null) {
+            submitButton.setBackground(blue);
+            submitButton.setForeground(Color.WHITE);
+        }
+
+        if (nextButton != null) {
+            nextButton.setBackground(green);
+            nextButton.setForeground(Color.WHITE);
+        }
+
+        // 更新提示文本颜色
+        if (hintLabel != null) {
+            String text = hintLabel.getText();
+            if (text.contains("correct")) {
+                hintLabel.setForeground(green);
+            } else if (text.contains("incorrect") || text.contains("solution")) {
+                hintLabel.setForeground(red);
+            } else {
+                hintLabel.setForeground(Color.BLACK);
+            }
+        }
+
+        // 更新计时器颜色
+        if (timerLabel != null && remainingSeconds <= 60) {
+            timerLabel.setForeground(red);
+        } else if (timerLabel != null) {
+            timerLabel.setForeground(Color.BLACK);
+        }
+
+        // 刷新渐变背景
+        if (gradientTopWrapper != null) {
+            gradientTopWrapper.repaint();
+        }
+
+        // 刷新形状面板
+        if (shapePanel != null) {
+            shapePanel.repaint();
+        }
+
+        repaint();
+    }
+
+    private Map<String, Double> getSectorParameters(String shapeName) {
+        Map<String, Double> params = new HashMap<>();
+
+        switch (shapeName) {
+            case "Shape 1":
+                params.put("angle", 90.0);
+                params.put("radius", 8.0);
+                break;
+            case "Shape 2":
+                params.put("angle", 130.0);
+                params.put("radius", 18.0);
+                break;
+            case "Shape 3":
+                params.put("angle", 240.0);
+                params.put("radius", 19.0);
+                break;
+            case "Shape 4":
+                params.put("angle", 110.0);
+                params.put("radius", 22.0);
+                break;
+            case "Shape 5":
+                params.put("angle", 100.0);
+                params.put("radius", 3.5);
+                break;
+            case "Shape 6":
+                params.put("angle", 270.0);
+                params.put("radius", 8.0);
+                break;
+            case "Shape 7":
+                params.put("angle", 280.0);
+                params.put("radius", 12.0);
+                break;
+            case "Shape 8":
+                params.put("angle", 250.0);
+                params.put("radius", 15.0);
+                break;
+            default:
+                params.put("angle", 90.0);
+                params.put("radius", 10.0);
+        }
+
+        return params;
     }
 
     private void initializeData() {
@@ -181,9 +353,9 @@ public class Task6Screen extends JFrame {
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 options,
-                options[0]
-        );
-        if (sel == null) return;
+                options[0]);
+        if (sel == null)
+            return;
         currentShape = sel;
         availableShapes.remove(sel);
         loadShape(sel);
@@ -195,45 +367,33 @@ public class Task6Screen extends JFrame {
         attempts = 3;
         updateAttempts();
         hintLabel.setText("You have 3 attempts.");
+        hintLabel.setForeground(Color.BLACK);
         answerField.setText("");
         submitButton.setEnabled(true);
         nextButton.setVisible(false);
 
-        shapePanel.removeAll();
-        ImageIcon icon = new ImageIcon(getClass().getClassLoader()
-                .getResource("images/task6/" + shapeName + ".png"));
-        shapePanel.add(new JLabel(icon));
-        shapePanel.revalidate(); shapePanel.repaint();
+        // 重置并启动计时器
+        remainingSeconds = 300; // 5分钟
+        timerLabel.setForeground(Color.BLACK);
+        countdownTimer.restart();
 
-        int done = formulasMap.size() - availableShapes.size() - 1;
-        progressBar.setValue(done);
-        progressLabel.setText("Completed: " + done + "/" + formulasMap.size());
+        // 刷新显示
+        shapePanel.repaint();
 
-        remainingSeconds = 300;
-        timerLabel.setText("Time left: 05:00");
-        countdownTimer.start();
+        // 更新进度条
+        progressLabel.setText("Completed: " + (8 - availableShapes.size()) + "/" + formulasMap.size());
+        progressBar.setValue(8 - availableShapes.size());
     }
 
-    // 更新尝试次数显示
     private void updateAttempts() {
-        String attemptsText = "<html>Attempts: ";
-        for (int i = 0; i < 3; i++) {
-            if (attempts == 3) {
-                if (i == 0) attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>";
-                else attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>";
-            } else if (attempts == 2) {
-                if (i == 0) attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
-                else if (i == 1) attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>";
-                else attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>";
-            } else if (attempts == 1) {
-                if (i < 2) attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
-                else attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>";
-            } else {
-                attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
-            }
+        StringBuilder dots = new StringBuilder();
+        for (int i = 0; i < attempts; i++) {
+            dots.append("<span style='color: ").append(getColorHex(green)).append("'>●</span> ");
         }
-        attemptsText += "</html>";
-        attemptDots.setText(attemptsText);
+        for (int i = attempts; i < 3; i++) {
+            dots.append("<span style='color: ").append(getColorHex(gray)).append("'>●</span> ");
+        }
+        attemptDots.setText("<html>" + dots + "</html>");
     }
 
     private String getColorHex(Color c) {
@@ -241,35 +401,50 @@ public class Task6Screen extends JFrame {
     }
 
     private void onSubmit() {
+        if (currentShape == null)
+            return;
+
         try {
-            double ans = Double.parseDouble(answerField.getText().trim());
-            if (Math.abs(ans - correctSolution) < 0.01) onCorrect();
-            else {
+            double answer = Double.parseDouble(answerField.getText().trim());
+            double errorMargin = correctSolution * 0.05; // 允许5%误差
+
+            if (Math.abs(answer - correctSolution) <= errorMargin) {
+                onCorrect();
+            } else {
                 attempts--;
                 updateAttempts();
-                if (attempts > 0) hintLabel.setText("Incorrect. Attempts left: " + attempts);
-                else { countdownTimer.stop(); showSolution(); }
+
+                if (attempts > 0) {
+                    hintLabel.setText("Your answer is incorrect. Try again. You have " + attempts + " attempts left.");
+                    hintLabel.setForeground(red);
+                } else {
+                    showSolution();
+                }
             }
-        } catch (NumberFormatException ex) {
-            hintLabel.setText("请输入有效数字");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid number.");
         }
     }
 
     private void onCorrect() {
-        countdownTimer.stop();
-        hintLabel.setText("Correct!");
+        hintLabel.setText("Your answer is correct!");
+        hintLabel.setForeground(green);
         submitButton.setEnabled(false);
         nextButton.setVisible(true);
+        countdownTimer.stop();
     }
 
     private void showSolution() {
-        hintLabel.setText(correctFormula + " = " + correctSolution);
+        hintLabel.setText("The correct solution is: " + correctFormula);
+        hintLabel.setForeground(red);
         submitButton.setEnabled(false);
         nextButton.setVisible(true);
+        countdownTimer.stop();
     }
 
     private void onTimeUp() {
-        hintLabel.setText("Time up! " + correctFormula + " = " + correctSolution);
+        hintLabel.setText("Time's up! The correct solution is: " + correctFormula);
+        hintLabel.setForeground(red);
         submitButton.setEnabled(false);
         nextButton.setVisible(true);
     }

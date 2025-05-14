@@ -11,11 +11,10 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag2;
 import static com.Shapeville.ShapevilleMainContent.flag3;
 
-public class Task3Screen extends JFrame {
-    private final String[] shapes = {"Rectangle", "Parallelogram", "Triangle", "Trapezoid"};
+public class Task3Screen extends JFrame implements ColorRefreshable {
+    private final String[] shapes = { "Rectangle", "Parallelogram", "Triangle", "Trapezoid" };
     private int currentShapeIndex = 0;
     private java.util.List<String> remainingShapes;
-
 
     private int attempts = 3;
     private double correctArea;
@@ -28,9 +27,16 @@ public class Task3Screen extends JFrame {
     private Timer countdownTimer;
     private int remainingSeconds = 180;
 
-    private RoundedCardPanel cardPanel;  // 题目卡片
+    private RoundedCardPanel cardPanel; // 题目卡片
     private JTextField answerField;
     private JLabel hintLabel;
+    private JPanel gradientTopWrapper;
+
+    // 颜色常量 - 使用ColorManager
+    private Color blue = ColorManager.getBlue();
+    private Color green = ColorManager.getGreen();
+    private Color red = ColorManager.getRed();
+    private Color progressBarColor = ColorManager.getProgressBarColor();
 
     public Task3Screen() {
         if (flag3 == 0) {
@@ -44,10 +50,10 @@ public class Task3Screen extends JFrame {
         setLayout(new BorderLayout(10, 10));
 
         // ─── 北：导航栏 ─────────────────────────
-        JPanel topWrapper = getJPanel();
+        gradientTopWrapper = getJPanel();
         TopNavBarPanel topNav = new TopNavBarPanel();
-        topWrapper.add(topNav);
-        add(topWrapper, BorderLayout.NORTH);
+        gradientTopWrapper.add(topNav);
+        add(gradientTopWrapper, BorderLayout.NORTH);
         topNav.homeButton.addActionListener(e -> dispose());
         topNav.endSessionButton.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "You scored " + currentShapeIndex + " / " + shapes.length);
@@ -70,6 +76,7 @@ public class Task3Screen extends JFrame {
         east.add(Box.createVerticalStrut(10));
         progressBar = new JProgressBar(0, shapes.length);
         progressBar.setValue(0);
+        progressBar.setForeground(progressBarColor);
         progressBar.setStringPainted(true);
         progressBar.setAlignmentX(Component.CENTER_ALIGNMENT);
         east.add(progressBar);
@@ -79,15 +86,56 @@ public class Task3Screen extends JFrame {
         cardPanel = new RoundedCardPanel();
         add(cardPanel, BorderLayout.CENTER);
 
-
-        setLocationRelativeTo(null);
-        setVisible(true);
-
         bindActions();
-        loadShape();  // 现在会先弹出选择对话框
+        loadShape(); // 现在会先弹出选择对话框
 
         setLocationRelativeTo(null);
-        setVisible(true);
+    }
+
+    /**
+     * 刷新所有UI元素的颜色，以响应色盲模式变化
+     */
+    @Override
+    public void refreshColors() {
+        System.out.println("Task3Screen正在刷新颜色...");
+
+        // 更新颜色常量
+        blue = ColorManager.getBlue();
+        green = ColorManager.getGreen();
+        red = ColorManager.getRed();
+        progressBarColor = ColorManager.getProgressBarColor();
+
+        // 更新进度条颜色
+        if (progressBar != null) {
+            progressBar.setForeground(progressBarColor);
+        }
+
+        // 更新卡片组件颜色
+        if (cardPanel != null) {
+            cardPanel.refreshColors();
+        }
+
+        // 更新计时器颜色
+        if (timerLabel != null && remainingSeconds <= 60) {
+            timerLabel.setForeground(red);
+        }
+
+        // 更新提示颜色
+        if (hintLabel != null) {
+            String hintText = hintLabel.getText();
+            if (hintText.contains("正确")) {
+                hintLabel.setForeground(green);
+            } else if (hintText.contains("不对")) {
+                hintLabel.setForeground(red);
+            }
+        }
+
+        // 刷新渐变背景
+        if (gradientTopWrapper != null) {
+            gradientTopWrapper.repaint();
+        }
+
+        repaint();
     }
 
     /** 绑定倒计时和按钮逻辑 */
@@ -95,6 +143,12 @@ public class Task3Screen extends JFrame {
         countdownTimer = new Timer(1000, e -> {
             remainingSeconds--;
             timerLabel.setText(String.format("Time: %02d:%02d", remainingSeconds / 60, remainingSeconds % 60));
+
+            // 剩下一分钟时将计时器变为红色
+            if (remainingSeconds == 60) {
+                timerLabel.setForeground(red);
+            }
+
             if (remainingSeconds <= 0) {
                 countdownTimer.stop();
                 revealAnswer();
@@ -108,6 +162,7 @@ public class Task3Screen extends JFrame {
         attempts = 3;
         remainingSeconds = 180;
         countdownTimer.restart();
+        timerLabel.setForeground(Color.BLACK); // 重置计时器颜色
         cardPanel.resetForNewShape();
 
         // 更新进度
@@ -130,41 +185,38 @@ public class Task3Screen extends JFrame {
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 options,
-                options[0]
-        );
-        if (shape == null) { // 用户点“取消”
+                options[0]);
+        if (shape == null) { // 用户点"取消"
             dispose();
             return;
         }
         // 从列表中移除，防止重复练习
         remainingShapes.remove(shape);
 
-
         // 生成随机参数并计算面积
         Random rand = new Random();
         switch (shape) {
             case "Rectangle":
-                dims = new int[]{rand.nextInt(20)+1, rand.nextInt(20)+1};
+                dims = new int[] { rand.nextInt(20) + 1, rand.nextInt(20) + 1 };
                 correctArea = dims[0] * dims[1];
                 break;
             case "Parallelogram":
-                dims = new int[]{rand.nextInt(20)+1, rand.nextInt(20)+1};
+                dims = new int[] { rand.nextInt(20) + 1, rand.nextInt(20) + 1 };
                 correctArea = dims[0] * dims[1];
                 break;
             case "Triangle":
-                dims = new int[]{rand.nextInt(20)+1, rand.nextInt(20)+1};
+                dims = new int[] { rand.nextInt(20) + 1, rand.nextInt(20) + 1 };
                 correctArea = dims[0] * dims[1] / 2.0;
                 break;
             default:
-                int a = rand.nextInt(19)+1;
-                int b = rand.nextInt(20-a)+a+1;
-                int h = rand.nextInt(20)+1;
-                dims = new int[]{a,b,h};
+                int a = rand.nextInt(19) + 1;
+                int b = rand.nextInt(20 - a) + a + 1;
+                int h = rand.nextInt(20) + 1;
+                dims = new int[] { a, b, h };
                 correctArea = (a + b) * h / 2.0;
         }
         // 把所选图形名称、参数和计算逻辑传给 cardPanel
         cardPanel.updateShape(shape, dims, correctArea, this::onSubmit);
-
     }
 
     /** 用户提交答案的回调 */
@@ -173,11 +225,13 @@ public class Task3Screen extends JFrame {
             double ans = Double.parseDouble(answerField.getText().trim());
             if (Math.abs(ans - correctArea) < 1e-6) {
                 hintLabel.setText("正确！🎉");
+                hintLabel.setForeground(green);
                 finishRound();
             } else {
                 attempts--;
                 if (attempts > 0) {
                     hintLabel.setText("不对，还剩 " + attempts + " 次机会");
+                    hintLabel.setForeground(red);
                 } else {
                     revealAnswer();
                 }
@@ -191,7 +245,7 @@ public class Task3Screen extends JFrame {
     private void finishRound() {
         countdownTimer.stop();
         cardPanel.showFormulaAndNext(() -> {
-            // “下一图形” 按钮点击
+            // "下一图形" 按钮点击
             currentShapeIndex++;
             if (currentShapeIndex < shapes.length) {
                 loadShape();
@@ -202,13 +256,22 @@ public class Task3Screen extends JFrame {
         });
     }
 
-    /** 时间到或三次错误后公布答案 */
+    /** 公开正确答案 */
     private void revealAnswer() {
-        hintLabel.setText(String.format("答案：%.2f", correctArea));
-        finishRound();
+        countdownTimer.stop();
+        hintLabel.setText("正确答案: " + correctArea);
+        hintLabel.setForeground(red);
+        cardPanel.showFormulaAndNext(() -> {
+            currentShapeIndex++;
+            if (currentShapeIndex < shapes.length) {
+                loadShape();
+            } else {
+                JOptionPane.showMessageDialog(this, "练习结束!");
+                dispose();
+            }
+        });
     }
 
-    /** 卡片式 UI Panel */
     private class RoundedCardPanel extends JPanel {
         private JLabel titleLabel;
         private ShapeCanvas shapeCanvas;
@@ -216,273 +279,321 @@ public class Task3Screen extends JFrame {
         private JLabel paramsLabel;
         private JButton submitButton, nextButton;
         private JPanel inputRow;
+        private Runnable submitCallback;
+        private Runnable nextCallback;
 
         RoundedCardPanel() {
-            setLayout(new BorderLayout());
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBackground(new Color(245, 249, 254));
-            setBorder(new RoundedBorder(16));
+            setBorder(new RoundedBorder(25));
 
-            // 顶部：标题
-            titleLabel = new JLabel("", SwingConstants.CENTER);
+            // 标题
+            titleLabel = new JLabel("Rectangle Area Calculation", SwingConstants.CENTER);
+            titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-            titleLabel.setBorder(BorderFactory.createEmptyBorder(12,0,12,0));
-            add(titleLabel, BorderLayout.NORTH);
+            titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+            add(titleLabel);
 
-            // 中部：绘图 Canvas
+            // 图形渲染区
             shapeCanvas = new ShapeCanvas();
-            add(shapeCanvas, BorderLayout.CENTER);
+            add(shapeCanvas);
 
-            // 底部：公式 + 参数 + 输入行
-            JPanel south = new JPanel();
-            south.setOpaque(false);
-            south.setLayout(new BoxLayout(south, BoxLayout.Y_AXIS));
-            south.setBorder(BorderFactory.createEmptyBorder(8,16,16,16));
+            // 参数文本
+            paramsLabel = new JLabel("", SwingConstants.CENTER);
+            paramsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            paramsLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            add(paramsLabel);
 
-            formulaLabel = new JLabel("Formula: ");
-            formulaLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            south.add(formulaLabel);
+            // 公式文本
+            formulaLabel = new JLabel("", SwingConstants.CENTER);
+            formulaLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            formulaLabel.setFont(new Font("Arial", Font.BOLD, 18));
+            formulaLabel.setVisible(false); // 初始隐藏
+            add(formulaLabel);
 
-            paramsLabel = new JLabel();
-            paramsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-            south.add(paramsLabel);
-            south.add(Box.createVerticalStrut(8));
+            // 输入框和提交按钮
+            inputRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            JLabel areaLabel = new JLabel("Area = ");
+            answerField = new JTextField(10);
+            submitButton = new JButton("Submit");
+            submitButton.setBackground(blue);
+            submitButton.setForeground(Color.WHITE);
 
-            // 输入 + 按钮行
-            inputRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8,0));
-            inputRow.setOpaque(false);
-            inputRow.add(new JLabel("Area ="));
-            answerField = new JTextField(6);
+            inputRow.add(areaLabel);
             inputRow.add(answerField);
-            inputRow.add(new JLabel("cm²"));
-            submitButton = new JButton("提交");
             inputRow.add(submitButton);
-            hintLabel = new JLabel("你有 3 次尝试机会");
-            inputRow.add(hintLabel);
-            nextButton = new JButton("下一图形");
-            nextButton.setVisible(false);
-            inputRow.add(nextButton);
+            add(inputRow);
 
-            south.add(inputRow);
-            add(south, BorderLayout.SOUTH);
+            // 提示文本
+            hintLabel = new JLabel(" ", SwingConstants.CENTER);
+            hintLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            hintLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+            add(hintLabel);
+
+            // 下一题按钮
+            nextButton = new JButton("Next Shape");
+            nextButton.setBackground(green);
+            nextButton.setForeground(Color.WHITE);
+            nextButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            nextButton.setVisible(false); // 初始隐藏
+            add(nextButton);
+
+            // 绑定按钮事件
+            submitButton.addActionListener(e -> {
+                if (submitCallback != null)
+                    submitCallback.run();
+            });
+            nextButton.addActionListener(e -> {
+                if (nextCallback != null)
+                    nextCallback.run();
+            });
         }
 
-        /** 点击提交按钮，触发外部回调 */
+        void refreshColors() {
+            if (submitButton != null) {
+                submitButton.setBackground(blue);
+                submitButton.setForeground(Color.WHITE);
+            }
+
+            if (nextButton != null) {
+                nextButton.setBackground(green);
+                nextButton.setForeground(Color.WHITE);
+            }
+
+            repaint(); // 重绘ShapeCanvas
+        }
+
+        /** 更新要展示的图形 */
         void updateShape(String shapeName, int[] p, double area,
-                         Runnable submitCallback) {
-            titleLabel.setText(shapeName);
+                Runnable submitCallback) {
+            titleLabel.setText(shapeName + " Area Calculation");
             shapeCanvas.setShape(shapeName, p, area);
-
-            formulaLabel.setText("Formula: " + shapeCanvas.getFormulaText());
-            paramsLabel.setText("Parameters: " + shapeCanvas.getParamsText());
-
-            submitButton.setVisible(true);
-            nextButton.setVisible(false);
-            hintLabel.setText("你有 3 次尝试机会");
-            answerField.setText("");
-
-            // 解绑旧动作，绑定新动作
-            for (ActionListener al : submitButton.getActionListeners()) {
-                submitButton.removeActionListener(al);
-            }
-            submitButton.addActionListener(e -> submitCallback.run());
-
-            nextButton.removeActionListener(nextButton.getActionListeners().length>0
-                    ? nextButton.getActionListeners()[0] : null);
-            nextButton.addActionListener(e -> submitCallback.run());
-        }
-
-        /** 本题完成后展示公式及“下一图形”按钮 */
-        void showFormulaAndNext(Runnable nextCallback) {
-            shapeCanvas.showFormula = true;
-            shapeCanvas.repaint();
-            submitButton.setVisible(false);
-            nextButton.setVisible(true);
-            // 重新绑定下一题动作
-            for (ActionListener al : nextButton.getActionListeners()) {
-                nextButton.removeActionListener(al);
-            }
-            nextButton.addActionListener(e -> nextCallback.run());
-        }
-
-        /** 重置状态，为新题做准备 */
-        void resetForNewShape() {
+            formulaLabel.setText(shapeCanvas.getFormulaText());
+            paramsLabel.setText(shapeCanvas.getParamsText());
+            this.submitCallback = submitCallback;
             shapeCanvas.showFormula = false;
-            shapeCanvas.repaint();
+            formulaLabel.setVisible(false);
+            submitButton.setEnabled(true);
+            answerField.setEnabled(true);
+            answerField.requestFocus();
+            nextButton.setVisible(false);
+            repaint();
+        }
+
+        /** 显示公式和下一题按钮 */
+        void showFormulaAndNext(Runnable nextCallback) {
+            this.nextCallback = nextCallback;
+            shapeCanvas.showFormula = true; // 打开公式渲染
+            formulaLabel.setVisible(true); // 显示公式文本
+            submitButton.setEnabled(false);
+            answerField.setEnabled(false);
+            nextButton.setVisible(true);
+            repaint();
+        }
+
+        /** 为新题目重置组件状态 */
+        void resetForNewShape() {
+            answerField.setText("");
+            hintLabel.setText(" ");
+            hintLabel.setForeground(Color.BLACK);
+            shapeCanvas.showFormula = false;
+            formulaLabel.setVisible(false);
         }
     }
 
-    /** 真正的绘图和尺寸、公式计算 */
     private class ShapeCanvas extends JPanel {
-        String shape; int[] p; double area;
+        String shape;
+        int[] p;
+        double area;
         boolean showFormula = false;
         static final int SCALE = 10;
 
         void setShape(String shape, int[] p, double area) {
-            this.shape = shape; this.p = p; this.area = area;
+            this.shape = shape;
+            this.p = p;
+            this.area = area;
         }
 
         String getFormulaText() {
             switch (shape) {
                 case "Rectangle":
+                    return "Area = Length × Width = " + p[0] + " × " + p[1] + " = " + area;
                 case "Parallelogram":
-                    return String.format("Area = %d × %d = %.0f", p[0], p[1], area);
+                    return "Area = Base × Height = " + p[0] + " × " + p[1] + " = " + area;
                 case "Triangle":
-                    return String.format("Area = ½ × %d × %d = %.1f", p[0], p[1], area);
+                    return "Area = ½ × Base × Height = ½ × " + p[0] + " × " + p[1] + " = " + area;
+                case "Trapezoid":
+                    return "Area = ½ × (a + b) × h = ½ × (" + p[0] + " + " + p[1] + ") × " + p[2] + " = " + area;
                 default:
-                    return String.format("Area = ( %d + %d ) ÷ 2 × %d = %.1f",
-                            p[0], p[1], p[2], area);
+                    return "";
             }
         }
 
         String getParamsText() {
             switch (shape) {
                 case "Rectangle":
-                    return String.format("Length = %d cm, Width = %d cm", p[0], p[1]);
+                    return "Length = " + p[0] + ", Width = " + p[1];
                 case "Parallelogram":
-                    return String.format("Base = %d cm, Height = %d cm", p[0], p[1]);
+                    return "Base = " + p[0] + ", Height = " + p[1];
                 case "Triangle":
-                    return String.format("Base = %d cm, Height = %d cm", p[0], p[1]);
+                    return "Base = " + p[0] + ", Height = " + p[1];
+                case "Trapezoid":
+                    return "a = " + p[0] + ", b = " + p[1] + ", Height = " + p[2];
                 default:
-                    return String.format("Top a = %d cm, Bottom b = %d cm, Height h = %d cm",
-                            p[0], p[1], p[2]);
+                    return "";
             }
         }
 
         @Override
         protected void paintComponent(Graphics g0) {
             super.paintComponent(g0);
-            if (shape == null) return;
             Graphics2D g = (Graphics2D) g0;
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // 计算居中绘图起始点
-            int w = (shape.equals("Trapezoid") ? p[1] : p[0]) * SCALE;
-            int h = p[ shape.equals("Triangle") ? 1
-                    : shape.equals("Trapezoid") ? 2 : 1 ] * SCALE;
-            int x0 = (getWidth() - w) / 2, y0 = (getHeight() - h) / 2;
+            int cx = getWidth() / 2;
+            int cy = getHeight() / 2;
 
-            // 填充
-            g.setColor(new Color(100, 149, 237));
+            g.setColor(ColorManager.adaptColor(new Color(100, 149, 237))); // 浅蓝色
+
             switch (shape) {
-                case "Rectangle":    g.fillRect(x0,y0,w,h); break;
+                case "Rectangle":
+                    int w = p[0] * SCALE;
+                    int h = p[1] * SCALE;
+                    g.fillRect(cx - w / 2, cy - h / 2, w, h);
+                    // 如果要显示公式
+                    if (showFormula) {
+                        g.setColor(Color.BLACK);
+                        drawDimension(g, cx - w / 2, cy + h / 2 + 10, cx + w / 2, cy + h / 2 + 10, p[0] + "",
+                                Color.BLACK);
+                        drawDimension(g, cx + w / 2 + 10, cy - h / 2, cx + w / 2 + 10, cy + h / 2, p[1] + "",
+                                Color.BLACK);
+                    }
+                    break;
                 case "Parallelogram":
-                    g.fillPolygon(
-                            new int[]{x0,x0+w,x0+w+20,x0+20},
-                            new int[]{y0,y0,y0+h,y0+h},4);
+                    int base = p[0] * SCALE;
+                    int height = p[1] * SCALE;
+                    int offset = height / 2; // 平行四边形的错位
+                    int[] xPoints = { cx - base / 2 + offset, cx + base / 2 + offset, cx + base / 2 - offset,
+                            cx - base / 2 - offset };
+                    int[] yPoints = { cy - height / 2, cy - height / 2, cy + height / 2, cy + height / 2 };
+                    g.fillPolygon(xPoints, yPoints, 4);
+                    // 如果要显示公式
+                    if (showFormula) {
+                        g.setColor(Color.BLACK);
+                        drawDimension(g, cx - base / 2 + offset, cy + height / 2 + 10, cx + base / 2 - offset,
+                                cy + height / 2 + 10, p[0] + "", Color.BLACK);
+                        drawDimension(g, cx + base / 2 + offset + 10, cy - height / 2, cx + base / 2 - offset + 10,
+                                cy + height / 2, p[1] + "", Color.BLACK);
+                    }
                     break;
                 case "Triangle":
-                    g.fillPolygon(
-                            new int[]{x0,x0+w/2,x0+w},
-                            new int[]{y0+h,y0,y0+h},3);
+                    int tbase = p[0] * SCALE;
+                    int theight = p[1] * SCALE;
+                    int[] txPoints = { cx - tbase / 2, cx + tbase / 2, cx };
+                    int[] tyPoints = { cy + theight / 2, cy + theight / 2, cy - theight / 2 };
+                    g.fillPolygon(txPoints, tyPoints, 3);
+                    // 如果要显示公式
+                    if (showFormula) {
+                        g.setColor(Color.BLACK);
+                        drawDimension(g, cx - tbase / 2, cy + theight / 2 + 10, cx + tbase / 2, cy + theight / 2 + 10,
+                                p[0] + "", Color.BLACK);
+                        drawDimension(g, cx + tbase / 2 + 10, cy + theight / 2, cx, cy - theight / 2, p[1] + "",
+                                Color.BLACK);
+                    }
                     break;
-                default: // Trapezoid
-                    int top = p[0]*SCALE, bot = p[1]*SCALE, ht = p[2]*SCALE;
-                    int off = (bot - top)/2;
-                    g.fillPolygon(
-                            new int[]{x0+off,x0+off+top,x0+bot,x0},
-                            new int[]{y0,y0,y0+ht,y0+ht},4);
-            }
-
-            // 边框 & 标注尺寸
-            g.setColor(Color.BLACK);
-            switch (shape) {
-                case "Rectangle":    g.drawRect(x0,y0,w,h); break;
-                case "Parallelogram":
-                    g.drawPolygon(
-                            new int[]{x0,x0+w,x0+w+20,x0+20},
-                            new int[]{y0,y0,y0+h,y0+h},4);
+                case "Trapezoid":
+                    int a = p[0] * SCALE; // 上底
+                    int b = p[1] * SCALE; // 下底
+                    int trapHeight = p[2] * SCALE; // 高
+                    int[] zxPoints = { cx - b / 2, cx + b / 2, cx + a / 2, cx - a / 2 };
+                    int[] zyPoints = { cy + trapHeight / 2, cy + trapHeight / 2, cy - trapHeight / 2,
+                            cy - trapHeight / 2 };
+                    g.fillPolygon(zxPoints, zyPoints, 4);
+                    // 如果要显示公式
+                    if (showFormula) {
+                        g.setColor(Color.RED);
+                        drawDimension(g, cx - a / 2, cy - trapHeight / 2 - 10, cx + a / 2, cy - trapHeight / 2 - 10,
+                                p[0] + " (a)", ColorManager.adaptColor(Color.RED));
+                        g.setColor(Color.BLACK);
+                        drawDimension(g, cx - b / 2, cy + trapHeight / 2 + 10, cx + b / 2, cy + trapHeight / 2 + 10,
+                                p[1] + " (b)", Color.BLACK);
+                        drawDimension(g, cx + b / 2 + 10, cy + trapHeight / 2, cx + a / 2 + 10, cy - trapHeight / 2,
+                                p[2] + " (h)", ColorManager.adaptColor(new Color(0, 128, 0)));
+                    }
                     break;
-                case "Triangle":
-                    g.drawPolygon(
-                            new int[]{x0,x0+w/2,x0+w},
-                            new int[]{y0+h,y0,y0+h},3);
-                    break;
-                default:
-                    int top2 = p[0]*SCALE, bot2 = p[1]*SCALE, ht2 = p[2]*SCALE;
-                    int off2 = (bot2 - top2)/2;
-                    g.drawPolygon(
-                            new int[]{x0+off2,x0+off2+top2,x0+bot2,x0},
-                            new int[]{y0,y0,y0+ht2,y0+ht2},4);
-            }
-
-            // 上方标注
-            g.setFont(new Font("Arial", Font.PLAIN, 14));
-            String topLabel = shape.equals("Trapezoid")
-                    ? (p[0]+" cm") : (p[0]+" cm");
-            int tw = g.getFontMetrics().stringWidth(topLabel);
-            g.drawString(topLabel, x0 + (w - tw)/2, y0 - 6);
-
-            // 左侧标注
-            String leftLabel = shape.equals("Trapezoid")
-                    ? (p[2]+" cm") : (shape.equals("Triangle")? p[1]+" cm": p[1]+" cm");
-            int lh = g.getFontMetrics().getHeight();
-            g.drawString(leftLabel,
-                    x0 - g.getFontMetrics().stringWidth(leftLabel) - 6,
-                    y0 + (h + lh)/2 );
-
-            // 显示公式
-            if (showFormula) {
-                g.setColor(Color.RED);
-                String formula = getFormulaText();
-                FontMetrics fm = g.getFontMetrics();
-                int fx = (getWidth() - fm.stringWidth(formula)) / 2;
-                int fy = y0 + h + 30;
-                g.drawString(formula, fx, fy);
             }
         }
     }
 
-    /** 通用：绘制带双向箭头的标注 */
     private void drawDimension(Graphics2D g, int x1, int y1, int x2, int y2, String label, Color color) {
-        Stroke old = g.getStroke();
         g.setColor(color);
-        g.setStroke(new BasicStroke(2));
-        // 画中间线
-        g.drawLine(x1, y1, x2, y2);
-        // 画两端箭头
+        g.draw(new Line2D.Double(x1, y1, x2, y2));
+
+        // 绘制两端的箭头
         drawArrowHead(g, x1, y1, x2, y2);
         drawArrowHead(g, x2, y2, x1, y1);
-        // 文字标签（略微偏移，避免贴在线上）
-        int mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-        g.setFont(new Font("Arial", Font.BOLD, 14));
-        g.drawString(label, mx + 4, my - 4);
-        g.setStroke(old);
+
+        // 绘制标签
+        FontMetrics fm = g.getFontMetrics();
+        int labelWidth = fm.stringWidth(label);
+        int labelX = (x1 + x2) / 2 - labelWidth / 2;
+        int labelY;
+
+        if (Math.abs(y1 - y2) < 5) { // 水平线
+            labelY = y1 - 5;
+        } else { // 垂直线
+            labelY = (y1 + y2) / 2 + fm.getAscent() / 2;
+        }
+
+        g.drawString(label, labelX, labelY);
     }
 
-    /** 辅助：在 (x,y) 处画一端箭头，指向 (tx,ty) */
     private void drawArrowHead(Graphics2D g, int x, int y, int tx, int ty) {
-        double phi = Math.toRadians(20);
-        int barb = 10;
-        double theta = Math.atan2(y - ty, x - tx);
-        double x1 = x - barb * Math.cos(theta + phi);
-        double y1 = y - barb * Math.sin(theta + phi);
-        double x2 = x - barb * Math.cos(theta - phi);
-        double y2 = y - barb * Math.sin(theta - phi);
-        g.draw(new Line2D.Double(x, y, x1, y1));
-        g.draw(new Line2D.Double(x, y, x2, y2));
+        int ARR_SIZE = 5;
+        double dx = tx - x;
+        double dy = ty - y;
+        double angle = Math.atan2(dy, dx);
+        int len = (int) Math.sqrt(dx * dx + dy * dy);
+
+        // Make arrow heads appear at the ends rather than the center
+        double adjX = x + (ARR_SIZE * Math.cos(angle + Math.PI / 2) / len);
+        double adjY = y + (ARR_SIZE * Math.sin(angle + Math.PI / 2) / len);
+
+        g.fillPolygon(
+                new int[] { x, (int) (x - ARR_SIZE * Math.cos(angle - Math.PI / 6)),
+                        (int) (x - ARR_SIZE * Math.cos(angle + Math.PI / 6)) },
+                new int[] { y, (int) (y - ARR_SIZE * Math.sin(angle - Math.PI / 6)),
+                        (int) (y - ARR_SIZE * Math.sin(angle + Math.PI / 6)) },
+                3);
     }
 
-
-    /** 简单的圆角边框实现 */
     private static class RoundedBorder implements Border {
         private final int radius;
-        RoundedBorder(int radius) { this.radius = radius; }
-        @Override public Insets getBorderInsets(Component c) {
-            return new Insets(radius,radius,radius,radius);
+
+        RoundedBorder(int radius) {
+            this.radius = radius;
         }
-        @Override public boolean isBorderOpaque() { return false; }
-        @Override public void paintBorder(Component c, Graphics g, int x, int y,
-                                          int width, int height) {
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(200,200,200));
-            g2.drawRoundRect(x, y, width-1, height-1, radius, radius);
+
+        @Override
+        public Insets getBorderInsets(Component c) {
+            return new Insets(this.radius, this.radius, this.radius, this.radius);
+        }
+
+        @Override
+        public boolean isBorderOpaque() {
+            return false;
+        }
+
+        @Override
+        public void paintBorder(Component c, Graphics g, int x, int y,
+                int width, int height) {
+            g.setColor(ColorManager.adaptColor(new Color(200, 200, 200)));
+            ((Graphics2D) g).setStroke(new BasicStroke(2));
+            g.drawRoundRect(x + 1, y + 1, width - 3, height - 3, radius, radius);
         }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Task3Screen::new);
+        SwingUtilities.invokeLater(() -> new Task3Screen().setVisible(true));
     }
 }
