@@ -166,11 +166,11 @@ public class ShapevilleGUI extends JFrame {
         }
 
         // 显示切换提示
-        String message = isColorBlindMode ? "色盲模式已启用" : "已切换到普通颜色模式";
+        String message = isColorBlindMode ? "blind model" : "normal model";
         JOptionPane.showMessageDialog(
                 this,
                 message,
-                "颜色模式切换",
+                "color model switching",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
