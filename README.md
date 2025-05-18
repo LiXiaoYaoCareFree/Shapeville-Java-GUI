@@ -11,6 +11,10 @@
 
 > 如果你第一次运行，可能需要配置运行配置（Run Configurations）并指定类路径。
 
+或者直接进入项目的根路径下，使用命令行直接运行:
+```bash
+java -cp bin com.Shapeville.MainWindow
+```
 ---
 
 ![](src/main/resources/images/README/images/img.png)
