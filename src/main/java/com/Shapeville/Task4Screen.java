@@ -11,6 +11,22 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag2;
 import static com.Shapeville.ShapevilleMainContent.flag4;
 
+
+/**
+ * Circle-practice window used by Shapeville’s geometry course.
+ * <p>
+ * The frame queues four modes—area / circumference calculated from either
+ * radius or diameter—so every combination is attempted once per session.
+ * A timer (3 min/question), progress bar and colour-blind-aware palette
+ * provide real-time feedback.  Each round randomly picks an integer radius
+ * or diameter (1–20 cm), draws the circle with dimensions, and lets the
+ * learner type the result; three wrong answers or a timeout reveal the
+ * correct formula and value.  After all four modes the window disposes and
+ * returns control to the main GUI.  Colours update through {@link
+ * ColorManager} when colour-blind mode toggles via the parent frame.
+ * <p>
+ * Author : Lingyuan Li
+ */
 public class Task4Screen extends JFrame implements ColorRefreshable {
     private Queue<String> modesQueue;
     private final int totalModes = 4;

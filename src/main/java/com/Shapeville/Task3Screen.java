@@ -11,6 +11,18 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag2;
 import static com.Shapeville.ShapevilleMainContent.flag3;
 
+/**
+ * Interactive window for <strong>Task&nbsp;3 – Shape Area Calculation</strong>.
+ * Lets the learner pick each of four shapes (rectangle, parallelogram,
+ * triangle, trapezoid). Random dimensions are generated and the learner has
+ * three attempts or 3&nbsp;minutes to supply the exact area. Colour‑coded hints,
+ * a countdown and a progress bar support the activity. After each round the
+ * correct formula is revealed; after all four rounds the window closes and the
+ * main dashboard updates. Colours live‑swap via {@link ColorManager} through
+ * {@link #refreshColors()}.
+ *
+ * @author Lingyuan Li
+ */
 public class Task3Screen extends JFrame implements ColorRefreshable {
     private final String[] shapes = { "Rectangle", "Parallelogram", "Triangle", "Trapezoid" };
     private int currentShapeIndex = 0;
@@ -20,7 +32,7 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
     private double correctArea;
     private int[] dims; // 当前题的随机参数
 
-    // UI 组件
+    // UI components --------------------------------------------------------
     private JLabel progressLabel;
     private JProgressBar progressBar;
     private JLabel timerLabel;
@@ -32,7 +44,7 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
     private JLabel hintLabel;
     private JPanel gradientTopWrapper;
 
-    // 颜色常量 - 使用ColorManager
+    // Palette colours ------------------------------------------------------
     private Color blue = ColorManager.getBlue();
     private Color green = ColorManager.getGreen();
     private Color red = ColorManager.getRed();
@@ -49,7 +61,7 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        // ─── 北：导航栏 ─────────────────────────
+        /* ---------- North: gradient navigation bar ---------------------- */
         gradientTopWrapper = getJPanel();
         TopNavBarPanel topNav = new TopNavBarPanel();
         gradientTopWrapper.add(topNav);
@@ -60,7 +72,7 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             dispose();
         });
 
-        // ─── 东：倒计时 + 进度 ────────────────────
+        /* ---------- East: timer + progress ------------------------------ */
         JPanel east = new JPanel();
         east.setLayout(new BoxLayout(east, BoxLayout.Y_AXIS));
         east.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -82,45 +94,39 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         east.add(progressBar);
         add(east, BorderLayout.EAST);
 
-        // ─── 中央：卡片式题目 ────────────────────
+        /* ---------- Centre: exercise card ------------------------------- */
         cardPanel = new RoundedCardPanel();
         add(cardPanel, BorderLayout.CENTER);
 
         bindActions();
-        loadShape(); // 现在会先弹出选择对话框
+        loadShape();
 
         setLocationRelativeTo(null);
     }
-
-    /**
-     * 刷新所有UI元素的颜色，以响应色盲模式变化
-     */
+    // ---------------------------------------------------------------------
+    //                     Colour‑blind palette refresh
+    // ---------------------------------------------------------------------
     @Override
     public void refreshColors() {
         System.out.println("Task3Screen正在刷新颜色...");
 
-        // 更新颜色常量
         blue = ColorManager.getBlue();
         green = ColorManager.getGreen();
         red = ColorManager.getRed();
         progressBarColor = ColorManager.getProgressBarColor();
 
-        // 更新进度条颜色
         if (progressBar != null) {
             progressBar.setForeground(progressBarColor);
         }
 
-        // 更新卡片组件颜色
         if (cardPanel != null) {
             cardPanel.refreshColors();
         }
 
-        // 更新计时器颜色
         if (timerLabel != null && remainingSeconds <= 60) {
             timerLabel.setForeground(red);
         }
 
-        // 更新提示颜色
         if (hintLabel != null) {
             String hintText = hintLabel.getText();
             if (hintText.contains("正确")) {
@@ -130,21 +136,21 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             }
         }
 
-        // 刷新渐变背景
         if (gradientTopWrapper != null) {
             gradientTopWrapper.repaint();
         }
 
         repaint();
     }
+    // ---------------------------------------------------------------------
+    //                           Timer & flow
+    // ---------------------------------------------------------------------
 
-    /** 绑定倒计时和按钮逻辑 */
     private void bindActions() {
         countdownTimer = new Timer(1000, e -> {
             remainingSeconds--;
             timerLabel.setText(String.format("Time: %02d:%02d", remainingSeconds / 60, remainingSeconds % 60));
 
-            // 剩下一分钟时将计时器变为红色
             if (remainingSeconds == 60) {
                 timerLabel.setForeground(red);
             }
@@ -156,7 +162,6 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         });
     }
 
-    /** 加载/刷新一道新题 */
     private void loadShape() {
         // 重置状态
         attempts = 3;
@@ -165,18 +170,16 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         timerLabel.setForeground(Color.BLACK); // 重置计时器颜色
         cardPanel.resetForNewShape();
 
-        // 更新进度
         progressLabel.setText("Progress: " + currentShapeIndex + " / " + shapes.length);
         progressBar.setValue(currentShapeIndex);
 
-        // 如果已经完成全部4种，结束
         if (currentShapeIndex >= shapes.length) {
             JOptionPane.showMessageDialog(this, "The practice is over. You have completed all the questions!");
             dispose();
             return;
         }
 
-        // 弹出对话框，让用户从剩余图形中选一个
+
         String[] options = remainingShapes.toArray(new String[0]);
         String shape = (String) JOptionPane.showInputDialog(
                 this,
@@ -186,14 +189,12 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
                 null,
                 options,
                 options[0]);
-        if (shape == null) { // 用户点"取消"
+        if (shape == null) {
             dispose();
             return;
         }
-        // 从列表中移除，防止重复练习
         remainingShapes.remove(shape);
 
-        // 生成随机参数并计算面积
         Random rand = new Random();
         switch (shape) {
             case "Rectangle":
@@ -219,7 +220,6 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         cardPanel.updateShape(shape, dims, correctArea, this::onSubmit);
     }
 
-    /** 用户提交答案的回调 */
     private void onSubmit() {
         try {
             double ans = Double.parseDouble(answerField.getText().trim());
@@ -241,7 +241,6 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         }
     }
 
-    /** 本题答对或时间/机会用尽后调用 */
     private void finishRound() {
         countdownTimer.stop();
         cardPanel.showFormulaAndNext(() -> {
@@ -256,7 +255,6 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         });
     }
 
-    /** 公开正确答案 */
     private void revealAnswer() {
         countdownTimer.stop();
         hintLabel.setText("Right answers:" + correctArea);
@@ -283,35 +281,38 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         private Runnable nextCallback;
 
         RoundedCardPanel() {
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setLayout(new BorderLayout());
             setBackground(new Color(245, 249, 254));
             setBorder(new RoundedBorder(25));
 
-            // 标题
+            JPanel content = new JPanel();
+            content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+
             titleLabel = new JLabel("Rectangle Area Calculation", SwingConstants.CENTER);
             titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
             titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-            add(titleLabel);
+            content.add(titleLabel);
 
-            // 图形渲染区
             shapeCanvas = new ShapeCanvas();
-            add(shapeCanvas);
+            shapeCanvas.setMaximumSize(
+                    new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
-            // 参数文本
+            shapeCanvas.setAlignmentX(Component.CENTER_ALIGNMENT); // 居中
+            content.add(shapeCanvas);
+
             paramsLabel = new JLabel("", SwingConstants.CENTER);
             paramsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             paramsLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-            add(paramsLabel);
+            content.add(paramsLabel);
 
-            // 公式文本
             formulaLabel = new JLabel("", SwingConstants.CENTER);
             formulaLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             formulaLabel.setFont(new Font("Arial", Font.BOLD, 18));
             formulaLabel.setVisible(false); // 初始隐藏
-            add(formulaLabel);
+            content.add(formulaLabel);
 
-            // 输入框和提交按钮
             inputRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
             JLabel areaLabel = new JLabel("Area = ");
             answerField = new JTextField(10);
@@ -322,23 +323,23 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             inputRow.add(areaLabel);
             inputRow.add(answerField);
             inputRow.add(submitButton);
-            add(inputRow);
+            content.add(inputRow);
 
-            // 提示文本
             hintLabel = new JLabel(" ", SwingConstants.CENTER);
             hintLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             hintLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-            add(hintLabel);
+            content.add(hintLabel);
 
-            // 下一题按钮
             nextButton = new JButton("Next Shape");
             nextButton.setBackground(green);
             nextButton.setForeground(Color.WHITE);
             nextButton.setAlignmentX(Component.CENTER_ALIGNMENT);
             nextButton.setVisible(false); // 初始隐藏
-            add(nextButton);
+            content.add(nextButton);
 
-            // 绑定按钮事件
+            add(content, BorderLayout.CENTER);
+            add(inputRow, BorderLayout.SOUTH);
+
             submitButton.addActionListener(e -> {
                 if (submitCallback != null)
                     submitCallback.run();
@@ -363,7 +364,6 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             repaint(); // 重绘ShapeCanvas
         }
 
-        /** 更新要展示的图形 */
         void updateShape(String shapeName, int[] p, double area,
                 Runnable submitCallback) {
             titleLabel.setText(shapeName + " Area Calculation");
@@ -380,7 +380,6 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             repaint();
         }
 
-        /** 显示公式和下一题按钮 */
         void showFormulaAndNext(Runnable nextCallback) {
             this.nextCallback = nextCallback;
             shapeCanvas.showFormula = true; // 打开公式渲染
@@ -391,7 +390,6 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             repaint();
         }
 
-        /** 为新题目重置组件状态 */
         void resetForNewShape() {
             answerField.setText("");
             hintLabel.setText(" ");
@@ -460,7 +458,6 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
                     int w = p[0] * SCALE;
                     int h = p[1] * SCALE;
                     g.fillRect(cx - w / 2, cy - h / 2, w, h);
-                    // 如果要显示公式
                     if (showFormula) {
                         g.setColor(Color.BLACK);
                         drawDimension(g, cx - w / 2, cy + h / 2 + 10, cx + w / 2, cy + h / 2 + 10, p[0] + "",
@@ -472,12 +469,11 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
                 case "Parallelogram":
                     int base = p[0] * SCALE;
                     int height = p[1] * SCALE;
-                    int offset = height / 2; // 平行四边形的错位
+                    int offset = height / 2;
                     int[] xPoints = { cx - base / 2 + offset, cx + base / 2 + offset, cx + base / 2 - offset,
                             cx - base / 2 - offset };
                     int[] yPoints = { cy - height / 2, cy - height / 2, cy + height / 2, cy + height / 2 };
                     g.fillPolygon(xPoints, yPoints, 4);
-                    // 如果要显示公式
                     if (showFormula) {
                         g.setColor(Color.BLACK);
                         drawDimension(g, cx - base / 2 + offset, cy + height / 2 + 10, cx + base / 2 - offset,
@@ -502,14 +498,13 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
                     }
                     break;
                 case "Trapezoid":
-                    int a = p[0] * SCALE; // 上底
-                    int b = p[1] * SCALE; // 下底
-                    int trapHeight = p[2] * SCALE; // 高
+                    int a = p[0] * SCALE;
+                    int b = p[1] * SCALE;
+                    int trapHeight = p[2] * SCALE;
                     int[] zxPoints = { cx - b / 2, cx + b / 2, cx + a / 2, cx - a / 2 };
                     int[] zyPoints = { cy + trapHeight / 2, cy + trapHeight / 2, cy - trapHeight / 2,
                             cy - trapHeight / 2 };
                     g.fillPolygon(zxPoints, zyPoints, 4);
-                    // 如果要显示公式
                     if (showFormula) {
                         g.setColor(Color.RED);
                         drawDimension(g, cx - a / 2, cy - trapHeight / 2 - 10, cx + a / 2, cy - trapHeight / 2 - 10,
@@ -529,19 +524,17 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         g.setColor(color);
         g.draw(new Line2D.Double(x1, y1, x2, y2));
 
-        // 绘制两端的箭头
         drawArrowHead(g, x1, y1, x2, y2);
         drawArrowHead(g, x2, y2, x1, y1);
 
-        // 绘制标签
         FontMetrics fm = g.getFontMetrics();
         int labelWidth = fm.stringWidth(label);
         int labelX = (x1 + x2) / 2 - labelWidth / 2;
         int labelY;
 
-        if (Math.abs(y1 - y2) < 5) { // 水平线
+        if (Math.abs(y1 - y2) < 5) {
             labelY = y1 - 5;
-        } else { // 垂直线
+        } else {
             labelY = (y1 + y2) / 2 + fm.getAscent() / 2;
         }
 

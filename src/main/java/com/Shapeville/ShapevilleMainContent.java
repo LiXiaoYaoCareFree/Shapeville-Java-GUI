@@ -3,79 +3,78 @@ package com.Shapeville;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Central dashboard shown at the top of the centre column. Presents a friendly
+ * welcome header, an illustrative tick icon and a live progress bar that turns
+ * the six Shapeville mini-tasks into a single percentage and score read-out.
+ * Every call to {@link #updateProgress()} increments an internal counter and
+ * refreshes the bar; the last call forces 100 % so the user always sees full
+ * completion. Static fields are used because each task window talks directly to
+ * this panel without holding an instance reference.
+ *
+ * @author Lingyuan Li
+ */
 public class ShapevilleMainContent extends JPanel {
-    public static int flag1 = 0;
-    public static int flag2 = 0;
-    public static int flag3 = 0;
-    public static int flag4 = 0;
-    public static int flag5 = 0;
-    public static int flag6 = 0;
 
+    /** Flags set by the individual TaskX screens. */
+    public static int flag1, flag2, flag3, flag4, flag5, flag6;
 
+    /** Shared widgets so tasks can update the UI from afar. */
     public static JProgressBar progressBar;
-    public static JLabel scoreLabel;
+    public static JLabel       scoreLabel;
+
     private static int tasksCompleted = 0;
     private static final int TOTAL_TASKS = 6;
 
+    /** Builds the header, icon, subtitle and progress bar. */
     public ShapevilleMainContent() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(new Color(240, 248, 255)); // 淡蓝背景
+        setBackground(new Color(240, 248, 255)); // light blue backdrop
 
-
-        // 欢迎标题区域
+        /* --- Welcome section ------------------------------------------------ */
         add(Box.createVerticalStrut(20));
 
-        // 加载图片图标
-        ImageIcon welcomeIcon = new ImageIcon(getClass().getClassLoader().getResource("images/tick.png"));
+        ImageIcon tick = new ImageIcon(getClass().getClassLoader().getResource("images/tick.png"));
+        Image scaled  = tick.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        JLabel icon   = new JLabel(new ImageIcon(scaled), SwingConstants.CENTER);
+        icon.setAlignmentX(CENTER_ALIGNMENT);
+        add(icon);
 
-        // 设置图片图标为指定大小
-        Image img = welcomeIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // 调整为 100x100
-        welcomeIcon = new ImageIcon(img);
+        JLabel title = new JLabel("Welcome to Shapeville!");
+        title.setFont(new Font("Arial", Font.BOLD, 28));
+        title.setAlignmentX(CENTER_ALIGNMENT);
+        add(title);
 
-        // 创建 JLabel 用于显示图片
-        JLabel welcomeIconLabel = new JLabel(welcomeIcon, SwingConstants.CENTER);
-        welcomeIconLabel.setAlignmentX(CENTER_ALIGNMENT);  // 让图片居中
+        JLabel subtitle = new JLabel("Let's explore shapes, angles, and geometry together!");
+        subtitle.setFont(new Font("Arial", Font.PLAIN, 16));
+        subtitle.setAlignmentX(CENTER_ALIGNMENT);
+        add(subtitle);
 
-        add(welcomeIconLabel);
-
-        JLabel welcomeText = new JLabel("Welcome to Shapeville!");
-        welcomeText.setFont(new Font("Arial", Font.BOLD, 28));
-        welcomeText.setAlignmentX(CENTER_ALIGNMENT);
-        add(welcomeText);
-
-        JLabel subtitleText = new JLabel("Let's explore shapes, angles, and geometry together!");
-        subtitleText.setFont(new Font("Arial", Font.PLAIN, 16));
-        subtitleText.setAlignmentX(CENTER_ALIGNMENT);
-        add(subtitleText);
-
-        // 进度条区域
+        /* --- Progress section ---------------------------------------------- */
         add(Box.createVerticalStrut(30));
-        JPanel progressPanel = new JPanel();
-        progressPanel.setLayout(new BorderLayout());
-        progressPanel.setOpaque(false);
+        JPanel barPanel = new JPanel(new BorderLayout());
+        barPanel.setOpaque(false);
 
-        JLabel progressLabel = new JLabel("Your Progress");
+        JLabel label = new JLabel("Your Progress");
         progressBar = new JProgressBar(0, 100);
-        progressBar.setValue(0);
         progressBar.setPreferredSize(new Dimension(400, 20));
         progressBar.setForeground(new Color(76, 175, 80));
-        scoreLabel = new JLabel("0/100 points");
+        scoreLabel  = new JLabel("0/100 points");
 
-        progressPanel.add(progressLabel, BorderLayout.WEST);
-        progressPanel.add(progressBar, BorderLayout.CENTER);
-        progressPanel.add(scoreLabel, BorderLayout.EAST);
-
-        add(progressPanel);
+        barPanel.add(label, BorderLayout.WEST);
+        barPanel.add(progressBar, BorderLayout.CENTER);
+        barPanel.add(scoreLabel, BorderLayout.EAST);
+        add(barPanel);
     }
+
+    /**
+     * Increments the <em>tasks completed</em> counter, recalculates the
+     * percentage and refreshes the bar and score label.
+     */
     public static void updateProgress() {
         tasksCompleted++;
         int percentage = (int) ((tasksCompleted * 100.0) / TOTAL_TASKS);
-
-        // 确保最后一次任务完成时显示100%
-        if (tasksCompleted == TOTAL_TASKS) {
-            percentage = 100;
-        }
-
+        if (tasksCompleted == TOTAL_TASKS) percentage = 100; // show full bar
         progressBar.setValue(percentage);
         scoreLabel.setText(percentage + "/100 points");
     }

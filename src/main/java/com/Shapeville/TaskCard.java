@@ -3,7 +3,22 @@ package com.Shapeville;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-
+/**
+ * Reusable card component shown in the Stage-Switcher grid.
+ * <p>
+ * Each card advertises one geometry task: a coloured badge, title,
+ * optional icon, two-line description, target age/level, and a coloured
+ * “Start” button that the caller can wire to any {@link ActionListener}.
+ * Layout uses a vertical BoxLayout so width is fixed (260 px) while
+ * height stretches just enough to fit the supplied text and icon.
+ * Background is white; a one-pixel darker border plus a theme-colour
+ * header panel makes every card visually consistent with the task’s
+ * difficulty colour (green, blue, purple, …).
+ * Perfect for dropping into any container that uses standard Swing
+ * layout managers.
+ * <p>
+ * Author : Lingyuan Li
+ */
 public class TaskCard extends JPanel {
     private JButton startButton;
 
@@ -61,7 +76,7 @@ public class TaskCard extends JPanel {
         add(footer);
     }
 
-    // 添加 Start 按钮事件监听器
+    // Add the Start button event listener
     public void addStartButtonListener(ActionListener listener) {
         startButton.addActionListener(listener);
     }

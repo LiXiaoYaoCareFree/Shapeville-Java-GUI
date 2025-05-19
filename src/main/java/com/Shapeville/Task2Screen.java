@@ -9,6 +9,17 @@ import java.util.Set;
 import static com.Shapeville.ShapevilleMainContent.flag1;
 import static com.Shapeville.ShapevilleMainContent.flag2;
 
+/**
+ * Interactive window for <strong>Task&nbsp;2 – Angle Type Identification</strong>.
+ * Presents a drawn angle (multiple of 10°) and asks the pupil to classify it
+ * as acute, right, obtuse, straight or reflex. The user has three attempts; a
+ * colourful feedback label and attempt counter guide the process. After four
+ * different angle types have been recognised the task ends. Colours adapt
+ * through {@link ColorManager}, and the main dashboard progress is updated the
+ * first time the window opens.
+ *
+ * @author Lingyuan Li
+ */
 public class Task2Screen extends JFrame implements ColorRefreshable {
     private Set<String> recognizedTypes = new HashSet<>();
     private int attempts;
@@ -148,18 +159,16 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
     }
 
     /**
-     * 刷新所有UI元素的颜色，以响应色盲模式变化
+     * Refresh the colors of all UI elements to respond to the changes in the color blindness mode
      */
     @Override
     public void refreshColors() {
         System.out.println("Task2Screen正在刷新颜色...");
 
-        // 更新颜色常量
         red = ColorManager.getRed();
         green = ColorManager.getGreen();
         blue = ColorManager.getBlue();
 
-        // 更新按钮颜色
         if (submitButton != null) {
             submitButton.setBackground(blue);
             submitButton.setForeground(Color.WHITE);
@@ -170,7 +179,6 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
             nextButton.setForeground(Color.WHITE);
         }
 
-        // 更新提示文本颜色
         if (hintLabel != null) {
             String hintText = hintLabel.getText();
             if (hintText.startsWith("Correct")) {
@@ -182,17 +190,14 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
             }
         }
 
-        // 更新角度面板颜色
         if (shapePanel instanceof AnglePanel) {
             ((AnglePanel) shapePanel).updateColors();
         }
 
-        // 刷新渐变背景
         if (gradientTopWrapper != null) {
             gradientTopWrapper.repaint();
         }
 
-        // 重绘所有面板
         if (mainPanel != null)
             mainPanel.repaint();
     }

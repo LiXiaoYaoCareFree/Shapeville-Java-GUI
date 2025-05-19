@@ -11,6 +11,22 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag2;
 import static com.Shapeville.ShapevilleMainContent.flag5;
 
+/**
+ * Practice window for estimating the area of irregular / compound shapes.
+ * <p>
+ * The frame shuffles six pre-defined figures, each linked to a text
+ * formula and exact numeric result.  Learners pick a shape, study the
+ * picture, and type the area.  They have 3 attempts and a 5-minute
+ * countdown; running out of tries or time reveals the worked solution.
+ * Progress and remaining shapes are shown via a coloured progress bar,
+ * three traffic-light “attempt dots,” and a live timer.  All colours
+ * adapt on the fly through {@link ColorManager} when colour-blind mode
+ * is toggled, thanks to the {@link ColorRefreshable} contract.
+ * After every shape is answered, the window disposes and control returns
+ * to the Shapeville main GUI.
+ * <p>
+ * Author : Lingyuan Li
+ */
 public class Task5Screen extends JFrame implements ColorRefreshable {
     private List<String> availableShapes;
     private Map<String, String> formulasMap;
@@ -189,7 +205,7 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
                 options,
                 options[0]);
         if (selection == null) {
-            return; // 用户取消选择
+            return;
         }
         currentShape = selection;
         availableShapes.remove(selection);
@@ -225,32 +241,30 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         countdownTimer.start();
     }
 
-    // 更新尝试次数显示
     private void updateAttemptsDisplay() {
         attemptsText = "<html>Attempts: ";
-        // 每次都有三个圆点，颜色会根据错误次数变化
         for (int i = 0; i < 3; i++) {
-            if (attempts == 3) { // 初始状态
+            if (attempts == 3) {
                 if (i == 0)
-                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>";
                 else
-                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
-            } else if (attempts == 2) { // 第一次错误
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>";
+            } else if (attempts == 2) {
                 if (i == 0)
-                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
                 else if (i == 1)
-                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>";
                 else
-                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
-            } else if (attempts == 1) { // 第二次错误
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>";
+            } else if (attempts == 1) {
                 if (i == 0)
-                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
                 else if (i == 1)
-                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
                 else
-                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
-            } else { // 第三次错误
-                attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 全部红色
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>";
+            } else {
+                attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
             }
         }
         attemptsText += "</html>";
@@ -277,7 +291,6 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         }
     }
 
-    // 获取颜色的Hex值
     private String getColorHex(Color color) {
         return ColorManager.getColorHex(color);
     }
@@ -302,23 +315,21 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
     }
 
     /**
-     * 刷新所有UI元素的颜色，以响应色盲模式变化
+     * Refresh the colors of all UI elements to respond to the changes in the color blindness mode
      */
     @Override
     public void refreshColors() {
-        System.out.println("Task5Screen正在刷新颜色...");
+        System.out.println("Task5Screen is refreshing colors...");
 
-        // 更新颜色常量
         orange = ColorManager.getOrange();
         gray = ColorManager.getGray();
         red = ColorManager.getRed();
         green = ColorManager.getGreen();
         yellow = ColorManager.getYellow();
 
-        // 更新尝试次数指示器
         updateAttemptsDisplay();
 
-        // 更新按钮颜色
+
         if (submitButton != null) {
             submitButton.setBackground(ColorManager.getBlue());
             submitButton.setForeground(Color.WHITE);
@@ -328,8 +339,6 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
             nextButton.setBackground(ColorManager.getGreen());
             nextButton.setForeground(Color.WHITE);
         }
-
-        // 更新提示文本颜色
         if (hintLabel != null) {
             String hintText = hintLabel.getText();
             if (hintText.startsWith("Correct")) {
@@ -339,26 +348,22 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
             }
         }
 
-        // 更新进度条颜色
         if (progressBar != null) {
             progressBar.setForeground(ColorManager.getProgressBarColor());
         }
 
-        // 更新计时器颜色
         if (timerLabel != null) {
-            if (remainingSeconds < 60) { // 剩余时间少于1分钟
+            if (remainingSeconds < 60) {
                 timerLabel.setForeground(red);
             } else {
                 timerLabel.setForeground(Color.BLACK);
             }
         }
 
-        // 刷新渐变背景
         if (gradientTopWrapper != null) {
             gradientTopWrapper.repaint();
         }
 
-        // 重绘所有面板
         if (taskPanel != null)
             taskPanel.repaint();
         if (shapePanel != null)

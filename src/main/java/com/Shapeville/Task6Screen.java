@@ -11,6 +11,22 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag2;
 import static com.Shapeville.ShapevilleMainContent.flag6;
 
+/**
+ * Interactive window for practising the area of circular sectors.
+ * <p>
+ * Eight preset exercises describe a sector by central angle and radius.
+ * The learner selects a case, inspects the drawn sector, and types the
+ * area; three attempts and a 5-minute countdown are allowed.  A 5 %
+ * tolerance recognises small rounding differences.  Traffic-light dots,
+ * a live timer, and a progress bar show current status.  Correct answers
+ * or exhausted attempts/time reveal the full worked formula.  Colours
+ * refresh instantly through {@link ColorManager} when colour-blind mode
+ * is toggled, in line with the {@link ColorRefreshable} protocol.
+ * When all sectors are completed the frame disposes and returns control
+ * to Shapeville’s main GUI.
+ * <p>
+ * Author : Lingyuan Li
+ */
 public class Task6Screen extends JFrame implements ColorRefreshable {
     private List<String> availableShapes;
     private Map<String, String> formulasMap;
@@ -94,21 +110,17 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
                 int centerY = getHeight() / 2;
                 int radius = Math.min(getWidth(), getHeight()) / 3;
 
-                // 解析扇形角度和半径信息
                 Map<String, Double> params = getSectorParameters(currentShape);
                 double angle = params.get("angle");
                 double r = params.get("radius");
 
-                // 绘制扇形
-                g2d.setColor(ColorManager.adaptColor(new Color(173, 216, 230))); // 浅蓝色填充
+                g2d.setColor(ColorManager.adaptColor(new Color(173, 216, 230)));
                 g2d.fillArc(centerX - radius, centerY - radius, radius * 2, radius * 2, 0, -(int) angle);
 
-                // 绘制边框
                 g2d.setColor(Color.BLACK);
                 g2d.drawArc(centerX - radius, centerY - radius, radius * 2, radius * 2, 0, -(int) angle);
-                g2d.drawLine(centerX, centerY, centerX + radius, centerY); // 右边半径线
+                g2d.drawLine(centerX, centerY, centerX + radius, centerY);
 
-                // 计算第二条半径线的角度位置
                 double endRadian = Math.toRadians(angle);
                 int x2 = centerX + (int) (radius * Math.cos(endRadian));
                 int y2 = centerY + (int) (radius * Math.sin(endRadian));
@@ -136,7 +148,6 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
             int ss = remainingSeconds % 60;
             timerLabel.setText(String.format("Time left: %02d:%02d", mm, ss));
 
-            // 当剩余时间少于1分钟时变红
             if (remainingSeconds == 60) {
                 timerLabel.setForeground(red);
             }
@@ -164,10 +175,6 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         hintLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         mainPanel.add(hintLabel);
 
-//        attemptDots = new JLabel();
-//        attemptDots.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        mainPanel.add(attemptDots);
-
         JPanel attemptsPanel = new JPanel();
         attemptsPanel.setLayout(new FlowLayout(FlowLayout.CENTER));  // 中间对齐
         attemptDots = new JLabel();
@@ -193,13 +200,12 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
     }
 
     /**
-     * 刷新所有UI元素的颜色，以响应色盲模式变化
+     * Refresh the colors of all UI elements to respond to the changes in the color blindness mode
      */
     @Override
     public void refreshColors() {
         System.out.println("Task6Screen正在刷新颜色...");
 
-        // 更新颜色常量
         orange = ColorManager.getOrange();
         gray = ColorManager.getGray();
         red = ColorManager.getRed();
@@ -207,12 +213,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         blue = ColorManager.getBlue();
         progressBarColor = ColorManager.getProgressBarColor();
 
-        // 更新进度条颜色
         if (progressBar != null) {
             progressBar.setForeground(progressBarColor);
         }
 
-        // 更新按钮颜色
         if (submitButton != null) {
             submitButton.setBackground(blue);
             submitButton.setForeground(Color.WHITE);
@@ -223,7 +227,6 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
             nextButton.setForeground(Color.WHITE);
         }
 
-        // 更新提示文本颜色
         if (hintLabel != null) {
             String text = hintLabel.getText();
             if (text.contains("correct")) {
@@ -235,19 +238,15 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
             }
         }
 
-        // 更新计时器颜色
         if (timerLabel != null && remainingSeconds <= 60) {
             timerLabel.setForeground(red);
         } else if (timerLabel != null) {
             timerLabel.setForeground(Color.BLACK);
         }
 
-        // 刷新渐变背景
         if (gradientTopWrapper != null) {
             gradientTopWrapper.repaint();
         }
-
-        // 刷新形状面板
         if (shapePanel != null) {
             shapePanel.repaint();
         }
@@ -379,44 +378,40 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         submitButton.setEnabled(true);
         nextButton.setVisible(false);
 
-        // 重置并启动计时器
-        remainingSeconds = 300; // 5分钟
+        remainingSeconds = 300;
         timerLabel.setForeground(Color.BLACK);
         countdownTimer.restart();
 
-        // 刷新显示
         shapePanel.repaint();
 
-        // 更新进度条
         progressLabel.setText("Completed: " + (8 - availableShapes.size()) + "/" + formulasMap.size());
         progressBar.setValue(8 - availableShapes.size());
     }
 
     private void updateAttempts() {
         attemptsText = "<html>Attempts: ";
-        // 每次都有三个圆点，颜色会根据错误次数变化
         for (int i = 0; i < 3; i++) {
-            if (attempts == 3) { // 初始状态
+            if (attempts == 3) {
                 if (i == 0)
-                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>";
                 else
-                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
-            } else if (attempts == 2) { // 第一次错误
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>";
+            } else if (attempts == 2) {
                 if (i == 0)
-                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
                 else if (i == 1)
-                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>";
                 else
-                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
-            } else if (attempts == 1) { // 第二次错误
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>";
+            } else if (attempts == 1) {
                 if (i == 0)
-                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
                 else if (i == 1)
-                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
                 else
-                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
-            } else { // 第三次错误
-                attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 全部红色
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>";
+            } else {
+                attemptsText += "<font color='" + getColorHex(red) + "'>● </font>";
             }
         }
         attemptsText += "</html>";

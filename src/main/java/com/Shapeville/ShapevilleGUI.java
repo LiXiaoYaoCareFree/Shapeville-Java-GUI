@@ -5,34 +5,70 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+/**
+ * Main GUI frame for the <strong>Shapeville</strong> educational game application.
+ * <p>
+ * The frame assembles the top navigation bar, the central content container and
+ * the bottom bar, and coordinates global behaviour such as:
+ * <ul>
+ *   <li>Switching between a normal and a colour‑blind friendly palette.</li>
+ *   <li>Keeping track of whether any task window is currently open and disabling
+ *       certain controls while they are.</li>
+ *   <li>Displaying session statistics when the user ends the game.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Lingyuan Li
+ */
 public class ShapevilleGUI extends JFrame {
+
+    /** Whether the colour‑blind palette is currently active. */
     private boolean isColorBlindMode = false;
+
+    /** The user's current session score (e.g. number of correct answers). */
     private int currentProgress = 18;
+
+    /**
+     * {@code true} if any of the {@code TaskXScreen} windows are open.
+     * This flag is shared so that other components can query the state.
+     */
     private static boolean otherWindowsOpen = false;
 
+    // --- UI components -----------------------------------------------------
+
+    /** Top navigation bar showing the logo, Home and End‑Session buttons. */
     private TopNavBarPanel topPanel;
+
+    /** Bottom bar that hosts the colour‑blind mode checkbox and other controls. */
     private BottomBarPanel bottomPanel;
 
+    /** Wrapper panel that paints the horizontal colour gradient behind {@link #topPanel}. */
     private JPanel gradientTopWrapper;
 
-    // 定时检查是否有Task窗口打开的计时器
+    /** Timer that periodically checks whether any task window is currently visible. */
     private Timer windowCheckTimer;
 
+    // -----------------------------------------------------------------------
+
+    /**
+     * Creates and initialises the main application window, builds its child components
+     * and starts the background timer that monitors auxiliary task windows.
+     */
     public ShapevilleGUI() {
         setTitle("Shapeville");
         setSize(1000, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // 顶部渐变背景包裹 topPanel
+        /* --- North: gradient background with top navigation bar ------------------- */
         gradientTopWrapper = getJPanel();
         topPanel = new TopNavBarPanel();
         gradientTopWrapper.add(topPanel);
 
-        // 中间部分
+        /* --- Centre --------------------------------------------------------------- */
         CenterPanelContainer centerPanel = new CenterPanelContainer();
 
-        // 底部面板
+        /* --- South ---------------------------------------------------------------- */
         bottomPanel = new BottomBarPanel(e -> toggleColorBlindMode());
 
         add(gradientTopWrapper, BorderLayout.NORTH);
@@ -42,25 +78,32 @@ public class ShapevilleGUI extends JFrame {
         bindListeners();
         setLocationRelativeTo(null);
 
-        // 启动定时检查窗口状态的计时器
+        // Start monitoring the state of auxiliary task windows
         startWindowChecker();
     }
 
-    // 启动窗口检查计时器
+    // -----------------------------------------------------------------------
+    //                          Window‑tracking logic
+    // -----------------------------------------------------------------------
+
+    /** Starts {@link #windowCheckTimer} which polls every 500 ms for open task windows. */
     private void startWindowChecker() {
         windowCheckTimer = new Timer(500, e -> checkOtherWindows());
         windowCheckTimer.start();
     }
 
-    // 检查是否有其他任务窗口打开
+    /**
+     * Iterates over all visible {@link Window}s and updates {@link #otherWindowsOpen}
+     * to reflect whether any {@code TaskXScreen} is currently shown.
+     * This information is used to disable the colour‑blind mode toggle while tasks
+     * are in progress.
+     */
     private void checkOtherWindows() {
         boolean taskWindowsOpen = false;
 
-        // 检查所有打开的窗口
+        // Inspect every visible window except this one
         for (Window window : Window.getWindows()) {
-            // 只检查可见的窗口
             if (window.isVisible() && window != this) {
-                // 检查是否是任何Task窗口类型
                 if (window instanceof Task1Screen ||
                         window instanceof Task2Screen ||
                         window instanceof Task3Screen ||
@@ -73,38 +116,48 @@ public class ShapevilleGUI extends JFrame {
             }
         }
 
-        // 更新状态
+        // Reflect the new state and refresh the checkbox accordingly
         if (taskWindowsOpen != otherWindowsOpen) {
             otherWindowsOpen = taskWindowsOpen;
             updateColorBlindModeCheckbox();
         }
     }
 
-    // 更新色盲模式复选框的启用状态
+    /**
+     * Enables or disables the checkbox inside {@link #bottomPanel} so that the user
+     * cannot toggle the palette while any task window is open.
+     */
     private void updateColorBlindModeCheckbox() {
         if (bottomPanel != null && bottomPanel.colorBlindModeCheckBox != null) {
             boolean enabled = !otherWindowsOpen;
             bottomPanel.colorBlindModeCheckBox.setEnabled(enabled);
 
-            // 如果禁用，提供视觉提示
-            if (!enabled) {
-                bottomPanel.colorBlindModeCheckBox.setToolTipText(
-                        "色盲模式在任务窗口打开时无法更改。请先关闭所有任务窗口再更改此设置。");
-            } else {
-                bottomPanel.colorBlindModeCheckBox.setToolTipText("启用色盲友好的颜色方案");
-            }
+            bottomPanel.colorBlindModeCheckBox.setToolTipText(
+                    enabled
+                            ? "Enable a colour‑blind friendly palette"
+                            : "The palette cannot be changed while a task window is open. Close all task windows first.");
         }
     }
 
-    // 创建自定义面板，绘制渐变色背景
+    // -----------------------------------------------------------------------
+    //                             UI helpers
+    // -----------------------------------------------------------------------
+
+    /**
+     * Creates a {@link JPanel} that paints a horizontal gradient, to be used as a
+     * background container for the top navigation bar.
+     *
+     * @return a panel with a custom {@code paintComponent} implementation
+     */
     static JPanel getJPanel() {
         JPanel gradientTopWrapper = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
-                GradientPaint gradient = new GradientPaint(0, 0, ColorManager.getGradientStart(), getWidth(), 0,
-                        ColorManager.getGradientEnd());
+                GradientPaint gradient = new GradientPaint(
+                        0, 0, ColorManager.getGradientStart(),
+                        getWidth(), 0, ColorManager.getGradientEnd());
                 g2d.setPaint(gradient);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }
@@ -113,68 +166,85 @@ public class ShapevilleGUI extends JFrame {
         return gradientTopWrapper;
     }
 
-    // 绑定按钮监听事件
+    /** Wires up event listeners for the top navigation buttons. */
     private void bindListeners() {
-        topPanel.homeButton.addActionListener(e -> JOptionPane.showMessageDialog(null, "Returning to Home Screen..."));
+        topPanel.homeButton.addActionListener(
+                e -> JOptionPane.showMessageDialog(null, "Returning to Home Screen..."));
+
         topPanel.endSessionButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null, "You earned " + currentProgress + " points in this session. Goodbye!");
+            JOptionPane.showMessageDialog(
+                    null,
+                    "You earned " + currentProgress + " points in this session. Goodbye!");
             System.exit(0);
         });
     }
 
-    // 色盲模式
+    // -----------------------------------------------------------------------
+    //                         Colour‑blind mode logic
+    // -----------------------------------------------------------------------
+
+    /**
+     * Toggles between the normal and the colour‑blind friendly palette.
+     * If any task window is open, the toggle is aborted and a warning is shown.
+     */
     private void toggleColorBlindMode() {
-        // 如果有其他任务窗口打开，不允许更改色盲模式
+        // Disallow toggling while tasks are running
         if (otherWindowsOpen) {
             JOptionPane.showMessageDialog(
                     this,
-                    "色盲模式在任务窗口打开时无法更改。\n请先关闭所有任务窗口再更改此设置。",
-                    "无法更改色盲模式",
+                    "The colour‑blind palette cannot be changed while a task window is open.\n" +
+                            "Please close all task windows first.",
+                    "Palette change blocked",
                     JOptionPane.WARNING_MESSAGE);
 
-            // 恢复复选框状态以匹配当前色盲模式状态
+            // Re‑synchronise the checkbox state
             bottomPanel.colorBlindModeCheckBox.setSelected(isColorBlindMode);
             return;
         }
 
         isColorBlindMode = bottomPanel.colorBlindModeCheckBox.isSelected();
-        // 更新ColorManager中的状态
+
+        // Persist the choice inside the central colour manager
         ColorManager.setColorBlindMode(isColorBlindMode);
 
-        // 刷新UI以应用色盲模式变更
+        // Apply the new palette to all refreshable windows
         refreshUI();
 
-        // 开发调试信息
-        System.out.println("色盲模式已" + (isColorBlindMode ? "启用" : "禁用"));
+        System.out.println("Colour‑blind mode " + (isColorBlindMode ? "enabled" : "disabled"));
     }
 
-    // 刷新UI以应用色盲模式变更
+    /**
+     * Repacks / repaints components so that the new palette takes effect
+     * without recreating the entire Swing component tree.
+     */
     private void refreshUI() {
-        // 不使用updateComponentTreeUI，避免窗口重置
-        // SwingUtilities.updateComponentTreeUI(this);
-
-        // 仅刷新本窗口的顶部渐变背景
+        // Repaint the gradient background of this window
         if (gradientTopWrapper != null) {
             gradientTopWrapper.repaint();
         }
 
-        // 对所有打开的窗口进行通知
+        // Notify all windows that implement the {@link ColorRefreshable} contract
         for (Window window : Window.getWindows()) {
             if (window instanceof ColorRefreshable) {
                 ((ColorRefreshable) window).refreshColors();
             }
         }
 
-        // 显示切换提示
-        String message = isColorBlindMode ? "blind model" : "normal model";
+        // Inform the user
+        String message = isColorBlindMode ? "Colour‑blind palette" : "Normal palette";
         JOptionPane.showMessageDialog(
                 this,
                 message,
-                "color model switching",
+                "Palette switched",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // 获取当前色盲模式状态
+    /**
+     * Convenience accessor used by other classes to determine if a task window
+     * is currently open.
+     *
+     * @return {@code true} if any {@code TaskXScreen} window is visible
+     */
     public static boolean isTaskWindowOpen() {
         return otherWindowsOpen;
     }

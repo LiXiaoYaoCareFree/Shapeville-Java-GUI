@@ -5,14 +5,29 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * Two-stage navigator embedded below the main dashboard. A pair of toggle
+ * buttons (Key&nbsp;Stage&nbsp;1 and Key&nbsp;Stage&nbsp;2) drive a
+ * {@link CardLayout} that swaps the corresponding grid of {@link TaskCard}s.
+ * Each task button spawns its own <code>TaskXScreen</code> window; while that
+ * window is open the owner frame is temporarily disabled and re-enabled on
+ * close, preventing simultaneous interaction. Basic colour decoration marks
+ * the active stage.
+ *
+ * <p>Usage: the panel is self-contained and exposes no public API besides its
+ * constructor.</p>
+ *
+ * @author Lingyuan Li
+ */
 public class StageSwitcherPanel extends JPanel {
+
     private final CardLayout cardLayout;
-    private final JPanel cardContainer;
+    private final JPanel     cardContainer;
 
     public StageSwitcherPanel() {
         setLayout(new BorderLayout());
 
-        // Stage buttons
+        /* ----------- Stage selector buttons ------------------------------- */
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JToggleButton ks1 = new JToggleButton("<html><b>Key Stage 1</b><br>(Years 1–2)</html>");
         JToggleButton ks2 = new JToggleButton("<html><b>Key Stage 2</b><br>(Years 3–4)</html>");
@@ -25,16 +40,16 @@ public class StageSwitcherPanel extends JPanel {
         decorateButton(ks2, false);
         buttonPanel.add(ks1);
         buttonPanel.add(ks2);
-
         add(buttonPanel, BorderLayout.NORTH);
 
-        // Content cards
-        cardLayout = new CardLayout();
-        cardContainer = new JPanel(cardLayout);
+        /* ----------- Content cards --------------------------------------- */
+        cardLayout     = new CardLayout();
+        cardContainer  = new JPanel(cardLayout);
         cardContainer.add(createStage1(), "KS1");
         cardContainer.add(createStage2(), "KS2");
         add(cardContainer, BorderLayout.CENTER);
 
+        /* ----------- Listeners ------------------------------------------- */
         ks1.addActionListener(e -> {
             cardLayout.show(cardContainer, "KS1");
             decorateButton(ks1, true);
@@ -47,6 +62,7 @@ public class StageSwitcherPanel extends JPanel {
         });
     }
 
+    /** Visual cue for the selected stage. */
     private void decorateButton(JToggleButton btn, boolean active) {
         if (active) {
             btn.setBackground(new Color(66, 133, 244));
@@ -59,17 +75,19 @@ public class StageSwitcherPanel extends JPanel {
         }
     }
 
+    /* ----------------------------- Stage builders ------------------------ */
+
     private JPanel createStage1() {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBackground(new Color(240, 250, 255));
 
-        TaskCard task1 = new TaskCard("Task 1", "Identification of Shapes",
-                "Learn to identify basic 2D shapes like circles, squares, triangles, rectangles, and more!", "Ages 5–7",
+        TaskCard task1 = new TaskCard("Task 1", "Shape Identification",
+                "Identify basic 2-D shapes: circles, squares, triangles…", "Ages 5–7",
                 new Color(76, 175, 80), loadIcon("shapes.png"));
         task1.addStartButtonListener(e -> startTask1());
 
-        TaskCard task2 = new TaskCard("Task 2", " Identification of Angle Types",
-                "Learn about different types of angles: right angles, acute angles, and obtuse angles!", "Ages 5–7",
+        TaskCard task2 = new TaskCard("Task 2", "Angle Types",
+                "Recognise right, acute and obtuse angles.", "Ages 5–7",
                 new Color(76, 175, 80), loadIcon("angles.png"));
         task2.addStartButtonListener(e -> startTask2());
 
@@ -83,32 +101,30 @@ public class StageSwitcherPanel extends JPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(new Color(240, 250, 255));
 
-        // The task of the first line
         JPanel row1 = new JPanel(new FlowLayout());
         row1.setOpaque(false);
-        TaskCard task3 = new TaskCard("Task 3", " Area Calculation of shapes",
-                "Learn how to calculate the area of rectangles, triangles, and other 2D shapes!", "Ages 7–10",
+        TaskCard task3 = new TaskCard("Task 3", "Area of Shapes",
+                "Calculate area of rectangles, triangles and more.", "Ages 7–10",
                 new Color(33, 150, 243), loadIcon("area.png"));
         task3.addStartButtonListener(e -> startTask3());
 
         TaskCard task4 = new TaskCard("Task 4", "Circle Area & Circumference",
-                "Discover how to calculate the area and circumference of circles using π!", "Ages 7–10",
+                "Use π to find area and circumference of circles.", "Ages 7–10",
                 new Color(33, 150, 243), loadIcon("Circle.png"));
         task4.addStartButtonListener(e -> startTask4());
 
         row1.add(task3);
         row1.add(task4);
 
-        // The task of the second line
         JPanel row2 = new JPanel(new FlowLayout());
         row2.setOpaque(false);
         TaskCard task5 = new TaskCard("Challenge 1", "Compound Shapes",
-                "Learn to calculate the area of compound shapes by breaking them into simpler shapes!", "Advanced",
+                "Break compound shapes into simpler ones to get area.", "Advanced",
                 new Color(156, 39, 176), loadIcon("compound.png"));
         task5.addStartButtonListener(e -> startTask5());
 
-        TaskCard task6 = new TaskCard("Challenge 2", "Sector Area Calculation",
-                "Master calculating the area of sectors and the length of arcs in circles!", "Advanced",
+        TaskCard task6 = new TaskCard("Challenge 2", "Sector Areas & Arcs",
+                "Find area of sectors and length of arcs.", "Advanced",
                 new Color(156, 39, 176), loadIcon("sectors.png"));
         task6.addStartButtonListener(e -> startTask6());
 
@@ -120,6 +136,7 @@ public class StageSwitcherPanel extends JPanel {
         return panel;
     }
 
+    /** Loads and scales a small icon from the class-path, may return {@code null}. */
     private ImageIcon loadIcon(String name) {
         try {
             ImageIcon raw = new ImageIcon(getClass().getClassLoader().getResource("images/" + name));
@@ -130,33 +147,21 @@ public class StageSwitcherPanel extends JPanel {
         }
     }
 
-    // Configure the task window so that it always comes first and disable the main window until the task window closes
+    /* --------------------- Task launching & modal logic ------------------ */
+
+    /** Ensures the task window is modal-like: owner disabled until closed. */
     private void configureTaskWindow(JFrame taskWindow) {
-        // The Settings are always on the top layer and prevent interaction with other Windows
         taskWindow.setAlwaysOnTop(true);
-        // Obtain the top-level window as the owner (usually the main application window)
         Window owner = SwingUtilities.getWindowAncestor(this);
         if (owner instanceof Frame) {
-            // Temporarily store the reference for use in custom event handling
             final Frame ownerFrame = (Frame) owner;
-            // Prevent the main window from obtaining focus until the task window is closed
             ownerFrame.setEnabled(false);
 
-            // Add a window closure listener to re-enable the main window when the task window is closed
             taskWindow.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    enableOwnerWindow(ownerFrame);
-                }
-
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    enableOwnerWindow(ownerFrame);
-                }
+                @Override public void windowClosed(WindowEvent e) { enableOwnerWindow(ownerFrame); }
+                @Override public void windowClosing(WindowEvent e) { enableOwnerWindow(ownerFrame); }
             });
 
-            // Add a window status listener to detect whether the task window is still visible
-            // This can capture window closures in any way, including the Home and Exit buttons
             new Timer(100, e -> {
                 if (!taskWindow.isVisible() || !taskWindow.isDisplayable()) {
                     ((Timer) e.getSource()).stop();
@@ -166,7 +171,6 @@ public class StageSwitcherPanel extends JPanel {
         }
     }
 
-    // Auxiliary method: Enable the main window at the appropriate time
     private void enableOwnerWindow(Frame ownerFrame) {
         SwingUtilities.invokeLater(() -> {
             ownerFrame.setEnabled(true);
@@ -175,51 +179,12 @@ public class StageSwitcherPanel extends JPanel {
         });
     }
 
-    // Start Task 1
-    public void startTask1() {
-        System.out.println("Starting Task 1: Shape Recognition");
-        Task1Screen task1Screen = new Task1Screen();
-        configureTaskWindow(task1Screen);
-        task1Screen.setVisible(true); // 显示任务界面
-    }
+    /* ----------------------------- Task starters ------------------------- */
 
-    // Start Task 2
-    public void startTask2() {
-        System.out.println("Starting Task 2: Angle Types");
-        Task2Screen task2Screen = new Task2Screen();
-        configureTaskWindow(task2Screen);
-        task2Screen.setVisible(true);
-    }
-
-    // Start Task 3
-    public void startTask3() {
-        System.out.println("Starting Task 3: Shape Area");
-        Task3Screen task3Screen = new Task3Screen();
-        configureTaskWindow(task3Screen);
-        task3Screen.setVisible(true);
-    }
-
-    // Start Task 4
-    public void startTask4() {
-        System.out.println("Starting Task 4: Circle Area & Circumference");
-        Task4Screen task4Screen = new Task4Screen();
-        configureTaskWindow(task4Screen);
-        task4Screen.setVisible(true);
-    }
-
-    // Start Task 5
-    public void startTask5() {
-        System.out.println("Starting Task 5: Compound Shapes");
-        Task5Screen task5Screen = new Task5Screen();
-        configureTaskWindow(task5Screen);
-        task5Screen.setVisible(true);
-    }
-
-    // Start Task 6
-    public void startTask6() {
-        System.out.println("Starting Task 6: Sectors & Arcs");
-        Task6Screen task6Screen = new Task6Screen();
-        configureTaskWindow(task6Screen);
-        task6Screen.setVisible(true);
-    }
+    public void startTask1() { Task1Screen s = new Task1Screen(); configureTaskWindow(s); s.setVisible(true); }
+    public void startTask2() { Task2Screen s = new Task2Screen(); configureTaskWindow(s); s.setVisible(true); }
+    public void startTask3() { Task3Screen s = new Task3Screen(); configureTaskWindow(s); s.setVisible(true); }
+    public void startTask4() { Task4Screen s = new Task4Screen(); configureTaskWindow(s); s.setVisible(true); }
+    public void startTask5() { Task5Screen s = new Task5Screen(); configureTaskWindow(s); s.setVisible(true); }
+    public void startTask6() { Task6Screen s = new Task6Screen(); configureTaskWindow(s); s.setVisible(true); }
 }

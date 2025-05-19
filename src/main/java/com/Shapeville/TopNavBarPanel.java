@@ -4,6 +4,21 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+/**
+ * Slim, gradient-friendly navigation bar reused at the top of every
+ * Shapeville window.
+ * <p>
+ * The left side shows the application logo (“Shapeville”) with a
+ * 30 × 30 px icon; the right side holds two coloured text-buttons:
+ * “Home” returns to the main menu, “End Session” closes the current
+ * task after showing a summary.  The panel itself is transparent so the
+ * parent frame can paint a gradient behind it; internal sub-panels are
+ * opaque to preserve button alignment.  All child components expose
+ * their references (public fields) so callers can attach listeners
+ * directly.
+ * <p>
+ * Author : Lingyuan Li
+ */
 public class TopNavBarPanel extends JPanel {
     public JButton homeButton;
     public JButton endSessionButton;
@@ -12,7 +27,6 @@ public class TopNavBarPanel extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        // 左侧 logo
         ImageIcon rawIcon = new ImageIcon(getClass().getClassLoader().getResource("images/img.png"));
         Image scaledImage = rawIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel("Shapeville", new ImageIcon(scaledImage), JLabel.LEFT);
@@ -25,7 +39,6 @@ public class TopNavBarPanel extends JPanel {
         leftPanel.add(logoLabel);
         leftPanel.setBorder(new EmptyBorder(5, 20, 0, 0));
 
-        // 右侧按钮
         homeButton = createButton("Home", "images/home.png", Color.BLUE);
         endSessionButton = createButton("End Session", "images/logout.png", Color.RED);
 

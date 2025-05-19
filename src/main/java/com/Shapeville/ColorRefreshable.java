@@ -1,11 +1,12 @@
 package com.Shapeville;
 
 /**
- * 颜色可刷新接口 - 所有需要响应色盲模式变化的窗口或组件需实现此接口
+ * Color Refresh interface - All Windows or components that need to respond to
+ * changes in color blindness modes must implement this interface
  */
 public interface ColorRefreshable {
     /**
-     * 刷新所有UI元素的颜色，以响应色盲模式变化
+     * Refresh the colors of all UI elements to respond to the changes in the color blindness mode
      */
     void refreshColors();
 }
