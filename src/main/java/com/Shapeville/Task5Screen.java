@@ -19,7 +19,7 @@ import static com.Shapeville.ShapevilleMainContent.flag5;
  * picture, and type the area.  They have 3 attempts and a 5-minute
  * countdown; running out of tries or time reveals the worked solution.
  * Progress and remaining shapes are shown via a coloured progress bar,
- * three traffic-light “attempt dots,” and a live timer.  All colours
+ * three traffic-light "attempt dots," and a live timer.  All colours
  * adapt on the fly through {@link ColorManager} when colour-blind mode
  * is toggled, thanks to the {@link ColorRefreshable} contract.
  * After every shape is answered, the window disposes and control returns
@@ -28,40 +28,91 @@ import static com.Shapeville.ShapevilleMainContent.flag5;
  * Author : Lingyuan Li
  */
 public class Task5Screen extends JFrame implements ColorRefreshable {
+    /** List of shapes that are still available for practice */
     private List<String> availableShapes;
+    
+    /** Map storing the formula for each shape */
     private Map<String, String> formulasMap;
+    
+    /** Map storing the correct solution for each shape */
     private Map<String, Double> solutionsMap;
+    
+    /** The currently selected shape for practice */
     private String currentShape;
+    
+    /** Text representation of attempt status */
     private String attemptsText;
 
+    /** Number of remaining attempts for current shape */
     private int attempts;
+    
+    /** The correct formula for the current shape */
     private String correctFormula;
+    
+    /** The correct solution for the current shape */
     private double correctSolution;
 
+    /** Progress bar showing completion status */
     private JProgressBar progressBar;
+    
+    /** Label showing progress text */
     private JLabel progressLabel;
+    
+    /** Label showing hints and feedback */
     private JLabel hintLabel;
+    
+    /** Label showing attempt status dots */
     private JLabel attemptDots;
+    
+    /** Text field for entering area answer */
     private JTextField answerField;
+    
+    /** Button to submit answer */
     private JButton submitButton;
+    
+    /** Button to proceed to next shape */
     private JButton nextButton;
+    
+    /** Panel displaying the current shape */
     private JPanel shapePanel;
 
+    /** Label showing remaining time */
     private JLabel timerLabel;
+    
+    /** Timer for countdown functionality */
     private Timer countdownTimer;
+    
+    /** Remaining seconds in the countdown */
     private int remainingSeconds;
 
-    // 使用ColorManager管理颜色
+    /** Orange color for UI elements */
     private Color orange = ColorManager.getOrange();
+    
+    /** Gray color for UI elements */
     private Color gray = ColorManager.getGray();
+    
+    /** Red color for UI elements */
     private Color red = ColorManager.getRed();
+    
+    /** Green color for UI elements */
     private Color green = ColorManager.getGreen();
+    
+    /** Yellow color for UI elements */
     private Color yellow = ColorManager.getYellow();
 
+    /** Top navigation bar panel */
     private TopNavBarPanel topPanel;
+    
+    /** Main task panel */
     private JPanel taskPanel;
+    
+    /** Wrapper panel for gradient top */
     private JPanel gradientTopWrapper;
 
+    /**
+     * Constructs a new Task5Screen instance.
+     * Initializes the UI components and sets up the practice environment.
+     */
     public Task5Screen() {
         if (flag5 == 0) {
             ShapevilleMainContent.updateProgress();
@@ -162,6 +213,10 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Initializes the formulas and solutions for all available shapes.
+     * Sets up the mapping between shape names and their corresponding formulas and solutions.
+     */
     private void initFormulasAndSolutions() {
         // Shape 2
         formulasMap.put("Shape 2", "A = 20×21 - 10×11 = 420 - 110 = 310 cm²");
@@ -188,6 +243,10 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         solutionsMap.put("Shape 9", 174.0);
     }
 
+    /**
+     * Prompts the user to select the next shape for practice.
+     * Handles the shape selection dialog and updates the UI accordingly.
+     */
     private void selectNext() {
         countdownTimer.stop();
         if (availableShapes.isEmpty()) {
@@ -212,6 +271,10 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         loadShape(currentShape);
     }
 
+    /**
+     * Loads the selected shape into the practice environment.
+     * @param shapeName The name of the shape to load
+     */
     private void loadShape(String shapeName) {
         correctFormula = formulasMap.get(shapeName);
         correctSolution = solutionsMap.get(shapeName);
@@ -241,6 +304,9 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         countdownTimer.start();
     }
 
+    /**
+     * Updates the visual display of remaining attempts using colored dots.
+     */
     private void updateAttemptsDisplay() {
         attemptsText = "<html>Attempts: ";
         for (int i = 0; i < 3; i++) {
@@ -271,6 +337,10 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         attemptDots.setText(attemptsText);
     }
 
+    /**
+     * Handles the submission of an answer.
+     * Validates the input and checks if it matches the correct solution.
+     */
     private void onSubmit() {
         try {
             double ans = Double.parseDouble(answerField.getText().trim());
@@ -291,10 +361,19 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Converts a Color object to its hexadecimal string representation.
+     * @param color The color to convert
+     * @return The hexadecimal string representation of the color
+     */
     private String getColorHex(Color color) {
         return ColorManager.getColorHex(color);
     }
 
+    /**
+     * Handles the case when a correct answer is submitted.
+     * Updates the UI to show success and enables the next button.
+     */
     private void onCorrect() {
         countdownTimer.stop();
         hintLabel.setText("Correct!");
@@ -302,12 +381,19 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         nextButton.setVisible(true);
     }
 
+    /**
+     * Displays the correct solution and formula when attempts are exhausted.
+     */
     private void showSolution() {
         hintLabel.setText(correctFormula + " = " + correctSolution);
         submitButton.setEnabled(false);
         nextButton.setVisible(true);
     }
 
+    /**
+     * Handles the case when time runs out.
+     * Displays the correct solution and enables the next button.
+     */
     private void onTimeUp() {
         hintLabel.setText("Time up! " + correctFormula + " = " + correctSolution);
         submitButton.setEnabled(false);
@@ -315,7 +401,8 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
     }
 
     /**
-     * Refresh the colors of all UI elements to respond to the changes in the color blindness mode
+     * Refreshes all UI colors to respond to color blindness mode changes.
+     * Implements the ColorRefreshable interface.
      */
     @Override
     public void refreshColors() {
@@ -370,6 +457,10 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
             shapePanel.repaint();
     }
 
+    /**
+     * Main method for testing the Task5Screen independently.
+     * @param args Command line arguments (not used)
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Task5Screen().setVisible(true));
     }

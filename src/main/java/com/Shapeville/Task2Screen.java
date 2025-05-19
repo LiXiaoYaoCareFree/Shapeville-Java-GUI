@@ -21,43 +21,85 @@ import static com.Shapeville.ShapevilleMainContent.flag2;
  * @author Lingyuan Li
  */
 public class Task2Screen extends JFrame implements ColorRefreshable {
+    /** Set to store the types of angles that have been correctly identified */
     private Set<String> recognizedTypes = new HashSet<>();
+    
+    /** Number of attempts remaining for the current angle */
     private int attempts;
+    
+    /** The current angle being displayed (in degrees) */
     private int currentAngle;
+    
+    /** The correct type of the current angle */
     private String correctType;
 
+    /** Panel for displaying the angle visualization */
     private JPanel shapePanel;
+    
+    /** Label for displaying hints and feedback */
     private JLabel hintLabel;
+    
+    /** Label for displaying remaining attempts */
     private JLabel attemptsLabel;
+    
+    /** Dropdown menu for selecting angle type */
     private JComboBox<String> typeCombo;
+    
+    /** Button for submitting the selected angle type */
     private JButton submitButton;
+    
+    /** Button for proceeding to the next angle */
     private JButton nextButton;
+    
+    /** Wrapper panel for the top gradient navigation */
     private JPanel gradientTopWrapper;
+    
+    /** Main content panel containing all UI elements */
     private JPanel mainPanel;
 
-    // 颜色常量 - 使用ColorManager
+    /** Color constants managed by ColorManager */
     private Color red = ColorManager.getRed();
     private Color green = ColorManager.getGreen();
     private Color blue = ColorManager.getBlue();
 
-    // Panel to draw the angle
+    /**
+     * Panel class for drawing and displaying angles
+     */
     class AnglePanel extends JPanel {
+        /** The angle to be displayed (in degrees) */
         private int angle;
+        
+        /** Radius of the angle visualization */
         private static final int RADIUS = 100;
+        
+        /** Color of the angle lines */
         private Color lineColor = Color.BLACK;
+        
+        /** Color of the angle arc */
         private Color arcColor = ColorManager.getBlue();
 
+        /**
+         * Constructs a new AnglePanel with the specified angle
+         * @param angle The angle to display (in degrees)
+         */
         public AnglePanel(int angle) {
             this.angle = angle;
             setPreferredSize(new Dimension(300, 300));
         }
 
+        /**
+         * Updates the colors of the angle visualization based on color blindness mode
+         */
         public void updateColors() {
             lineColor = ColorManager.isColorBlindMode() ? Color.BLACK : Color.BLACK;
             arcColor = ColorManager.getBlue();
             repaint();
         }
 
+        /**
+         * Paints the angle visualization including lines, arc, and angle label
+         * @param g The Graphics context to paint with
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -92,6 +134,9 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Constructs a new Task2Screen and initializes the UI components
+     */
     public Task2Screen() {
         if (flag2 == 0) {
             ShapevilleMainContent.updateProgress();
@@ -159,7 +204,7 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
     }
 
     /**
-     * Refresh the colors of all UI elements to respond to the changes in the color blindness mode
+     * Refreshes the colors of all UI elements to respond to changes in color blindness mode
      */
     @Override
     public void refreshColors() {
@@ -202,6 +247,10 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
             mainPanel.repaint();
     }
 
+    /**
+     * Selects and displays the next angle for identification
+     * Prompts user for angle input and updates the UI accordingly
+     */
     private void selectNext() {
         if (recognizedTypes.size() == 4) {
             JOptionPane.showMessageDialog(this, "You have identified 4 angle types!");
@@ -254,6 +303,11 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
         nextButton.setVisible(false);
     }
 
+    /**
+     * Determines the type of angle based on its degree measurement
+     * @param angle The angle in degrees
+     * @return The type of angle ("Acute", "Right", "Obtuse", "Straight", or "Reflex")
+     */
     private String determineType(int angle) {
         if (angle == 90)
             return "Right";
@@ -269,10 +323,17 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
         return "Straight";
     }
 
+    /**
+     * Updates the attempts label to show remaining attempts
+     */
     private void updateAttemptsLabel() {
         attemptsLabel.setText("Attempts left: " + attempts);
     }
 
+    /**
+     * Handles the submission of the selected angle type
+     * Checks if the answer is correct and updates the UI accordingly
+     */
     private void onSubmit() {
         String selected = (String) typeCombo.getSelectedItem();
         if (selected.equals(correctType)) {
@@ -296,6 +357,10 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Main method to launch the Task2Screen
+     * @param args Command line arguments (not used)
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Task2Screen().setVisible(true));
     }

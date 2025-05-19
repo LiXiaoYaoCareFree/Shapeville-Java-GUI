@@ -21,9 +21,15 @@ import java.awt.event.WindowEvent;
  */
 public class StageSwitcherPanel extends JPanel {
 
+    /** CardLayout manager for switching between different stages */
     private final CardLayout cardLayout;
+    /** Container panel that holds the stage content cards */
     private final JPanel     cardContainer;
 
+    /**
+     * Constructs a new StageSwitcherPanel with two stages and their respective task cards.
+     * Initializes the UI components, sets up the layout, and configures the stage switching logic.
+     */
     public StageSwitcherPanel() {
         setLayout(new BorderLayout());
 
@@ -62,7 +68,11 @@ public class StageSwitcherPanel extends JPanel {
         });
     }
 
-    /** Visual cue for the selected stage. */
+    /**
+     * Applies visual styling to a toggle button based on its active state.
+     * @param btn the toggle button to decorate
+     * @param active true if the button is selected, false otherwise
+     */
     private void decorateButton(JToggleButton btn, boolean active) {
         if (active) {
             btn.setBackground(new Color(66, 133, 244));
@@ -77,6 +87,10 @@ public class StageSwitcherPanel extends JPanel {
 
     /* ----------------------------- Stage builders ------------------------ */
 
+    /**
+     * Creates and configures the panel for Key Stage 1 tasks.
+     * @return a JPanel containing Task 1 and Task 2 cards
+     */
     private JPanel createStage1() {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBackground(new Color(240, 250, 255));
@@ -96,6 +110,10 @@ public class StageSwitcherPanel extends JPanel {
         return panel;
     }
 
+    /**
+     * Creates and configures the panel for Key Stage 2 tasks.
+     * @return a JPanel containing Task 3, Task 4, and two challenge tasks
+     */
     private JPanel createStage2() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -136,7 +154,11 @@ public class StageSwitcherPanel extends JPanel {
         return panel;
     }
 
-    /** Loads and scales a small icon from the class-path, may return {@code null}. */
+    /**
+     * Loads and scales an icon from the classpath resources.
+     * @param name the filename of the icon to load
+     * @return a scaled ImageIcon, or null if loading fails
+     */
     private ImageIcon loadIcon(String name) {
         try {
             ImageIcon raw = new ImageIcon(getClass().getClassLoader().getResource("images/" + name));
@@ -149,7 +171,10 @@ public class StageSwitcherPanel extends JPanel {
 
     /* --------------------- Task launching & modal logic ------------------ */
 
-    /** Ensures the task window is modal-like: owner disabled until closed. */
+    /**
+     * Configures a task window to behave modally by disabling the owner window.
+     * @param taskWindow the window to configure
+     */
     private void configureTaskWindow(JFrame taskWindow) {
         taskWindow.setAlwaysOnTop(true);
         Window owner = SwingUtilities.getWindowAncestor(this);
@@ -171,6 +196,10 @@ public class StageSwitcherPanel extends JPanel {
         }
     }
 
+    /**
+     * Re-enables the owner window and brings it to the front.
+     * @param ownerFrame the frame to re-enable
+     */
     private void enableOwnerWindow(Frame ownerFrame) {
         SwingUtilities.invokeLater(() -> {
             ownerFrame.setEnabled(true);
@@ -181,10 +210,33 @@ public class StageSwitcherPanel extends JPanel {
 
     /* ----------------------------- Task starters ------------------------- */
 
+    /**
+     * Launches Task 1 screen for shape identification.
+     */
     public void startTask1() { Task1Screen s = new Task1Screen(); configureTaskWindow(s); s.setVisible(true); }
+
+    /**
+     * Launches Task 2 screen for angle types.
+     */
     public void startTask2() { Task2Screen s = new Task2Screen(); configureTaskWindow(s); s.setVisible(true); }
+
+    /**
+     * Launches Task 3 screen for area calculations.
+     */
     public void startTask3() { Task3Screen s = new Task3Screen(); configureTaskWindow(s); s.setVisible(true); }
+
+    /**
+     * Launches Task 4 screen for circle measurements.
+     */
     public void startTask4() { Task4Screen s = new Task4Screen(); configureTaskWindow(s); s.setVisible(true); }
+
+    /**
+     * Launches Challenge 1 screen for compound shapes.
+     */
     public void startTask5() { Task5Screen s = new Task5Screen(); configureTaskWindow(s); s.setVisible(true); }
+
+    /**
+     * Launches Challenge 2 screen for sector areas and arcs.
+     */
     public void startTask6() { Task6Screen s = new Task6Screen(); configureTaskWindow(s); s.setVisible(true); }
 }

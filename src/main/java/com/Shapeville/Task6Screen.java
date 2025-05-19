@@ -23,43 +23,93 @@ import static com.Shapeville.ShapevilleMainContent.flag6;
  * refresh instantly through {@link ColorManager} when colour-blind mode
  * is toggled, in line with the {@link ColorRefreshable} protocol.
  * When all sectors are completed the frame disposes and returns control
- * to Shapeville’s main GUI.
+ * to Shapeville's main GUI.
  * <p>
  * Author : Lingyuan Li
  */
 public class Task6Screen extends JFrame implements ColorRefreshable {
+    /** List of available shapes for practice */
     private List<String> availableShapes;
+    
+    /** Map storing formulas for each shape */
     private Map<String, String> formulasMap;
+    
+    /** Map storing correct solutions for each shape */
     private Map<String, Double> solutionsMap;
+    
+    /** Currently selected shape for practice */
     private String currentShape;
+    
+    /** Text representation of remaining attempts */
     private String attemptsText;
 
+    /** Number of remaining attempts for current shape */
     private int attempts;
+    
+    /** Correct formula for the current shape */
     private String correctFormula;
+    
+    /** Correct solution value for the current shape */
     private double correctSolution;
 
+    /** Progress bar showing completion status */
     private JProgressBar progressBar;
+    
+    /** Label showing progress text */
     private JLabel progressLabel;
+    
+    /** Label showing hints and feedback */
     private JLabel hintLabel;
+    
+    /** Label showing attempt status dots */
     private JLabel attemptDots;
+    
+    /** Text field for user input */
     private JTextField answerField;
+    
+    /** Button to submit answer */
     private JButton submitButton;
+    
+    /** Button to proceed to next shape */
     private JButton nextButton;
+    
+    /** Panel for drawing the shape */
     private JPanel shapePanel;
 
+    /** Label showing remaining time */
     private JLabel timerLabel;
+    
+    /** Timer for countdown functionality */
     private Timer countdownTimer;
+    
+    /** Remaining seconds in the countdown */
     private int remainingSeconds;
+    
+    /** Panel for gradient top wrapper */
     private JPanel gradientTopWrapper;
 
-    // Color constants - 使用ColorManager
+    /** Orange color for UI elements */
     private Color orange = ColorManager.getOrange();
+    
+    /** Gray color for UI elements */
     private Color gray = ColorManager.getGray();
+    
+    /** Red color for UI elements */
     private Color red = ColorManager.getRed();
+    
+    /** Green color for UI elements */
     private Color green = ColorManager.getGreen();
+    
+    /** Blue color for UI elements */
     private Color blue = ColorManager.getBlue();
+    
+    /** Color for progress bar */
     private Color progressBarColor = ColorManager.getProgressBarColor();
 
+    /**
+     * Constructs a new Task6Screen instance.
+     * Initializes the UI components and sets up the practice environment.
+     */
     public Task6Screen() {
         if (flag6 == 0) {
             ShapevilleMainContent.updateProgress();
@@ -200,7 +250,8 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
     }
 
     /**
-     * Refresh the colors of all UI elements to respond to the changes in the color blindness mode
+     * Refreshes the colors of all UI elements to respond to changes in color blindness mode.
+     * Implements the ColorRefreshable interface.
      */
     @Override
     public void refreshColors() {
@@ -254,6 +305,11 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         repaint();
     }
 
+    /**
+     * Gets the parameters (angle and radius) for a given shape.
+     * @param shapeName The name of the shape to get parameters for
+     * @return Map containing angle and radius values for the shape
+     */
     private Map<String, Double> getSectorParameters(String shapeName) {
         Map<String, Double> params = new HashMap<>();
 
@@ -298,6 +354,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         return params;
     }
 
+    /**
+     * Initializes the data structures with predefined shapes, formulas, and solutions.
+     * Sets up 8 different sector exercises with varying angles and radii.
+     */
     private void initializeData() {
         availableShapes = new ArrayList<>();
         formulasMap = new LinkedHashMap<>();
@@ -344,6 +404,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         solutionsMap.put("Shape 8", 490.63);
     }
 
+    /**
+     * Handles the selection of the next shape for practice.
+     * Shows a dialog for shape selection and initializes the practice session.
+     */
     private void selectNext() {
         countdownTimer.stop();
         if (availableShapes.isEmpty()) {
@@ -367,6 +431,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         loadShape(sel);
     }
 
+    /**
+     * Loads a selected shape and initializes the practice session.
+     * @param shapeName The name of the shape to load
+     */
     private void loadShape(String shapeName) {
         correctFormula = formulasMap.get(shapeName);
         correctSolution = solutionsMap.get(shapeName);
@@ -388,6 +456,9 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         progressBar.setValue(8 - availableShapes.size());
     }
 
+    /**
+     * Updates the visual representation of remaining attempts using colored dots.
+     */
     private void updateAttempts() {
         attemptsText = "<html>Attempts: ";
         for (int i = 0; i < 3; i++) {
@@ -418,10 +489,19 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         attemptDots.setText(attemptsText);
     }
 
+    /**
+     * Converts a Color object to its hexadecimal string representation.
+     * @param c The color to convert
+     * @return Hexadecimal string representation of the color
+     */
     private String getColorHex(Color c) {
         return String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
     }
 
+    /**
+     * Handles the submission of an answer.
+     * Validates the input and checks if it's within the acceptable error margin.
+     */
     private void onSubmit() {
         if (currentShape == null)
             return;
@@ -448,6 +528,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Handles the case when a correct answer is submitted.
+     * Updates UI elements and stops the timer.
+     */
     private void onCorrect() {
         hintLabel.setText("Your answer is correct!");
         hintLabel.setForeground(green);
@@ -456,6 +540,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         countdownTimer.stop();
     }
 
+    /**
+     * Shows the correct solution when attempts are exhausted.
+     * Updates UI elements and stops the timer.
+     */
     private void showSolution() {
         hintLabel.setText("The correct solution is: " + correctFormula);
         hintLabel.setForeground(red);
@@ -464,6 +552,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         countdownTimer.stop();
     }
 
+    /**
+     * Handles the case when time runs out.
+     * Shows the correct solution and updates UI elements.
+     */
     private void onTimeUp() {
         hintLabel.setText("Time's up! The correct solution is: " + correctFormula);
         hintLabel.setForeground(red);
@@ -471,6 +563,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         nextButton.setVisible(true);
     }
 
+    /**
+     * Main method to launch the Task6Screen.
+     * @param args Command line arguments (not used)
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Task6Screen().setVisible(true));
     }

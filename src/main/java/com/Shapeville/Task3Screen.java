@@ -24,32 +24,69 @@ import static com.Shapeville.ShapevilleMainContent.flag3;
  * @author Lingyuan Li
  */
 public class Task3Screen extends JFrame implements ColorRefreshable {
+    /** Array of available shapes for the exercise */
     private final String[] shapes = { "Rectangle", "Parallelogram", "Triangle", "Trapezoid" };
+    
+    /** Current index of the shape being tested */
     private int currentShapeIndex = 0;
+    
+    /** List of shapes that haven't been tested yet */
     private java.util.List<String> remainingShapes;
 
+    /** Number of attempts remaining for the current shape */
     private int attempts = 3;
+    
+    /** The correct area for the current shape */
     private double correctArea;
-    private int[] dims; // 当前题的随机参数
+    
+    /** Random dimensions for the current shape */
+    private int[] dims;
 
     // UI components --------------------------------------------------------
+    /** Label showing progress through the exercise */
     private JLabel progressLabel;
+    
+    /** Progress bar showing completion status */
     private JProgressBar progressBar;
+    
+    /** Label showing remaining time */
     private JLabel timerLabel;
+    
+    /** Timer for the countdown */
     private Timer countdownTimer;
+    
+    /** Remaining seconds in the current round */
     private int remainingSeconds = 180;
 
-    private RoundedCardPanel cardPanel; // 题目卡片
+    /** Panel containing the current shape exercise */
+    private RoundedCardPanel cardPanel;
+    
+    /** Text field for entering the answer */
     private JTextField answerField;
+    
+    /** Label showing hints and feedback */
     private JLabel hintLabel;
+    
+    /** Wrapper panel for the gradient navigation bar */
     private JPanel gradientTopWrapper;
 
     // Palette colours ------------------------------------------------------
+    /** Blue color for UI elements */
     private Color blue = ColorManager.getBlue();
+    
+    /** Green color for success states */
     private Color green = ColorManager.getGreen();
+    
+    /** Red color for error states */
     private Color red = ColorManager.getRed();
+    
+    /** Color for the progress bar */
     private Color progressBarColor = ColorManager.getProgressBarColor();
 
+    /**
+     * Constructs a new Task3Screen window and initializes the UI components.
+     * Sets up the navigation bar, timer, progress tracking, and the main exercise card.
+     */
     public Task3Screen() {
         if (flag3 == 0) {
             ShapevilleMainContent.updateProgress();
@@ -106,6 +143,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
     // ---------------------------------------------------------------------
     //                     Colour‑blind palette refresh
     // ---------------------------------------------------------------------
+    /**
+     * Refreshes all color-related UI elements when the color scheme changes.
+     * Updates colors for progress bar, card panel, timer, hints, and navigation bar.
+     */
     @Override
     public void refreshColors() {
         System.out.println("Task3Screen正在刷新颜色...");
@@ -146,6 +187,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
     //                           Timer & flow
     // ---------------------------------------------------------------------
 
+    /**
+     * Initializes and binds the countdown timer action.
+     * Updates the timer display and handles time expiration.
+     */
     private void bindActions() {
         countdownTimer = new Timer(1000, e -> {
             remainingSeconds--;
@@ -162,6 +207,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         });
     }
 
+    /**
+     * Loads a new shape for the exercise.
+     * Resets the state, generates random dimensions, and updates the UI.
+     */
     private void loadShape() {
         // 重置状态
         attempts = 3;
@@ -220,6 +269,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         cardPanel.updateShape(shape, dims, correctArea, this::onSubmit);
     }
 
+    /**
+     * Handles the submission of an answer.
+     * Validates the input and provides feedback based on correctness.
+     */
     private void onSubmit() {
         try {
             double ans = Double.parseDouble(answerField.getText().trim());
@@ -241,6 +294,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Completes the current round after a correct answer.
+     * Shows the formula and prepares for the next shape.
+     */
     private void finishRound() {
         countdownTimer.stop();
         cardPanel.showFormulaAndNext(() -> {
@@ -255,6 +312,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         });
     }
 
+    /**
+     * Reveals the correct answer when time runs out or attempts are exhausted.
+     * Shows the formula and prepares for the next shape.
+     */
     private void revealAnswer() {
         countdownTimer.stop();
         hintLabel.setText("Right answers:" + correctArea);
@@ -270,16 +331,41 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         });
     }
 
+    /**
+     * Panel class for displaying the shape exercise card with rounded corners.
+     * Contains the shape visualization, input field, and feedback elements.
+     */
     private class RoundedCardPanel extends JPanel {
+        /** Label showing the current shape type */
         private JLabel titleLabel;
+        
+        /** Canvas for drawing the current shape */
         private ShapeCanvas shapeCanvas;
+        
+        /** Label showing the area formula */
         private JLabel formulaLabel;
+        
+        /** Label showing the shape dimensions */
         private JLabel paramsLabel;
-        private JButton submitButton, nextButton;
+        
+        /** Button for submitting answers */
+        private JButton submitButton;
+        
+        /** Button for proceeding to next shape */
+        private JButton nextButton;
+        
+        /** Panel containing the input field and submit button */
         private JPanel inputRow;
+        
+        /** Callback for submit button action */
         private Runnable submitCallback;
+        
+        /** Callback for next button action */
         private Runnable nextCallback;
 
+        /**
+         * Constructs a new RoundedCardPanel with all necessary UI components.
+         */
         RoundedCardPanel() {
             //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setLayout(new BorderLayout());
@@ -350,6 +436,9 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             });
         }
 
+        /**
+         * Updates the colors of UI elements when the color scheme changes.
+         */
         void refreshColors() {
             if (submitButton != null) {
                 submitButton.setBackground(blue);
@@ -364,6 +453,13 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             repaint(); // 重绘ShapeCanvas
         }
 
+        /**
+         * Updates the panel with a new shape exercise.
+         * @param shapeName The name of the shape
+         * @param p The dimensions of the shape
+         * @param area The correct area
+         * @param submitCallback Callback for submit button
+         */
         void updateShape(String shapeName, int[] p, double area,
                 Runnable submitCallback) {
             titleLabel.setText(shapeName + " Area Calculation");
@@ -380,6 +476,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             repaint();
         }
 
+        /**
+         * Shows the formula and next button after an answer is submitted.
+         * @param nextCallback Callback for next button
+         */
         void showFormulaAndNext(Runnable nextCallback) {
             this.nextCallback = nextCallback;
             shapeCanvas.showFormula = true; // 打开公式渲染
@@ -390,6 +490,9 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             repaint();
         }
 
+        /**
+         * Resets the panel state for a new shape.
+         */
         void resetForNewShape() {
             answerField.setText("");
             hintLabel.setText(" ");
@@ -399,19 +502,41 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Canvas class for drawing shapes and their dimensions.
+     */
     private class ShapeCanvas extends JPanel {
+        /** Current shape type */
         String shape;
+        
+        /** Shape dimensions */
         int[] p;
+        
+        /** Correct area of the shape */
         double area;
+        
+        /** Whether to show the formula */
         boolean showFormula = false;
+        
+        /** Scale factor for drawing shapes */
         static final int SCALE = 10;
 
+        /**
+         * Sets the current shape and its properties.
+         * @param shape The shape type
+         * @param p The dimensions
+         * @param area The correct area
+         */
         void setShape(String shape, int[] p, double area) {
             this.shape = shape;
             this.p = p;
             this.area = area;
         }
 
+        /**
+         * Gets the formula text for the current shape.
+         * @return The formula as a string
+         */
         String getFormulaText() {
             switch (shape) {
                 case "Rectangle":
@@ -427,6 +552,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             }
         }
 
+        /**
+         * Gets the parameter text for the current shape.
+         * @return The parameters as a string
+         */
         String getParamsText() {
             switch (shape) {
                 case "Rectangle":
@@ -442,6 +571,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             }
         }
 
+        /**
+         * Paints the shape and its dimensions on the canvas.
+         * @param g0 The graphics context
+         */
         @Override
         protected void paintComponent(Graphics g0) {
             super.paintComponent(g0);
@@ -520,6 +653,16 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Draws dimension lines with arrows and labels.
+     * @param g The graphics context
+     * @param x1 Start x coordinate
+     * @param y1 Start y coordinate
+     * @param x2 End x coordinate
+     * @param y2 End y coordinate
+     * @param label The dimension label
+     * @param color The line color
+     */
     private void drawDimension(Graphics2D g, int x1, int y1, int x2, int y2, String label, Color color) {
         g.setColor(color);
         g.draw(new Line2D.Double(x1, y1, x2, y2));
@@ -541,6 +684,14 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         g.drawString(label, labelX, labelY);
     }
 
+    /**
+     * Draws an arrow head at the specified position.
+     * @param g The graphics context
+     * @param x Arrow base x coordinate
+     * @param y Arrow base y coordinate
+     * @param tx Target x coordinate
+     * @param ty Target y coordinate
+     */
     private void drawArrowHead(Graphics2D g, int x, int y, int tx, int ty) {
         int ARR_SIZE = 5;
         double dx = tx - x;
@@ -560,32 +711,61 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
                 3);
     }
 
+    /**
+     * Custom border class for rounded corners.
+     */
     private static class RoundedBorder implements Border {
+        /** Radius of the rounded corners */
         private final int radius;
 
+        /**
+         * Constructs a new RoundedBorder.
+         * @param radius The corner radius
+         */
         RoundedBorder(int radius) {
             this.radius = radius;
         }
 
+        /**
+         * Gets the border insets.
+         * @param c The component
+         * @return The border insets
+         */
         @Override
         public Insets getBorderInsets(Component c) {
             return new Insets(this.radius, this.radius, this.radius, this.radius);
         }
 
+        /**
+         * Checks if the border is opaque.
+         * @return false
+         */
         @Override
         public boolean isBorderOpaque() {
             return false;
         }
 
+        /**
+         * Paints the rounded border.
+         * @param c The component
+         * @param g The graphics context
+         * @param x The x coordinate
+         * @param y The y coordinate
+         * @param width The width
+         * @param height The height
+         */
         @Override
-        public void paintBorder(Component c, Graphics g, int x, int y,
-                int width, int height) {
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             g.setColor(ColorManager.adaptColor(new Color(200, 200, 200)));
             ((Graphics2D) g).setStroke(new BasicStroke(2));
             g.drawRoundRect(x + 1, y + 1, width - 3, height - 3, radius, radius);
         }
     }
 
+    /**
+     * Main method for testing the Task3Screen.
+     * @param args Command line arguments (not used)
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Task3Screen().setVisible(true));
     }

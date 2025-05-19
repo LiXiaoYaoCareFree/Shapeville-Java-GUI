@@ -27,57 +27,125 @@ import static com.Shapeville.ShapevilleMainContent.flag1;
  * @author Lingyuan Li
  */
 public class Task1Screen extends JFrame implements ColorRefreshable {
-    private int attempts = 3; // Number of attempts
-    private String correctAnswer; // right answers
-    public int score = 0; // scores
+    /** Number of attempts allowed for each shape */
+    private int attempts = 3;
+    
+    /** The correct answer for the current shape */
+    private String correctAnswer;
+    
+    /** Current score of the player */
+    public int score = 0;
+    
+    /** Progress bar showing completion status */
     private JProgressBar progressBar;
+    
+    /** Top navigation bar panel */
     private TopNavBarPanel topPanel;
+    
+    /** Button for selecting basic (2D) shapes */
     private JToggleButton basicButton;
+    
+    /** Button for selecting advanced (3D) shapes */
     private JToggleButton advancedButton;
-    private JPanel shapePanel; // A panel for displaying shapes
+    
+    /** Panel for displaying the current shape */
+    private JPanel shapePanel;
+    
+    /** Panel showing progress information */
     private JPanel progressPanel;
+    
+    /** Main task panel containing all components */
     private JPanel taskPanel;
+    
+    /** Panel containing level selection buttons */
     private JPanel levelPanel;
+    
+    /** Panel containing input field and submit button */
     private JPanel inputPanel;
+    
+    /** Panel showing hints and feedback */
     private JPanel hintPanel;
+    
+    /** Panel showing attempt counter */
     private JPanel attemptPanel;
+    
+    /** Wrapper panel for gradient background */
     private JPanel gradientTopWrapper;
+    
+    /** Label showing hints and feedback */
     private JLabel hintLabel;
+    
+    /** Label showing attempt counter dots */
     private JLabel attemptDots;
+    
+    /** Label showing progress information */
     private JLabel progressLabel;
+    
+    /** Label showing the question */
     private JLabel questionLabel;
+    
+    /** Text field for user input */
     private JTextField styledTextField;
+    
+    /** Button for submitting answers */
     private JButton submitButton;
+    
+    /** Button for moving to next shape */
     private JButton nextButton;
+    
+    /** Text showing attempt information */
     private String attemptsText;
+    
+    /** Flag indicating if current level is basic (2D) */
     private Boolean isBasic;
 
-    // Create a counter to record the number of clicks
-    int[] clickCount = { 0 }; // 使用数组来使其在 Lambda 表达式中可变
+    /** Counter for tracking number of next shape clicks */
+    int[] clickCount = { 0 };
 
-    // 2D and 3D shape arrays
+    /** Array of available 2D shapes */
     private String[] shapes2D = { "Circle", "Rectangle", "Triangle", "Oval", "Octagon", "Square", "Heptagon", "Rhombus",
             "Pentagon", "Hexagon", "Kite" };
+            
+    /** Array of available 3D shapes */
     private String[] shapes3D = { "Cube", "Cuboid", "Cylinder", "Sphere", "Triangular prism", "Square-based pyramid",
             "Cone", "Tetrahedron" };
 
-    private int currentShapeIndex = 0; // Record the currently loaded graphic index
-    private List<String> allShapes = new ArrayList<>(); // Store all the graphics to be loaded
+    /** Index of the current shape being displayed */
+    private int currentShapeIndex = 0;
+    
+    /** List of all shapes to be displayed */
+    private List<String> allShapes = new ArrayList<>();
 
-    // Color constant - Use ColorManager to obtain colors
+    /** Orange color from ColorManager */
     private Color orange = ColorManager.getOrange();
+    
+    /** Gray color from ColorManager */
     private Color gray = ColorManager.getGray();
+    
+    /** Red color from ColorManager */
     private Color red = ColorManager.getRed();
+    
+    /** Green color from ColorManager */
     private Color green = ColorManager.getGreen();
+    
+    /** Yellow color from ColorManager */
     private Color yellow = ColorManager.getYellow();
+    
+    /** Blue color from ColorManager */
     private Color blue = ColorManager.getBlue();
+    
+    /** Dark blue color from ColorManager */
     private Color blueDark = ColorManager.getBlueDark();
 
-    // Randomly select 4 from the 2D shape array
+    /** List of randomly selected 2D shapes */
     List<String> selected2DShapes = getRandomElements(shapes2D, 4);
-    // Randomly select 4 from the 3D shape array
+    
+    /** List of randomly selected 3D shapes */
     List<String> selected3DShapes = getRandomElements(shapes3D, 4);
 
+    /**
+     * Creates and configures the main Task1Screen window
+     */
     private void CreateTask1Screen() {
         setTitle("Task 1: Shape Recognition");
         setSize(800, 600);
@@ -85,6 +153,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Creates and configures the top navigation bar with home and end session buttons
+     */
     private void CreateTask1TopNavigationBar() {
         // Top navigation bar
         gradientTopWrapper = getJPanel();
@@ -106,6 +177,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         });
     }
 
+    /**
+     * Creates and configures the progress bar panel
+     */
     private void CreateTask1ProgressBarPanel() {
         // Custom progress bar
         progressBar = new JProgressBar(0, 8);
@@ -118,6 +192,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         progressBar.setBackground(new Color(229, 231, 235)); // 设置背景色（进度条背景色）
     }
 
+    /**
+     * Creates and configures the level selection panel with basic and advanced buttons
+     */
     private void CreateTask1levelPanel() {
         // Create button groups for managing mutual exclusion selections
         basicButton = new JToggleButton("2D Shapes (Basic Level)");
@@ -132,6 +209,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         advancedButton.setForeground(Color.WHITE);
     }
 
+    /**
+     * Creates and configures the input panel with question label and text field
+     */
     private void CreateTask1InputPanel() {
         // Question and answer input box
         inputPanel = new JPanel();
@@ -163,6 +243,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         });
     }
 
+    /**
+     * Creates and configures the submit button with styling and event handling
+     */
     private void CreateTask1submitButton() {
         submitButton = new JButton("Submit");
 
@@ -197,6 +280,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         SubmitButtonEvent();
     }
 
+    /**
+     * Sets up the event handling for the submit button
+     */
     private void SubmitButtonEvent() {
         // 提交按钮事件
         submitButton.addActionListener(new ActionListener() {
@@ -240,6 +326,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         });
     }
 
+    /**
+     * Creates and configures the hint panel for displaying feedback
+     */
     private void CreateTask1HintPanel() {
         // Error prompt box
         hintPanel = new JPanel();
@@ -251,6 +340,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         hintPanel.add(hintLabel);
     }
 
+    /**
+     * Creates and configures the attempt counter panel
+     */
     private void CreateTask1AttemptPanel() {
         attemptPanel = new JPanel();
         attemptPanel.setLayout(new FlowLayout());
@@ -259,7 +351,12 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         attemptPanel.add(attemptDots);
     }
 
-    // The score is calculated based on the level and the number of attempts
+    /**
+     * Calculates the score based on the level and number of attempts
+     * @param isBasic true if the current level is basic (2D), false for advanced (3D)
+     * @param attempts number of attempts used
+     * @return the calculated score
+     */
     private int calculateScore(boolean isBasic, int attempts) {
         switch (attempts) {
             case 1:
@@ -273,7 +370,10 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         }
     }
 
-    // Customize the correct prompt dialog box
+    /**
+     * Shows a custom dialog displaying the current score
+     * @param score the current score to display
+     */
     private void showCustomDialog(int score) {
         //Create a non-modal dialog box to avoid blocking the focus restoration of the main window
         JDialog dialog = new JDialog();
@@ -328,17 +428,28 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         dialog.setVisible(true);
     }
 
+    /**
+     * Updates the state of level selection buttons based on the current shape
+     * @param shapeName name of the current shape
+     */
     private void updateLevelButtonState(String shapeName) {
         boolean isBasic = selected2DShapes.contains(shapeName);
         basicButton.setSelected(!isBasic);
         advancedButton.setSelected(isBasic);
     }
 
-
+    /**
+     * Converts a Color object to its hex string representation
+     * @param color the color to convert
+     * @return hex string representation of the color
+     */
     private String getColorHex(Color color) {
         return ColorManager.getColorHex(color);
     }
 
+    /**
+     * Updates the attempt counter display with appropriate colors
+     */
     private void updateAttempts() {
         attemptsText = "<html>Attempts: ";
         for (int i = 0; i < 3; i++) {
@@ -369,6 +480,10 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         attemptDots.setText(attemptsText);
     }
 
+    /**
+     * Creates and configures the next shape button
+     * @return configured JButton for moving to next shape
+     */
     private JButton createNextShapeButton() {
         nextButton = new JButton("Next Shape");
         nextButton.setBackground(new Color(33, 150, 243));
@@ -411,6 +526,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         return nextButton;
     }
 
+    /**
+     * Loads and displays the next shape in the sequence
+     */
     private void loadNextShape() {
         if (currentShapeIndex < allShapes.size()) {
             String nextShapeName = allShapes.get(currentShapeIndex);
@@ -456,13 +574,22 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         }
     }
 
-    // 从数组中随机选择指定数量的元素
+    /**
+     * Randomly selects a specified number of elements from an array
+     * @param array source array to select from
+     * @param count number of elements to select
+     * @return list of randomly selected elements
+     */
     private java.util.List<String> getRandomElements(String[] array, int count) {
         List<String> list = new ArrayList<>(Arrays.asList(array));
         Collections.shuffle(list);
         return list.subList(0, Math.min(count, list.size()));
     }
 
+    /**
+     * Configures a toggle button with consistent styling
+     * @param button the button to configure
+     */
     private void configureButton(JToggleButton button) {
         button.setPreferredSize(new Dimension(300, 40));
         button.setFont(new Font("Roboto", Font.BOLD, 16));
@@ -488,7 +615,7 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
     }
 
     /**
-     *Refresh the colors of all UI elements to respond to the changes in the color blindness mode
+     * Refreshes all UI element colors to respond to color blindness mode changes
      */
     @Override
     public void refreshColors() {
@@ -571,6 +698,9 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
             levelPanel.repaint();
     }
 
+    /**
+     * Constructs a new Task1Screen instance and initializes all components
+     */
     public Task1Screen() {
         if (flag1 == 0) {
             ShapevilleMainContent.updateProgress();
@@ -648,6 +778,10 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         setLocationRelativeTo(null); // Centered display
     }
 
+    /**
+     * Main method to launch the Task1Screen
+     * @param args command line arguments (not used)
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

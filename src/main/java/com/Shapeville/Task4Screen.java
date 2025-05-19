@@ -11,9 +11,8 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag2;
 import static com.Shapeville.ShapevilleMainContent.flag4;
 
-
 /**
- * Circle-practice window used by Shapeville’s geometry course.
+ * Circle-practice window used by Shapeville's geometry course.
  * <p>
  * The frame queues four modes—area / circumference calculated from either
  * radius or diameter—so every combination is attempted once per session.
@@ -28,30 +27,64 @@ import static com.Shapeville.ShapevilleMainContent.flag4;
  * Author : Lingyuan Li
  */
 public class Task4Screen extends JFrame implements ColorRefreshable {
+    /** Queue to store the sequence of practice modes */
     private Queue<String> modesQueue;
+    
+    /** Total number of practice modes in a session */
     private final int totalModes = 4;
+    
+    /** Current index of the practice mode */
     private int currentModeIndex = 0;
+    
+    /** Flag indicating if the first practice type is area calculation */
     private boolean firstIsArea;
 
+    /** Number of remaining attempts for the current question */
     private int attempts;
+    
+    /** The correct result for the current question */
     private double correctResult;
-    private int value; // 半径或直径
+    
+    /** The radius or diameter value for the current question */
+    private int value;
 
-    // UI 组件
+    /** Label displaying the progress information */
     private JLabel progressLabel;
+    
+    /** Progress bar showing completion status */
     private JProgressBar progressBar;
+    
+    /** Label displaying the countdown timer */
     private JLabel timerLabel;
+    
+    /** Timer for countdown functionality */
     private Timer countdownTimer;
+    
+    /** Remaining seconds for the current question */
     private int remainingSeconds = 180;
+    
+    /** Panel containing the question card */
     private CardPanel cardPanel;
+    
+    /** Wrapper panel for the gradient top section */
     private JPanel gradientTopWrapper;
 
-    // 颜色常量 - 使用ColorManager
+    /** Blue color for UI elements */
     private Color blue = ColorManager.getBlue();
+    
+    /** Green color for UI elements */
     private Color green = ColorManager.getGreen();
+    
+    /** Red color for UI elements */
     private Color red = ColorManager.getRed();
+    
+    /** Color for the progress bar */
     private Color progressBarColor = ColorManager.getProgressBarColor();
 
+    /**
+     * Constructs a new Task4Screen instance.
+     * Initializes the UI components and starts the practice session.
+     */
     public Task4Screen() {
         if (flag4 == 0) {
             ShapevilleMainContent.updateProgress();
@@ -131,7 +164,8 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
     }
 
     /**
-     * 刷新所有UI元素的颜色，以响应色盲模式变化
+     * Refreshes all UI elements' colors in response to color-blind mode changes.
+     * Updates colors for progress bar, card panel, timer, and gradient background.
      */
     @Override
     public void refreshColors() {
@@ -168,6 +202,10 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         repaint();
     }
 
+    /**
+     * Initializes and binds the countdown timer functionality.
+     * Updates the timer display and handles timeout conditions.
+     */
     private void bindTimer() {
         countdownTimer = new Timer(1000, e -> {
             remainingSeconds--;
@@ -186,6 +224,10 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         });
     }
 
+    /**
+     * Loads the next practice mode and initializes a new question.
+     * Updates the UI and resets the timer and attempts counter.
+     */
     private void loadNextMode() {
         // 第三题之前，自动添加另一类型的两题
         if (currentModeIndex == 2) {
@@ -233,6 +275,10 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         cardPanel.updateQuestion(mode, value, correctResult, this::onSubmit);
     }
 
+    /**
+     * Handles the submission of an answer.
+     * Validates the input and checks if it matches the correct result.
+     */
     private void onSubmit() {
         try {
             double ans = Double.parseDouble(cardPanel.inputField.getText().trim());
@@ -252,25 +298,61 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Completes the current round and prepares for the next question.
+     * Stops the timer and shows the formula.
+     */
     private void finishRound() {
         countdownTimer.stop();
         cardPanel.showFormulaAndNext(this::loadNextMode);
     }
 
+    /**
+     * Reveals the correct answer when time runs out or attempts are exhausted.
+     * Shows the correct result and prepares for the next question.
+     */
     private void revealAnswer() {
         cardPanel.showFeedback(String.format("Answer: %.2f", correctResult), red);
         finishRound();
     }
 
-    /** 卡片式面板及画布，代码与之前保持一致 **/
+    /**
+     * Inner class representing the card panel that displays questions and handles user input.
+     */
     private class CardPanel extends JPanel {
+        /** Canvas for drawing the circle */
         private CircleCanvas canvas;
-        private JLabel title, formulaLabel, paramLabel, feedbackLabel;
+        
+        /** Label for the question title */
+        private JLabel title;
+        
+        /** Label for displaying formulas */
+        private JLabel formulaLabel;
+        
+        /** Label for displaying parameters */
+        private JLabel paramLabel;
+        
+        /** Label for feedback messages */
+        private JLabel feedbackLabel;
+        
+        /** Text field for user input */
         private JTextField inputField;
-        private JButton submitBtn, nextBtn;
+        
+        /** Button for submitting answers */
+        private JButton submitBtn;
+        
+        /** Button for proceeding to next question */
+        private JButton nextBtn;
+        
+        /** Callback for submit action */
         private Runnable submitCallback;
+        
+        /** Callback for next question action */
         private Runnable nextCallback;
 
+        /**
+         * Constructs a new CardPanel with all necessary UI components.
+         */
         CardPanel() {
             setLayout(new BorderLayout());
             setBackground(new Color(245, 249, 254));
@@ -348,6 +430,9 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             });
         }
 
+        /**
+         * Refreshes the colors of all UI elements in the card panel.
+         */
         void refreshColors() {
             if (submitBtn != null) {
                 submitBtn.setBackground(blue);
@@ -376,6 +461,13 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             repaint();
         }
 
+        /**
+         * Updates the question display with new content.
+         * @param mode The practice mode
+         * @param val The radius or diameter value
+         * @param correct The correct result
+         * @param cb Callback for submit action
+         */
         void updateQuestion(String mode, int val, double correct, Runnable cb) {
             title.setText(getTitle(mode));
             paramLabel.setText(getParamText(mode, val));
@@ -391,6 +483,10 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             inputField.requestFocus();
         }
 
+        /**
+         * Shows the formula and next question button.
+         * @param nextCb Callback for next question action
+         */
         void showFormulaAndNext(Runnable nextCb) {
             nextCallback = nextCb;
             canvas.showResult = true;
@@ -402,21 +498,40 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             nextBtn.setVisible(true);
         }
 
+        /**
+         * Resets the panel for a new question.
+         */
         void resetForNewQuestion() {
             inputField.setText("");
             feedbackLabel.setText(" ");
             feedbackLabel.setForeground(Color.BLACK);
         }
 
+        /**
+         * Displays feedback message with specified color.
+         * @param text The feedback message
+         * @param color The color for the message
+         */
         void showFeedback(String text, Color color) {
             feedbackLabel.setText(text);
             feedbackLabel.setForeground(color);
         }
 
+        /**
+         * Gets the title text based on the practice mode.
+         * @param mode The practice mode
+         * @return The formatted title text
+         */
         String getTitle(String mode) {
             return mode.contains("Area") ? "Circle Area Calculation" : "Circle Circumference Calculation";
         }
 
+        /**
+         * Gets the parameter text based on the practice mode.
+         * @param mode The practice mode
+         * @param val The radius or diameter value
+         * @return The formatted parameter text
+         */
         String getParamText(String mode, int val) {
             if (mode.contains("Radius")) {
                 return "Radius = " + val + " cm";
@@ -426,18 +541,38 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Inner class for drawing the circle and its measurements.
+     */
     private class CircleCanvas extends JPanel {
+        /** Current practice mode */
         private String mode;
+        
+        /** Current radius or diameter value */
         private int val;
+        
+        /** Flag indicating if result should be shown */
         boolean showResult = false;
+        
+        /** Scale factor for drawing */
         private static final int SCALE = 10;
 
+        /**
+         * Sets the question parameters for the canvas.
+         * @param m The practice mode
+         * @param v The radius or diameter value
+         */
         void setQuestion(String m, int v) {
             this.mode = m;
             this.val = v;
             repaint();
         }
 
+        /**
+         * Gets the formula text based on the practice mode.
+         * @param m The practice mode
+         * @return The formatted formula text
+         */
         String getFormulaText(String m) {
             if (m.startsWith("Area with Radius")) {
                 return String.format("Area = π × r² = π × %d² ≈ %.2f", val, Math.PI * val * val);
@@ -450,6 +585,10 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             }
         }
 
+        /**
+         * Paints the circle and its measurements.
+         * @param g0 The graphics context
+         */
         @Override
         protected void paintComponent(Graphics g0) {
             super.paintComponent(g0);
@@ -496,6 +635,15 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             }
         }
 
+        /**
+         * Draws dimension lines with arrows and labels.
+         * @param g The graphics context
+         * @param x1 Start x-coordinate
+         * @param y1 Start y-coordinate
+         * @param x2 End x-coordinate
+         * @param y2 End y-coordinate
+         * @param label The dimension label
+         */
         private void drawDimension(Graphics2D g, int x1, int y1, int x2, int y2, String label) {
             g.setColor(ColorManager.adaptColor(new Color(50, 50, 50)));
             g.draw(new Line2D.Double(x1, y1, x2, y2));
@@ -507,6 +655,14 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             g.drawString(label, (x1 + x2) / 2 - labelWidth / 2, y1 + fm.getHeight() + 2);
         }
 
+        /**
+         * Draws an arrow head at the specified position.
+         * @param g The graphics context
+         * @param x Arrow head x-coordinate
+         * @param y Arrow head y-coordinate
+         * @param tx Target x-coordinate
+         * @param ty Target y-coordinate
+         */
         private void drawArrowHead(Graphics2D g, int x, int y, int tx, int ty) {
             int ARR_SIZE = 6;
             double dx = tx - x;
@@ -522,21 +678,47 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Inner class implementing a rounded border.
+     */
     private static class RoundedBorder implements Border {
+        /** Border radius */
         private final int r;
 
+        /**
+         * Constructs a new RoundedBorder with specified radius.
+         * @param radius The border radius
+         */
         RoundedBorder(int radius) {
             this.r = radius;
         }
 
+        /**
+         * Gets the border insets.
+         * @param c The component
+         * @return The border insets
+         */
         public Insets getBorderInsets(Component c) {
             return new Insets(r, r, r, r);
         }
 
+        /**
+         * Checks if the border is opaque.
+         * @return false as the border is not opaque
+         */
         public boolean isBorderOpaque() {
             return false;
         }
 
+        /**
+         * Paints the rounded border.
+         * @param c The component
+         * @param g The graphics context
+         * @param x The x-coordinate
+         * @param y The y-coordinate
+         * @param w The width
+         * @param h The height
+         */
         public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -545,6 +727,10 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         }
     }
 
+    /**
+     * Main method for testing the Task4Screen.
+     * @param args Command line arguments (not used)
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Task4Screen().setVisible(true));
     }
