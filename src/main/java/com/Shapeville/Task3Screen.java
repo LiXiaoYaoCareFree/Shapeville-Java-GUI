@@ -171,7 +171,7 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
 
         // 如果已经完成全部4种，结束
         if (currentShapeIndex >= shapes.length) {
-            JOptionPane.showMessageDialog(this, "练习结束，您完成了所有题目！");
+            JOptionPane.showMessageDialog(this, "The practice is over. You have completed all the questions!");
             dispose();
             return;
         }
@@ -180,8 +180,8 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         String[] options = remainingShapes.toArray(new String[0]);
         String shape = (String) JOptionPane.showInputDialog(
                 this,
-                "请选择一个图形：",
-                "选择图形",
+                "Please select a graphic:",
+                "Select the graphic",
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 options,
@@ -224,20 +224,20 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         try {
             double ans = Double.parseDouble(answerField.getText().trim());
             if (Math.abs(ans - correctArea) < 1e-6) {
-                hintLabel.setText("正确！🎉");
+                hintLabel.setText("Correct! ");
                 hintLabel.setForeground(green);
                 finishRound();
             } else {
                 attempts--;
                 if (attempts > 0) {
-                    hintLabel.setText("不对，还剩 " + attempts + " 次机会");
+                    hintLabel.setText("There is still " + attempts + " chance left");
                     hintLabel.setForeground(red);
                 } else {
                     revealAnswer();
                 }
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "请输入数字格式的答案");
+            JOptionPane.showMessageDialog(this, "Please enter the answer in numerical format!");
         }
     }
 
@@ -250,7 +250,7 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             if (currentShapeIndex < shapes.length) {
                 loadShape();
             } else {
-                JOptionPane.showMessageDialog(this, "练习结束，您完成了所有题目！");
+                JOptionPane.showMessageDialog(this, "The practice is over. You have completed all the questions!");
                 dispose();
             }
         });
@@ -259,14 +259,14 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
     /** 公开正确答案 */
     private void revealAnswer() {
         countdownTimer.stop();
-        hintLabel.setText("正确答案: " + correctArea);
+        hintLabel.setText("Right answers:" + correctArea);
         hintLabel.setForeground(red);
         cardPanel.showFormulaAndNext(() -> {
             currentShapeIndex++;
             if (currentShapeIndex < shapes.length) {
                 loadShape();
             } else {
-                JOptionPane.showMessageDialog(this, "练习结束!");
+                JOptionPane.showMessageDialog(this, "The practice is over.");
                 dispose();
             }
         });

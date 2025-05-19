@@ -63,12 +63,12 @@ public class StageSwitcherPanel extends JPanel {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBackground(new Color(240, 250, 255));
 
-        TaskCard task1 = new TaskCard("Task 1", "Shape Recognition",
+        TaskCard task1 = new TaskCard("Task 1", "Identification of Shapes",
                 "Learn to identify basic 2D shapes like circles, squares, triangles, rectangles, and more!", "Ages 5–7",
                 new Color(76, 175, 80), loadIcon("shapes.png"));
         task1.addStartButtonListener(e -> startTask1());
 
-        TaskCard task2 = new TaskCard("Task 2", "Angle Types",
+        TaskCard task2 = new TaskCard("Task 2", " Identification of Angle Types",
                 "Learn about different types of angles: right angles, acute angles, and obtuse angles!", "Ages 5–7",
                 new Color(76, 175, 80), loadIcon("angles.png"));
         task2.addStartButtonListener(e -> startTask2());
@@ -83,10 +83,10 @@ public class StageSwitcherPanel extends JPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(new Color(240, 250, 255));
 
-        // 第一行的任务
+        // The task of the first line
         JPanel row1 = new JPanel(new FlowLayout());
         row1.setOpaque(false);
-        TaskCard task3 = new TaskCard("Task 3", "Shape Area",
+        TaskCard task3 = new TaskCard("Task 3", " Area Calculation of shapes",
                 "Learn how to calculate the area of rectangles, triangles, and other 2D shapes!", "Ages 7–10",
                 new Color(33, 150, 243), loadIcon("area.png"));
         task3.addStartButtonListener(e -> startTask3());
@@ -99,7 +99,7 @@ public class StageSwitcherPanel extends JPanel {
         row1.add(task3);
         row1.add(task4);
 
-        // 第二行的任务
+        // The task of the second line
         JPanel row2 = new JPanel(new FlowLayout());
         row2.setOpaque(false);
         TaskCard task5 = new TaskCard("Challenge 1", "Compound Shapes",
@@ -107,7 +107,7 @@ public class StageSwitcherPanel extends JPanel {
                 new Color(156, 39, 176), loadIcon("compound.png"));
         task5.addStartButtonListener(e -> startTask5());
 
-        TaskCard task6 = new TaskCard("Challenge 2", "Sectors & Arcs",
+        TaskCard task6 = new TaskCard("Challenge 2", "Sector Area Calculation",
                 "Master calculating the area of sectors and the length of arcs in circles!", "Advanced",
                 new Color(156, 39, 176), loadIcon("sectors.png"));
         task6.addStartButtonListener(e -> startTask6());
@@ -130,19 +130,19 @@ public class StageSwitcherPanel extends JPanel {
         }
     }
 
-    // 配置任务窗口，使其总是在前，并禁用主窗口直到任务窗口关闭
+    // Configure the task window so that it always comes first and disable the main window until the task window closes
     private void configureTaskWindow(JFrame taskWindow) {
-        // 设置总是在最上层，阻止与其他窗口的交互
+        // The Settings are always on the top layer and prevent interaction with other Windows
         taskWindow.setAlwaysOnTop(true);
-        // 获取顶层窗口作为所有者（通常是主应用窗口）
+        // Obtain the top-level window as the owner (usually the main application window)
         Window owner = SwingUtilities.getWindowAncestor(this);
         if (owner instanceof Frame) {
-            // 暂存引用，以便在自定义的事件处理中使用
+            // Temporarily store the reference for use in custom event handling
             final Frame ownerFrame = (Frame) owner;
-            // 使主窗口无法获得焦点，直到任务窗口关闭
+            // Prevent the main window from obtaining focus until the task window is closed
             ownerFrame.setEnabled(false);
 
-            // 添加窗口关闭监听器，在任务窗口关闭时重新启用主窗口
+            // Add a window closure listener to re-enable the main window when the task window is closed
             taskWindow.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
@@ -155,8 +155,8 @@ public class StageSwitcherPanel extends JPanel {
                 }
             });
 
-            // 添加一个窗口状态监听器来检测任务窗口是否仍然可见
-            // 这可以捕获任何方式的窗口关闭，包括Home和Exit按钮
+            // Add a window status listener to detect whether the task window is still visible
+            // This can capture window closures in any way, including the Home and Exit buttons
             new Timer(100, e -> {
                 if (!taskWindow.isVisible() || !taskWindow.isDisplayable()) {
                     ((Timer) e.getSource()).stop();
@@ -166,7 +166,7 @@ public class StageSwitcherPanel extends JPanel {
         }
     }
 
-    // 辅助方法：在适当的时候启用主窗口
+    // Auxiliary method: Enable the main window at the appropriate time
     private void enableOwnerWindow(Frame ownerFrame) {
         SwingUtilities.invokeLater(() -> {
             ownerFrame.setEnabled(true);
@@ -175,7 +175,7 @@ public class StageSwitcherPanel extends JPanel {
         });
     }
 
-    // 启动任务1
+    // Start Task 1
     public void startTask1() {
         System.out.println("Starting Task 1: Shape Recognition");
         Task1Screen task1Screen = new Task1Screen();
@@ -183,7 +183,7 @@ public class StageSwitcherPanel extends JPanel {
         task1Screen.setVisible(true); // 显示任务界面
     }
 
-    // 启动任务2
+    // Start Task 2
     public void startTask2() {
         System.out.println("Starting Task 2: Angle Types");
         Task2Screen task2Screen = new Task2Screen();
@@ -191,7 +191,7 @@ public class StageSwitcherPanel extends JPanel {
         task2Screen.setVisible(true);
     }
 
-    // 启动任务3
+    // Start Task 3
     public void startTask3() {
         System.out.println("Starting Task 3: Shape Area");
         Task3Screen task3Screen = new Task3Screen();
@@ -199,7 +199,7 @@ public class StageSwitcherPanel extends JPanel {
         task3Screen.setVisible(true);
     }
 
-    // 启动任务4
+    // Start Task 4
     public void startTask4() {
         System.out.println("Starting Task 4: Circle Area & Circumference");
         Task4Screen task4Screen = new Task4Screen();
@@ -207,7 +207,7 @@ public class StageSwitcherPanel extends JPanel {
         task4Screen.setVisible(true);
     }
 
-    // 启动任务5
+    // Start Task 5
     public void startTask5() {
         System.out.println("Starting Task 5: Compound Shapes");
         Task5Screen task5Screen = new Task5Screen();
@@ -215,7 +215,7 @@ public class StageSwitcherPanel extends JPanel {
         task5Screen.setVisible(true);
     }
 
-    // 启动任务6
+    // Start Task 6
     public void startTask6() {
         System.out.println("Starting Task 6: Sectors & Arcs");
         Task6Screen task6Screen = new Task6Screen();

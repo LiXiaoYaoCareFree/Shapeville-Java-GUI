@@ -96,6 +96,8 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
 
         // Timer display
         timerLabel = new JLabel("Time left: 05:00");
+        timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        timerLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         mainPanel.add(timerLabel);
         countdownTimer = new Timer(1000, e -> {
             remainingSeconds--;
@@ -118,9 +120,16 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         mainPanel.add(inputPanel);
 
         hintLabel = new JLabel("You have 3 attempts.");
+        hintLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        hintLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         mainPanel.add(hintLabel);
+
+
+        JPanel attemptsPanel = new JPanel();
+        attemptsPanel.setLayout(new FlowLayout(FlowLayout.CENTER));  // 中间对齐
         attemptDots = new JLabel();
-        mainPanel.add(attemptDots);
+        attemptsPanel.add(attemptDots);
+        mainPanel.add(attemptsPanel);
 
         nextButton = new JButton("Next");
         nextButton.setVisible(false);
@@ -138,10 +147,6 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
     }
 
     private void initFormulasAndSolutions() {
-        // Shape 1
-        formulasMap.put("Shape 1", "A = 14×14 + 0.5×14×5 = 231 cm²");
-        solutionsMap.put("Shape 1", 183.5);
-
         // Shape 2
         formulasMap.put("Shape 2", "A = 20×21 - 10×11 = 420 - 110 = 310 cm²");
         solutionsMap.put("Shape 2", 310.0);
@@ -155,17 +160,8 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         solutionsMap.put("Shape 4", 280.0);
 
         // Shape 5
-        formulasMap.put("Shape 5", "A = 4×2 + 1/2×4×(4 - 2) = 8 + 4 = 12 m²");
-        solutionsMap.put("Shape 5", 12.0);
-
-        // Shape 6
-        formulasMap.put("Shape 6", "A = 9×11 + 1/2×(20 - 9)×11 = 99 + 60.5 = 159.5 m²");
-        solutionsMap.put("Shape 6", 159.5);
-
-        // Shape 7 (需更多信息以计算)
-        formulasMap.put("Shape 7",
-                "A = √[s(s-a)(s-b)(s-c)] + 14×5, where s = (a+b+c)/2 = 21, A = √[21×9×7×5] + 70 = 21√15 + 70 ≈ 151.04 m²");
-        solutionsMap.put("Shape 7", 151.04);
+        formulasMap.put("Shape 5", "A = 4×3 + 1/2×4×(6 - 3) = 12 + 6 = 18 m²");
+        solutionsMap.put("Shape 5", 18.0);
 
         // Shape 8
         formulasMap.put("Shape 8", "A = 60×36 + 36×36 = 2160 + 1296 = 3456 m²");
@@ -186,8 +182,8 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         String[] options = availableShapes.toArray(new String[0]);
         String selection = (String) JOptionPane.showInputDialog(
                 this,
-                "请选择一个图形",
-                "选择图形",
+                "Please select a graphic",
+                "Select the graphic",
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 options,
@@ -260,13 +256,6 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         attemptsText += "</html>";
         attemptDots.setText(attemptsText);
     }
-    // private void updateAttemptsDisplay() {
-    // StringBuilder sb = new StringBuilder("Attempts: ");
-    // for (int i = 0; i < 3; i++) {
-    // sb.append(i < attempts ? "● " : "○ ");
-    // }
-    // attemptDots.setText(sb.toString());
-    // }
 
     private void onSubmit() {
         try {
@@ -284,7 +273,7 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
                 }
             }
         } catch (NumberFormatException ex) {
-            hintLabel.setText("请输入有效数字");
+            hintLabel.setText("Please enter significant figures");
         }
     }
 

@@ -50,8 +50,8 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         String[] options = { "Area", "Circumference" };
         int choice = JOptionPane.showOptionDialog(
                 this,
-                "请选择先练习的计算类型:",
-                "选择计算类型",
+                "Please select the type of calculation to practice first:",
+                "Select the calculation type",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
@@ -119,7 +119,7 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
      */
     @Override
     public void refreshColors() {
-        System.out.println("Task4Screen正在刷新颜色...");
+        System.out.println("Task4Screen is refreshing the color...");
 
         // 更新颜色常量
         blue = ColorManager.getBlue();
@@ -182,7 +182,7 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             }
         }
         if (currentModeIndex >= totalModes) {
-            JOptionPane.showMessageDialog(this, "练习结束！");
+            JOptionPane.showMessageDialog(this, "The practice is over!");
             dispose();
             return;
         }
@@ -221,7 +221,7 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         try {
             double ans = Double.parseDouble(cardPanel.inputField.getText().trim());
             if (Math.abs(ans - correctResult) < 1e-2) {
-                cardPanel.showFeedback("Correct! 🎉", green);
+                cardPanel.showFeedback("Correct! ", green);
                 finishRound();
             } else {
                 attempts--;
@@ -232,7 +232,7 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
                 }
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "请输入数字格式答案");
+            JOptionPane.showMessageDialog(this, "Please enter the answer in numerical format");
         }
     }
 

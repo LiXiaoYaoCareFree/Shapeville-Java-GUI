@@ -13,14 +13,14 @@ import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleMainContent.flag1;
 
 public class Task1Screen extends JFrame implements ColorRefreshable {
-    private int attempts = 3; // 尝试次数
-    private String correctAnswer; // 正确答案
-    public int score = 0; // 分数
+    private int attempts = 3; // Number of attempts
+    private String correctAnswer; // right answers
+    public int score = 0; // scores
     private JProgressBar progressBar;
     private TopNavBarPanel topPanel;
     private JToggleButton basicButton;
     private JToggleButton advancedButton;
-    private JPanel shapePanel; // 显示形状的面板
+    private JPanel shapePanel; // A panel for displaying shapes
     private JPanel progressPanel;
     private JPanel taskPanel;
     private JPanel levelPanel;
@@ -38,19 +38,19 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
     private String attemptsText;
     private Boolean isBasic;
 
-    // 创建一个计数器来记录点击次数
+    // Create a counter to record the number of clicks
     int[] clickCount = { 0 }; // 使用数组来使其在 Lambda 表达式中可变
 
-    // 2D 和 3D 形状数组
+    // 2D and 3D shape arrays
     private String[] shapes2D = { "Circle", "Rectangle", "Triangle", "Oval", "Octagon", "Square", "Heptagon", "Rhombus",
             "Pentagon", "Hexagon", "Kite" };
     private String[] shapes3D = { "Cube", "Cuboid", "Cylinder", "Sphere", "Triangular prism", "Square-based pyramid",
             "Cone", "Tetrahedron" };
 
-    private int currentShapeIndex = 0; // 记录当前加载的图形索引
-    private List<String> allShapes = new ArrayList<>(); // 存储所有待加载的图形
+    private int currentShapeIndex = 0; // Record the currently loaded graphic index
+    private List<String> allShapes = new ArrayList<>(); // Store all the graphics to be loaded
 
-    // 颜色常量 - 使用ColorManager来获取颜色
+    // Color constant - Use ColorManager to obtain colors
     private Color orange = ColorManager.getOrange();
     private Color gray = ColorManager.getGray();
     private Color red = ColorManager.getRed();

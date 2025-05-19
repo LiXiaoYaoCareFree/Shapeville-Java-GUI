@@ -16,6 +16,7 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
     private Map<String, String> formulasMap;
     private Map<String, Double> solutionsMap;
     private String currentShape;
+    private String attemptsText;
 
     private int attempts;
     private String correctFormula;
@@ -163,9 +164,15 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         hintLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         mainPanel.add(hintLabel);
 
+//        attemptDots = new JLabel();
+//        attemptDots.setAlignmentX(Component.CENTER_ALIGNMENT);
+//        mainPanel.add(attemptDots);
+
+        JPanel attemptsPanel = new JPanel();
+        attemptsPanel.setLayout(new FlowLayout(FlowLayout.CENTER));  // 中间对齐
         attemptDots = new JLabel();
-        attemptDots.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(attemptDots);
+        attemptsPanel.add(attemptDots);
+        mainPanel.add(attemptsPanel);
 
         nextButton = new JButton("Next");
         nextButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -348,8 +355,8 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         String[] options = availableShapes.toArray(new String[0]);
         String sel = (String) JOptionPane.showInputDialog(
                 this,
-                "请选择一个扇形",
-                "选择扇形",
+                "Please select a sector",
+                "Select the sector",
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 options,
@@ -386,14 +393,34 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
     }
 
     private void updateAttempts() {
-        StringBuilder dots = new StringBuilder();
-        for (int i = 0; i < attempts; i++) {
-            dots.append("<span style='color: ").append(getColorHex(green)).append("'>●</span> ");
+        attemptsText = "<html>Attempts: ";
+        // 每次都有三个圆点，颜色会根据错误次数变化
+        for (int i = 0; i < 3; i++) {
+            if (attempts == 3) { // 初始状态
+                if (i == 0)
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                else
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
+            } else if (attempts == 2) { // 第一次错误
+                if (i == 0)
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                else if (i == 1)
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+                else
+                    attemptsText += "<font color='" + getColorHex(gray) + "'>● </font>"; // 灰色
+            } else if (attempts == 1) { // 第二次错误
+                if (i == 0)
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                else if (i == 1)
+                    attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 红色
+                else
+                    attemptsText += "<font color='" + getColorHex(orange) + "'>● </font>"; // 橙色
+            } else { // 第三次错误
+                attemptsText += "<font color='" + getColorHex(red) + "'>● </font>"; // 全部红色
+            }
         }
-        for (int i = attempts; i < 3; i++) {
-            dots.append("<span style='color: ").append(getColorHex(gray)).append("'>●</span> ");
-        }
-        attemptDots.setText("<html>" + dots + "</html>");
+        attemptsText += "</html>";
+        attemptDots.setText(attemptsText);
     }
 
     private String getColorHex(Color c) {
