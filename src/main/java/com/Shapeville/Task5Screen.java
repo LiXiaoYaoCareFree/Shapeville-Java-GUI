@@ -96,6 +96,8 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
 
         // Timer display
         timerLabel = new JLabel("Time left: 05:00");
+        timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        timerLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         mainPanel.add(timerLabel);
         countdownTimer = new Timer(1000, e -> {
             remainingSeconds--;
@@ -118,9 +120,16 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         mainPanel.add(inputPanel);
 
         hintLabel = new JLabel("You have 3 attempts.");
+        hintLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        hintLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         mainPanel.add(hintLabel);
+
+
+        JPanel attemptsPanel = new JPanel();
+        attemptsPanel.setLayout(new FlowLayout(FlowLayout.CENTER));  // 中间对齐
         attemptDots = new JLabel();
-        mainPanel.add(attemptDots);
+        attemptsPanel.add(attemptDots);
+        mainPanel.add(attemptsPanel);
 
         nextButton = new JButton("Next");
         nextButton.setVisible(false);
@@ -186,8 +195,8 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         String[] options = availableShapes.toArray(new String[0]);
         String selection = (String) JOptionPane.showInputDialog(
                 this,
-                "请选择一个图形",
-                "选择图形",
+                "Please select a graphic",
+                "Select the graphic",
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 options,
@@ -284,7 +293,7 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
                 }
             }
         } catch (NumberFormatException ex) {
-            hintLabel.setText("请输入有效数字");
+            hintLabel.setText("Please enter significant figures");
         }
     }
 
