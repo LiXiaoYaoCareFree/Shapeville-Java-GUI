@@ -198,8 +198,8 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
     }
 
     private void selectNext() {
-        if (recognizedTypes.size() == 5) {
-            JOptionPane.showMessageDialog(this, "You have identified all angle types!");
+        if (recognizedTypes.size() == 4) {
+            JOptionPane.showMessageDialog(this, "You have identified 4 angle types!");
             dispose();
             return;
         }
@@ -221,10 +221,11 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
             }
             try {
                 int val = Integer.parseInt(input.trim());
-                if (val >= 0 && val <= 360 && val % 10 == 0) {
+                if (val > 0 && val < 360 && val % 10 == 0) {
                     angle = val;
                 } else {
-                    JOptionPane.showMessageDialog(this, "Please enter a multiple of 10 between 0 and 360.");
+                    JOptionPane.showMessageDialog(this, "Please enter a multiple of 10 between 0 and 360(Not\n" +
+                            "including 0 and 360), using only multiples of 10 degrees for simplicity.");
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Invalid number. Try again.");
