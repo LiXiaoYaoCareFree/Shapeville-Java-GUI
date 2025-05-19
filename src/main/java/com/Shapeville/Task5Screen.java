@@ -147,10 +147,6 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
     }
 
     private void initFormulasAndSolutions() {
-        // Shape 1
-        formulasMap.put("Shape 1", "A = 14×14 + 0.5×14×5 = 231 cm²");
-        solutionsMap.put("Shape 1", 183.5);
-
         // Shape 2
         formulasMap.put("Shape 2", "A = 20×21 - 10×11 = 420 - 110 = 310 cm²");
         solutionsMap.put("Shape 2", 310.0);
@@ -164,17 +160,8 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         solutionsMap.put("Shape 4", 280.0);
 
         // Shape 5
-        formulasMap.put("Shape 5", "A = 4×2 + 1/2×4×(4 - 2) = 8 + 4 = 12 m²");
-        solutionsMap.put("Shape 5", 12.0);
-
-        // Shape 6
-        formulasMap.put("Shape 6", "A = 9×11 + 1/2×(20 - 9)×11 = 99 + 60.5 = 159.5 m²");
-        solutionsMap.put("Shape 6", 159.5);
-
-        // Shape 7 (需更多信息以计算)
-        formulasMap.put("Shape 7",
-                "A = √[s(s-a)(s-b)(s-c)] + 14×5, where s = (a+b+c)/2 = 21, A = √[21×9×7×5] + 70 = 21√15 + 70 ≈ 151.04 m²");
-        solutionsMap.put("Shape 7", 151.04);
+        formulasMap.put("Shape 5", "A = 4×3 + 1/2×4×(6 - 3) = 12 + 6 = 18 m²");
+        solutionsMap.put("Shape 5", 18.0);
 
         // Shape 8
         formulasMap.put("Shape 8", "A = 60×36 + 36×36 = 2160 + 1296 = 3456 m²");
@@ -269,13 +256,6 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         attemptsText += "</html>";
         attemptDots.setText(attemptsText);
     }
-    // private void updateAttemptsDisplay() {
-    // StringBuilder sb = new StringBuilder("Attempts: ");
-    // for (int i = 0; i < 3; i++) {
-    // sb.append(i < attempts ? "● " : "○ ");
-    // }
-    // attemptDots.setText(sb.toString());
-    // }
 
     private void onSubmit() {
         try {
