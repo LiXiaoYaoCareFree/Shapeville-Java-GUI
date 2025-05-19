@@ -22,13 +22,15 @@ import java.awt.*;
 public class TopNavBarPanel extends JPanel {
     public JButton homeButton;
     public JButton endSessionButton;
+    public ImageIcon rawIcon;
+    public Image scaledImage;
 
     public TopNavBarPanel() {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        ImageIcon rawIcon = new ImageIcon(getClass().getClassLoader().getResource("images/img.png"));
-        Image scaledImage = rawIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        rawIcon = new ImageIcon(getClass().getClassLoader().getResource("images/img.png"));
+        scaledImage = rawIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         JLabel logoLabel = new JLabel("Shapeville", new ImageIcon(scaledImage), JLabel.LEFT);
         logoLabel.setFont(new Font("Arial", Font.BOLD, 24));
         logoLabel.setForeground(Color.WHITE);
