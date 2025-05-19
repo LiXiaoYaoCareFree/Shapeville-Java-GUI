@@ -13,9 +13,21 @@
 
 或者直接进入项目的根路径下，使用命令行直接运行:
 ```bash
+mkdir -p bin
+```
+
+```bash
+javac -d bin -sourcepath src/main/java src/main/java/com/Shapeville/MainWindow.java
+```
+
+```bash
+cp -r src/main/resources/images bin/
+```
+
+```bash
 java -cp bin com.Shapeville.MainWindow
 ```
----
+
 
 ![](src/main/resources/images/README/images/img.png)
 
