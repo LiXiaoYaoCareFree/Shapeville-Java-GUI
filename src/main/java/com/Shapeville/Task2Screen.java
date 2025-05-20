@@ -271,7 +271,7 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
             if (input == null) {
                 // User cancelled
                 dispose();
-                return;
+                //return;
             }
             try {
                 int val = Integer.parseInt(input.trim());
