@@ -4,11 +4,14 @@ import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.*;
 import static com.Shapeville.ShapevilleGUI.getJPanel;
-import static com.Shapeville.ShapevilleMainContent.flag2;
+import static com.Shapeville.StageSwitcherPanel.task1;
+import static com.Shapeville.StageSwitcherPanel.task4;
+import static com.Shapeville.Task1Screen.calculateScore;
+import static com.Shapeville.Task1Screen.showCustomDialog;
+import static com.Shapeville.ShapevilleGUI.currentProgressScore;
 import static com.Shapeville.ShapevilleMainContent.flag4;
 
 /**
@@ -80,6 +83,8 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
     
     /** Color for the progress bar */
     private Color progressBarColor = ColorManager.getProgressBarColor();
+
+    private int score = 0;
 
     private JPanel inputRow;
     /**
@@ -241,6 +246,7 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             dispose();
             if (flag4 == 0) {
                 ShapevilleMainContent.updateProgress();
+                task4.setStartButtonEnabled(false); // 禁用
                 flag4 = 1;
             }
             return;
@@ -284,6 +290,10 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         try {
             double ans = Double.parseDouble(cardPanel.inputField.getText().trim());
             if (Math.abs(ans - correctResult) < 1e-2) {
+                score += calculateScore(true, attempts);
+                currentProgressScore += score;
+                showCustomDialog(score);
+                System.out.println(score);
                 cardPanel.showFeedback("Correct! ", green);
                 finishRound();
             } else {

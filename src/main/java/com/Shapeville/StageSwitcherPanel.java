@@ -26,6 +26,13 @@ public class StageSwitcherPanel extends JPanel {
     /** Container panel that holds the stage content cards */
     private final JPanel     cardContainer;
 
+    public static TaskCard task1;
+    public static TaskCard task2;
+    public static TaskCard task3;
+    public static TaskCard task4;
+    public static TaskCard task5;
+    public static TaskCard task6;
+
     /**
      * Constructs a new StageSwitcherPanel with two stages and their respective task cards.
      * Initializes the UI components, sets up the layout, and configures the stage switching logic.
@@ -95,12 +102,12 @@ public class StageSwitcherPanel extends JPanel {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBackground(new Color(240, 250, 255));
 
-        TaskCard task1 = new TaskCard("Task 1", "Shape Identification",
+        task1 = new TaskCard("Task 1", "Shape Identification",
                 "Identify basic 2-D shapes: circles, squares, triangles…", "Ages 5–7",
                 new Color(76, 175, 80), loadIcon("shapes.png"));
         task1.addStartButtonListener(e -> startTask1());
 
-        TaskCard task2 = new TaskCard("Task 2", "Angle Types",
+        task2 = new TaskCard("Task 2", "Angle Types",
                 "Recognise right, acute and obtuse angles.", "Ages 5–7",
                 new Color(76, 175, 80), loadIcon("angles.png"));
         task2.addStartButtonListener(e -> startTask2());
@@ -121,12 +128,12 @@ public class StageSwitcherPanel extends JPanel {
 
         JPanel row1 = new JPanel(new FlowLayout());
         row1.setOpaque(false);
-        TaskCard task3 = new TaskCard("Task 3", "Area of Shapes",
+        task3 = new TaskCard("Task 3", "Area of Shapes",
                 "Calculate area of rectangles, triangles and more.", "Ages 7–10",
                 new Color(33, 150, 243), loadIcon("area.png"));
         task3.addStartButtonListener(e -> startTask3());
 
-        TaskCard task4 = new TaskCard("Task 4", "Circle Area & Circumference",
+        task4 = new TaskCard("Task 4", "Circle Area & Circumference",
                 "Use π to find area and circumference of circles.", "Ages 7–10",
                 new Color(33, 150, 243), loadIcon("Circle.png"));
         task4.addStartButtonListener(e -> startTask4());
@@ -136,12 +143,12 @@ public class StageSwitcherPanel extends JPanel {
 
         JPanel row2 = new JPanel(new FlowLayout());
         row2.setOpaque(false);
-        TaskCard task5 = new TaskCard("Challenge 1", "Compound Shapes",
+        task5 = new TaskCard("Challenge 1", "Compound Shapes",
                 "Break compound shapes into simpler ones to get area.", "Advanced",
                 new Color(156, 39, 176), loadIcon("compound.png"));
         task5.addStartButtonListener(e -> startTask5());
 
-        TaskCard task6 = new TaskCard("Challenge 2", "Sector Areas & Arcs",
+        task6 = new TaskCard("Challenge 2", "Sector Areas & Arcs",
                 "Find area of sectors and length of arcs.", "Advanced",
                 new Color(156, 39, 176), loadIcon("sectors.png"));
         task6.addStartButtonListener(e -> startTask6());

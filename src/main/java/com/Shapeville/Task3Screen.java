@@ -8,8 +8,12 @@ import java.awt.geom.Line2D;
 import java.util.Random;
 
 import static com.Shapeville.ShapevilleGUI.getJPanel;
-import static com.Shapeville.ShapevilleMainContent.flag2;
 import static com.Shapeville.ShapevilleMainContent.flag3;
+import static com.Shapeville.ShapevilleGUI.currentProgressScore;
+import static com.Shapeville.StageSwitcherPanel.task1;
+import static com.Shapeville.StageSwitcherPanel.task3;
+import static com.Shapeville.Task1Screen.calculateScore;
+import static com.Shapeville.Task1Screen.showCustomDialog;
 
 /**
  * Interactive window for <strong>Task&nbsp;3 – Shape Area Calculation</strong>.
@@ -69,6 +73,8 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
     
     /** Wrapper panel for the gradient navigation bar */
     private JPanel gradientTopWrapper;
+
+    private int score  = 0;
 
     // Palette colours ------------------------------------------------------
     /** Blue color for UI elements */
@@ -223,6 +229,7 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
             dispose();
             if (flag3 == 0) {
                 ShapevilleMainContent.updateProgress();
+                task3.setStartButtonEnabled(false); // 禁用
                 flag3 = 1;
             }
             return;
@@ -277,6 +284,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         try {
             double ans = Double.parseDouble(answerField.getText().trim());
             if (Math.abs(ans - correctArea) < 1e-6) {
+                score += calculateScore(true, attempts);
+                currentProgressScore += score;
+                showCustomDialog(score);
+                System.out.println(score);
                 hintLabel.setText("Correct! ");
                 hintLabel.setForeground(green);
                 finishRound();

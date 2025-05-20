@@ -12,6 +12,7 @@ import java.util.List;
 import static com.Shapeville.ShapevilleGUI.getJPanel;
 import static com.Shapeville.ShapevilleGUI.currentProgressScore;
 import static com.Shapeville.ShapevilleMainContent.flag1;
+import static com.Shapeville.StageSwitcherPanel.task1;
 
 /**
  * Interactive window for <strong>Task&nbsp;1 – Shape Recognition</strong>.
@@ -360,7 +361,7 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
      * @param attempts number of attempts used
      * @return the calculated score
      */
-    private int calculateScore(boolean isBasic, int attempts) {
+    public static int calculateScore(boolean isBasic, int attempts) {
         switch (attempts) {
             case 1:
                 return isBasic ? 1 : 2;
@@ -377,7 +378,7 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
      * Shows a custom dialog displaying the current score
      * @param score the current score to display
      */
-    private void showCustomDialog(int score) {
+    public static void showCustomDialog(int score) {
         //Create a non-modal dialog box to avoid blocking the focus restoration of the main window
         JDialog dialog = new JDialog();
         dialog.setTitle("Score");
@@ -394,7 +395,7 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         JPanel iconPanel = new JPanel();
         iconPanel.setBackground(new Color(255, 255, 255));
         iconPanel.setPreferredSize(new Dimension(300, 40));
-        JLabel icon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/img_1.png")));
+        JLabel icon = new JLabel(new ImageIcon(Task1Screen.class.getClassLoader().getResource("images/img_1.png")));
         iconPanel.add(icon);
         contentPanel.add(iconPanel);
 
@@ -403,7 +404,7 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
         scorePanel.setLayout(new FlowLayout());
         scorePanel.setBackground(new Color(240, 248, 255));
 
-        JLabel scoreIcon = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("images/img_2.png")));
+        JLabel scoreIcon = new JLabel(new ImageIcon(Task1Screen.class.getClassLoader().getResource("images/img_2.png")));
         JLabel scoreValueLabel = new JLabel("Your current score: ");
         JLabel scoreValue = new JLabel(String.valueOf(score));
         scoreValue.setForeground(new Color(59, 130, 246));
@@ -522,6 +523,7 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
                         dispose();
                         if (flag1 == 0) {
                             ShapevilleMainContent.updateProgress();
+                            task1.setStartButtonEnabled(false); // 禁用
                             flag1 = 1;
                         }
                     });

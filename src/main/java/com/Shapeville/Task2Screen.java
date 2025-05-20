@@ -8,6 +8,11 @@ import java.util.Set;
 
 import static com.Shapeville.ShapevilleMainContent.flag1;
 import static com.Shapeville.ShapevilleMainContent.flag2;
+import static com.Shapeville.ShapevilleGUI.currentProgressScore;
+import static com.Shapeville.StageSwitcherPanel.task1;
+import static com.Shapeville.StageSwitcherPanel.task2;
+import static com.Shapeville.Task1Screen.calculateScore;
+import static com.Shapeville.Task1Screen.showCustomDialog;
 
 /**
  * Interactive window for <strong>Task&nbsp;2 – Angle Type Identification</strong>.
@@ -61,6 +66,8 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
     private Color red = ColorManager.getRed();
     private Color green = ColorManager.getGreen();
     private Color blue = ColorManager.getBlue();
+
+    private int score = 0;
 
     /**
      * Panel class for drawing and displaying angles
@@ -253,6 +260,7 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
             dispose();
             if (flag2 == 0) {
                 ShapevilleMainContent.updateProgress();
+                task2.setStartButtonEnabled(false); // 禁用
                 flag2 = 1;
             }
             return;
@@ -337,6 +345,10 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
     private void onSubmit() {
         String selected = (String) typeCombo.getSelectedItem();
         if (selected.equals(correctType)) {
+            score += calculateScore(true, attempts);
+            currentProgressScore += score;
+            showCustomDialog(score);
+            System.out.println(score);
             recognizedTypes.add(selected);
             hintLabel.setText("Correct! You have recognized: " + recognizedTypes);
             hintLabel.setForeground(green);

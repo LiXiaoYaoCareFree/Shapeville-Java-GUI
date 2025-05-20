@@ -3,13 +3,16 @@ package com.Shapeville;
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
 import static com.Shapeville.ShapevilleGUI.getJPanel;
-import static com.Shapeville.ShapevilleMainContent.flag2;
+import static com.Shapeville.ShapevilleGUI.currentProgressScore;
 import static com.Shapeville.ShapevilleMainContent.flag6;
+import static com.Shapeville.StageSwitcherPanel.task1;
+import static com.Shapeville.StageSwitcherPanel.task6;
+import static com.Shapeville.Task1Screen.calculateScore;
+import static com.Shapeville.Task1Screen.showCustomDialog;
 
 /**
  * Interactive window for practising the area of circular sectors.
@@ -105,6 +108,8 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
     
     /** Color for progress bar */
     private Color progressBarColor = ColorManager.getProgressBarColor();
+
+    private int score = 0;
 
     /**
      * Constructs a new Task6Screen instance.
@@ -411,6 +416,7 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
             dispose();
             if (flag6 == 0) {
                 ShapevilleMainContent.updateProgress();
+                task6.setStartButtonEnabled(false); // 禁用
                 flag6 = 1;
             }
             return;
@@ -533,6 +539,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
      * Updates UI elements and stops the timer.
      */
     private void onCorrect() {
+        score += calculateScore(false, attempts);
+        currentProgressScore += score;
+        showCustomDialog(score);
+        System.out.println(score);
         hintLabel.setText("Your answer is correct!");
         hintLabel.setForeground(green);
         submitButton.setEnabled(false);

@@ -96,4 +96,12 @@ public class TaskCard extends JPanel {
     public void addStartButtonListener(ActionListener listener) {
         startButton.addActionListener(listener);
     }
+
+    /**
+     * Enables or disables the Start button.
+     * @param enabled true to enable, false to disable
+     */
+    public void setStartButtonEnabled(boolean enabled) {
+        startButton.setEnabled(enabled);
+    }
 }

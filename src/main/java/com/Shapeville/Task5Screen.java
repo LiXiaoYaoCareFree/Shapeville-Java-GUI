@@ -3,13 +3,16 @@ package com.Shapeville;
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
 import static com.Shapeville.ShapevilleGUI.getJPanel;
-import static com.Shapeville.ShapevilleMainContent.flag2;
+import static com.Shapeville.StageSwitcherPanel.task1;
+import static com.Shapeville.StageSwitcherPanel.task5;
+import static com.Shapeville.Task1Screen.calculateScore;
+import static com.Shapeville.Task1Screen.showCustomDialog;
 import static com.Shapeville.ShapevilleMainContent.flag5;
+import static com.Shapeville.ShapevilleGUI.currentProgressScore;
 
 /**
  * Practice window for estimating the area of irregular / compound shapes.
@@ -108,6 +111,8 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
     
     /** Wrapper panel for gradient top */
     private JPanel gradientTopWrapper;
+
+    private int score = 0;
 
     /**
      * Constructs a new Task5Screen instance.
@@ -250,6 +255,7 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
             dispose();
             if (flag5 == 0) {
                 ShapevilleMainContent.updateProgress();
+                task5.setStartButtonEnabled(false); // 禁用
                 flag5 = 1;
             }
             return;
@@ -376,6 +382,10 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
      */
     private void onCorrect() {
         countdownTimer.stop();
+        score += calculateScore(false, attempts);
+        currentProgressScore += score;
+        showCustomDialog(score);
+        System.out.println(score);
         hintLabel.setText("Correct!");
         submitButton.setEnabled(false);
         nextButton.setVisible(true);
