@@ -81,6 +81,7 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
     /** Color for the progress bar */
     private Color progressBarColor = ColorManager.getProgressBarColor();
 
+    private JPanel inputRow;
     /**
      * Constructs a new Task4Screen instance.
      * Initializes the UI components and starts the practice session.
@@ -387,13 +388,18 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             south.add(formulaLabel);
 
             // 输入区域
-            JPanel inputRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            inputRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
             inputRow.setOpaque(false);
             inputRow.add(new JLabel("Result = "));
             inputField = new JTextField(10);
             inputField.addActionListener(e -> onSubmit());
             inputRow.add(inputField);
-            inputRow.add(new JLabel("cm²"));
+            if (firstIsArea) {
+                inputRow.add(new JLabel("cm²"));
+            } else {
+                inputRow.add(new JLabel("cm"));
+            }
+
 
             // 提交按钮
             submitBtn = new JButton("Submit");
