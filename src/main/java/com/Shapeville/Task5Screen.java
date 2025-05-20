@@ -114,10 +114,6 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
      * Initializes the UI components and sets up the practice environment.
      */
     public Task5Screen() {
-        if (flag5 == 0) {
-            ShapevilleMainContent.updateProgress();
-            flag5 = 1;
-        }
         setTitle("Task 5: Compound Shapes");
         setSize(800, 650);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -252,6 +248,10 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
         if (availableShapes.isEmpty()) {
             JOptionPane.showMessageDialog(this, "You have practiced all shapes.");
             dispose();
+            if (flag5 == 0) {
+                ShapevilleMainContent.updateProgress();
+                flag5 = 1;
+            }
             return;
         }
         String[] options = availableShapes.toArray(new String[0]);

@@ -88,10 +88,6 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
      * Sets up the navigation bar, timer, progress tracking, and the main exercise card.
      */
     public Task3Screen() {
-        if (flag3 == 0) {
-            ShapevilleMainContent.updateProgress();
-            flag3 = 1;
-        }
         remainingShapes = new java.util.ArrayList<>(java.util.Arrays.asList(shapes));
         setTitle("Task 3: Shape Area Calculation");
         setSize(1000, 700);
@@ -225,6 +221,10 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
         if (currentShapeIndex >= shapes.length) {
             JOptionPane.showMessageDialog(this, "The practice is over. You have completed all the questions!");
             dispose();
+            if (flag3 == 0) {
+                ShapevilleMainContent.updateProgress();
+                flag3 = 1;
+            }
             return;
         }
 

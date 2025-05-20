@@ -86,10 +86,6 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
      * Initializes the UI components and starts the practice session.
      */
     public Task4Screen() {
-        if (flag4 == 0) {
-            ShapevilleMainContent.updateProgress();
-            flag4 = 1;
-        }
         setTitle("Task 4: Circle Area & Circumference");
         setSize(800, 600);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -242,6 +238,10 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
         if (currentModeIndex >= totalModes) {
             JOptionPane.showMessageDialog(this, "The practice is over!");
             dispose();
+            if (flag4 == 0) {
+                ShapevilleMainContent.updateProgress();
+                flag4 = 1;
+            }
             return;
         }
         attempts = 3;

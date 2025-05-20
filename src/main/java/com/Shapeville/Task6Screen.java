@@ -111,10 +111,6 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
      * Initializes the UI components and sets up the practice environment.
      */
     public Task6Screen() {
-        if (flag6 == 0) {
-            ShapevilleMainContent.updateProgress();
-            flag6 = 1;
-        }
         setTitle("Task 6: Sector Area Calculation");
         setSize(900, 700);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -413,6 +409,10 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
         if (availableShapes.isEmpty()) {
             JOptionPane.showMessageDialog(this, "You have practiced all sectors.");
             dispose();
+            if (flag6 == 0) {
+                ShapevilleMainContent.updateProgress();
+                flag6 = 1;
+            }
             return;
         }
         String[] options = availableShapes.toArray(new String[0]);

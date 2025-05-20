@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.Shapeville.ShapevilleGUI.getJPanel;
+import static com.Shapeville.ShapevilleGUI.currentProgressScore;
 import static com.Shapeville.ShapevilleMainContent.flag1;
 
 /**
@@ -291,12 +292,14 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
                 String userAnswer = styledTextField.getText().trim();
                 if (userAnswer.equalsIgnoreCase(correctAnswer)) {
                     hintLabel.setText("Correct! ✅ This is indeed a " + correctAnswer + ".");
-                    if (currentShapeIndex <= 3) {
+                    System.out.println(currentShapeIndex);
+                    if (currentShapeIndex <= 4) {
                         isBasic = true;
                     } else {
                         isBasic = false;
                     }
                     score += calculateScore(isBasic, attempts);
+                    currentProgressScore += score;
                     System.out.println(score);
                     styledTextField.setText("");
                     showCustomDialog(score);
@@ -517,6 +520,10 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
                     Timer closeTimer = new Timer(2500, event -> {
                         System.out.println("Task1Screen closed after 8 clicks.");
                         dispose();
+                        if (flag1 == 0) {
+                            ShapevilleMainContent.updateProgress();
+                            flag1 = 1;
+                        }
                     });
                     closeTimer.setRepeats(false);
                     closeTimer.start();
@@ -702,11 +709,6 @@ public class Task1Screen extends JFrame implements ColorRefreshable {
      * Constructs a new Task1Screen instance and initializes all components
      */
     public Task1Screen() {
-        if (flag1 == 0) {
-            ShapevilleMainContent.updateProgress();
-            flag1 = 1;
-        }
-
         CreateTask1Screen();
 
         // Top navigation bar

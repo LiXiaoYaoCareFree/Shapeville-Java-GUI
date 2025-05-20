@@ -138,10 +138,6 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
      * Constructs a new Task2Screen and initializes the UI components
      */
     public Task2Screen() {
-        if (flag2 == 0) {
-            ShapevilleMainContent.updateProgress();
-            flag2 = 1;
-        }
         setTitle("Task 2: Angle Type Identification");
         setSize(600, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -255,6 +251,10 @@ public class Task2Screen extends JFrame implements ColorRefreshable {
         if (recognizedTypes.size() == 4) {
             JOptionPane.showMessageDialog(this, "You have identified 4 angle types!");
             dispose();
+            if (flag2 == 0) {
+                ShapevilleMainContent.updateProgress();
+                flag2 = 1;
+            }
             return;
         }
         // Reset attempts

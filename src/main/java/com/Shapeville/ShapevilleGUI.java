@@ -2,8 +2,6 @@ package com.Shapeville;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 /**
  * Main GUI frame for the <strong>Shapeville</strong> educational game application.
@@ -26,7 +24,7 @@ public class ShapevilleGUI extends JFrame {
     private boolean isColorBlindMode = false;
 
     /** The user's current session score (e.g. number of correct answers). */
-    private int currentProgress = 18;
+    public static int currentProgressScore = 0;
 
     /**
      * {@code true} if any of the {@code TaskXScreen} windows are open.
@@ -174,7 +172,7 @@ public class ShapevilleGUI extends JFrame {
         topPanel.endSessionButton.addActionListener(e -> {
             JOptionPane.showMessageDialog(
                     null,
-                    "You earned " + currentProgress + " points in this session. Goodbye!");
+                    "You earned " + currentProgressScore + " points in this session. Goodbye!");
             System.exit(0);
         });
     }
