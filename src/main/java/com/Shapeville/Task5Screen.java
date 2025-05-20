@@ -270,7 +270,7 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
                 options,
                 options[0]);
         if (selection == null) {
-            return;
+            throw new RuntimeException("stay the proceedings\n");
         }
         currentShape = selection;
         availableShapes.remove(selection);

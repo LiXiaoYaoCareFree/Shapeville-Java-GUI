@@ -86,6 +86,12 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
 
     private int score = 0;
 
+    private boolean userCancelled = false;
+
+    public boolean isUserCancelled() {
+        return userCancelled;
+    }
+
     private JPanel inputRow;
     /**
      * Constructs a new Task4Screen instance.
@@ -109,9 +115,10 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
                 options,
                 options[0]);
         if (choice < 0) {
-            dispose();
-            return;
+            userCancelled = true;
+            throw new RuntimeException("stay the proceedings\n");
         }
+
         firstIsArea = (choice == 0);
         modesQueue = new LinkedList<>();
         if (firstIsArea) {
@@ -405,9 +412,9 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
             inputField.addActionListener(e -> onSubmit());
             inputRow.add(inputField);
             if (firstIsArea) {
-                inputRow.add(new JLabel("cm²"));
+                inputRow.add(new JLabel());
             } else {
-                inputRow.add(new JLabel("cm"));
+                inputRow.add(new JLabel());
             }
 
 
@@ -748,6 +755,14 @@ public class Task4Screen extends JFrame implements ColorRefreshable {
      * @param args Command line arguments (not used)
      */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Task4Screen().setVisible(true));
+        SwingUtilities.invokeLater(() -> {
+            Task4Screen screen = new Task4Screen();
+            if (!screen.isUserCancelled()) {
+                screen.setVisible(true);
+            } else {
+                System.exit(0); // 强制退出程序
+            }
+        });
     }
+
 }

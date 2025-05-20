@@ -430,8 +430,7 @@ public class Task6Screen extends JFrame implements ColorRefreshable {
                 null,
                 options,
                 options[0]);
-        if (sel == null)
-            return;
+        if (sel == null)  throw new RuntimeException("stay the proceedings\n");
         currentShape = sel;
         availableShapes.remove(sel);
         loadShape(sel);
