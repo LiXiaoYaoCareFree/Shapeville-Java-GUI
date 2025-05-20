@@ -229,7 +229,7 @@ public class Task5Screen extends JFrame implements ColorRefreshable {
 
         // Shape 4
         formulasMap.put("Shape 4", "A = 24×6 + 12×12 = 144 + 144 = 288 m²");
-        solutionsMap.put("Shape 4", 280.0);
+        solutionsMap.put("Shape 4", 288.0);
 
         // Shape 5
         formulasMap.put("Shape 5", "A = 4×3 + 1/2×4×(6 - 3) = 12 + 6 = 18 m²");
