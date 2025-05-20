@@ -240,7 +240,7 @@ public class Task3Screen extends JFrame implements ColorRefreshable {
                 options[0]);
         if (shape == null) {
             dispose();
-            return;
+            //return;
         }
         remainingShapes.remove(shape);
 
